@@ -2,9 +2,10 @@ import type { Metadata } from "next";
 import { Salsa, Roboto_Condensed } from "next/font/google";
 import { ReactNode } from "react";
 import { Provider } from "react-redux";
-import { store } from "@/store/store";
-import "./globals.css";
+import { store } from "@/context/store";
+import "../style/globals.css";
 
+//W---------{ Fonts for website }----------
 const salsa = Salsa({
   variable: "--font-salsa",
   subsets: ["latin"],
@@ -16,6 +17,7 @@ const roboto = Roboto_Condensed({
   weight: "500",
 });
 
+//W---------{ Meta data for SCO }----------
 export const metadata: Metadata = {
   title: "LearnHub Academy | Best Coaching & Learning Platform",
   description:
@@ -87,6 +89,7 @@ export const metadata: Metadata = {
   },
 };
 
+//W---------{ Root layout for website }----------
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en">

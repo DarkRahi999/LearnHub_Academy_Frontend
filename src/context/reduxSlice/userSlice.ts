@@ -1,18 +1,12 @@
+import { User } from "@/interface/user";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-// User Type define
-interface User {
-  id: number;
-  name: string;
-  email: string;
-}
-
-// State Type define
+//W---------{ State Type define }----------
 interface UserState {
   users: User[];
 }
 
-// Initial State
+//W---------{ Initial State }----------
 const initialState: UserState = {
   users: [
     { id: 1, name: "Rahi", email: "rahi@example.com" },
@@ -43,6 +37,6 @@ export const userSlice = createSlice({
   },
 });
 
-// Export actions & reducer
+//W---------{ Export actions & reducer }----------
 export const { showUsers, addUser, deleteUser, updateUser } = userSlice.actions;
 export default userSlice.reducer;
