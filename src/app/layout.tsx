@@ -1,5 +1,8 @@
 import type { Metadata } from "next";
 import { Salsa, Roboto_Condensed } from "next/font/google";
+import { ReactNode } from "react";
+import { Provider } from "react-redux";
+import { store } from "@/store/store";
 import "./globals.css";
 
 const salsa = Salsa({
@@ -84,11 +87,13 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
       <body className={`${salsa.variable} ${roboto.variable} antialiased dark`}>
-        <main>{children}</main>
+        <Provider store={store}>
+          <main>{children}</main>
+        </Provider>
       </body>
     </html>
   );
