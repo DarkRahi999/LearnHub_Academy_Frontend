@@ -1,8 +1,10 @@
 import type { Metadata, Viewport } from "next";
 import { Salsa, Roboto_Condensed } from "next/font/google";
 import { ReactNode } from "react";
-import "../style/globals.css";
 import Providers from "./auth/provider";
+import { ThemeProvider } from "@/app/auth/themeProvider";
+import "../style/globals.css";
+import { Header } from "@/components/layouts/Header";
 
 //W---------{ Fonts for website }----------
 const salsa = Salsa({
@@ -29,7 +31,7 @@ export const metadata: Metadata = {
     "education resources",
     "student presentations",
   ],
-  authors: [{ name: "learnhub-academy" }],
+  authors: [{ name: "learnHub-academy" }],
   applicationName: "LearnHub Academy",
   category: "education",
   metadataBase: new URL("https://yourdomain.com"),
@@ -93,11 +95,19 @@ export const viewport: Viewport = {
 //W---------{ Root Layout }----------
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="en">
-      <body className={`${salsa.variable} ${roboto.variable} antialiased dark`}>
-        <Providers>
-          <main>{children}</main>
-        </Providers>
+    <html lang="en" suppressHydrationWarning>
+      <body className={`${salsa.variable} ${roboto.variable} antialiased`}>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <Providers>
+            <Header />
+            <main>{children}</main>
+          </Providers>
+        </ThemeProvider>
       </body>
     </html>
   );
