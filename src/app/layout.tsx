@@ -1,9 +1,8 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Salsa, Roboto_Condensed } from "next/font/google";
 import { ReactNode } from "react";
-import { Provider } from "react-redux";
-import { store } from "@/context/store";
 import "../style/globals.css";
+import Providers from "./auth/provider";
 
 //W---------{ Fonts for website }----------
 const salsa = Salsa({
@@ -64,15 +63,6 @@ export const metadata: Metadata = {
     apple: "/apple-touch-icon.png",
   },
   manifest: "/site.webmanifest",
-  themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
-    { media: "(prefers-color-scheme: dark)", color: "#0f172a" },
-  ],
-  viewport: {
-    width: "device-width",
-    initialScale: 1,
-    maximumScale: 1,
-  },
   verification: {
     google: "your-google-verification-code",
   },
@@ -89,14 +79,25 @@ export const metadata: Metadata = {
   },
 };
 
-//W---------{ Root layout for website }----------
+//W---------{ viewport & themeColor }----------
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
+    { media: "(prefers-color-scheme: dark)", color: "#0f172a" },
+  ],
+};
+
+//W---------{ Root Layout }----------
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
       <body className={`${salsa.variable} ${roboto.variable} antialiased dark`}>
-        <Provider store={store}>
+        <Providers>
           <main>{children}</main>
-        </Provider>
+        </Providers>
       </body>
     </html>
   );
