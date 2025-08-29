@@ -1,10 +1,10 @@
 import type { Metadata, Viewport } from "next";
 import { Salsa, Roboto_Condensed } from "next/font/google";
 import { ReactNode } from "react";
-import Providers from "./auth/provider";
-import { ThemeProvider } from "@/app/auth/themeProvider";
+import Providers from "./rootProvider/provider";
+import { ThemeProvider } from "@/app/rootProvider/themeProvider";
 import "../style/globals.css";
-import { Header } from "@/components/layouts/Header";
+import { AuthProvider } from "@/auth/auth";
 
 //W---------{ Fonts for website }----------
 const salsa = Salsa({
@@ -97,17 +97,18 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${salsa.variable} ${roboto.variable} antialiased`}>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          <Providers>
-            <Header />
-            <main>{children}</main>
-          </Providers>
-        </ThemeProvider>
+        <AuthProvider>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <Providers>
+              <main>{children}</main>
+            </Providers>
+          </ThemeProvider>
+        </AuthProvider>
       </body>
     </html>
   );
