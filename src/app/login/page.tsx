@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useAuth } from "@/auth/auth";
+import { useAuth, UserRole } from "@/auth/auth";
 
 const users = [
     { username: "editor123", password: "12345", role: "editor" },
@@ -20,7 +20,7 @@ export default function Login() {
         );
 
         if (foundUser) {
-            login(foundUser);
+            login({ ...foundUser, role: foundUser.role as UserRole });
         } else {
             setError("Invalid username or password");
         }
