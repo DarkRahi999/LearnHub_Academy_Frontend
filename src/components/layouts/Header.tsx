@@ -2,7 +2,6 @@
 
 import { File, LogOut, UsersRound, User, LogIn, Menu, X } from 'lucide-react';
 import { Button } from '../ui/button';
-// import { useAuth } from "@/auth/auth";
 import { NavButton } from '../own/NavButton';
 import { ModeToggle } from './ModeToggle';
 import Link from 'next/link';
@@ -170,13 +169,13 @@ export default function Header() {
                                                 <UsersRound className="w-5 h-5 mr-3" />
                                                 Profile
                                             </Link>
-                                        </Button>
+                            </Button>
                                         <Button variant="ghost" asChild className="w-full justify-start h-12 text-left hover:bg-accent/50">
                                             <Link href="/notices" onClick={() => setIsMobileMenuOpen(false)}>
                                                 <File className="w-5 h-5 mr-3" />
                                                 Notices
                                             </Link>
-                                        </Button>
+                            </Button>
                                         
                                         <div className="pt-4 border-t border-border">
                                             <Button 
@@ -189,13 +188,13 @@ export default function Header() {
                                             >
                                                 <LogOut className="w-5 h-5 mr-3" />
                                                 Logout
-                                            </Button>
+                            </Button>
                                         </div>
                                     </div>
-                                </>
+                        </>
                             )}
-                        </div>
-                    </div>
+                </div>
+            </div>
                 </>
             )}
         </header>

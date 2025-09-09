@@ -1,8 +1,8 @@
 import type { Metadata, Viewport } from "next";
 import { Salsa, Roboto_Condensed } from "next/font/google";
 import { ReactNode } from "react";
-import Providers from "./rootProvider/storeProvider";
-import { ThemeProvider } from "@/app/rootProvider/themeProvider";
+import Providers from "../provider/storeProvider";
+import { ThemeProvider } from "@/provider/themeProvider";
 import "../style/globals.css";
 
 //W---------{ Fonts for website }----------
