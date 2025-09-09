@@ -1,6 +1,11 @@
 //W---------{ User Interface }----------
-export interface User {
+export interface UserSignup {
   id: number;
-  name: string;
+  firstName: string;
+  lastName?: string;
   email: string;
+  phone?: string;
+  password: string;
+  dob?: Date;
+  gender: string;
 }

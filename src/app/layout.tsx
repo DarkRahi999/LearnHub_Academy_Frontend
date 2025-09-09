@@ -1,10 +1,9 @@
 import type { Metadata, Viewport } from "next";
 import { Salsa, Roboto_Condensed } from "next/font/google";
 import { ReactNode } from "react";
-import Providers from "./rootProvider/provider";
+import Providers from "./rootProvider/storeProvider";
 import { ThemeProvider } from "@/app/rootProvider/themeProvider";
 import "../style/globals.css";
-import { AuthProvider } from "@/auth/auth";
 
 //W---------{ Fonts for website }----------
 const salsa = Salsa({
@@ -97,7 +96,6 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${salsa.variable} ${roboto.variable} antialiased`}>
-        <AuthProvider>
           <ThemeProvider
             attribute="class"
             defaultTheme="system"
@@ -108,7 +106,6 @@ export default function RootLayout({ children }: { children: ReactNode }) {
               <main>{children}</main>
             </Providers>
           </ThemeProvider>
-        </AuthProvider>
       </body>
     </html>
   );
