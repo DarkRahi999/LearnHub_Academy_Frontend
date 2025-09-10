@@ -6,8 +6,9 @@ import { NavButton } from '../own/NavButton';
 import { ModeToggle } from './ModeToggle';
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
+import Image from 'next/image';
 
-// Temporary auth state - replace with your auth context
+//W---------{ Temporary auth state - replace with your auth context }----------
 interface User {
     id: number;
     email: string;
@@ -23,7 +24,7 @@ export default function Header() {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
     useEffect(() => {
-        // Check for stored token and user data
+ //W---------{ Check for stored token and user data }----------
         const token = localStorage.getItem('access_token');
         const userData = localStorage.getItem('user_data');
 
@@ -81,10 +82,13 @@ export default function Header() {
                     ) : (
                         <>
                             <div className="flex items-center gap-1 xs:gap-2">
-                                <img
+                                <Image
                                     src={user.avatarUrl}
                                     alt={`${user.firstName} ${user.lastName || ''}`}
+                                    width={32}
+                                    height={32}
                                     className="w-6 h-6 xs:w-8 xs:h-8 rounded-full object-cover"
+                                    unoptimized
                                 />
                                 <span className="text-xs xs:text-sm font-medium hidden sm:inline">
                                     {user.firstName}{user.lastName ? ` ${user.lastName}` : ''}
@@ -150,10 +154,13 @@ export default function Header() {
                                 <>
                                     <div className="space-y-2">
                                         <div className="flex items-center gap-3 py-3 px-3 bg-muted/30 rounded-lg mb-4">
-                                            <img
+                                            <Image
                                                 src={user.avatarUrl}
                                                 alt={`${user.firstName} ${user.lastName || ''}`}
+                                                width={40}
+                                                height={40}
                                                 className="w-10 h-10 rounded-full object-cover ring-2 ring-primary/20"
+                                                unoptimized
                                             />
                                             <div>
                                                 <p className="text-sm font-medium">

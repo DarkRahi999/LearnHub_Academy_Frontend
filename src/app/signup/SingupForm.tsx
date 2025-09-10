@@ -31,11 +31,7 @@ export const SignupFormSchema = z.object({
         .regex(/[0-9]/, { message: "Password must contain at least one number" }),
 });
 
-interface IProps {
-    props: UserSignup
-}
-
-const SignupForm = ({ }: IProps) => {
+const SignupForm = () => {
     const form = useForm<z.infer<typeof SignupFormSchema>>({
         resolver: zodResolver(SignupFormSchema),
         defaultValues: {
@@ -52,23 +48,23 @@ const SignupForm = ({ }: IProps) => {
         },
     })
 
-    // 2. Define a submit handler.
+ //W---------{ 2. Define a submit handler. }----------
     async function onSubmit(values: z.infer<typeof SignupFormSchema>) {
         try {
-            // DOB convert করা optional
+ //W---------{ DOB convert করা optional }----------
             const payload = {
                 ...values,
             };
 
-            const newUser = await createUser(payload as Omit<UserSignup, "id">); // axios POST call
+            const newUser = await createUser(payload as Omit<UserSignup, "id">); //W---------{ axios POST call }----------
             
-            // Store token and user data in localStorage
+ //W---------{ Store token and user data in localStorage }----------
             localStorage.setItem('access_token', newUser.access_token);
             localStorage.setItem('user_data', JSON.stringify(newUser.user));
             
             console.log("User created:", newUser);
             
-            // Redirect to home page
+ //W---------{ Redirect to home page }----------
             window.location.href = '/';
 
         } catch (error) {

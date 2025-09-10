@@ -1,6 +1,7 @@
 "use client"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
+import { useForm, SubmitHandler } from "react-hook-form"
+import type { Resolver } from "react-hook-form"
 import {
     Form,
     FormControl,
@@ -15,9 +16,19 @@ import { z } from "zod"
 import axios from "axios"
 import { API_URLS } from "@/config/configURL"
 
+type LoginValues = {
+    email?: string
+    userName?: string
+    password: string
+}
+
 const LoginSchema = z.object({
-    email: z.string().email({ message: "Invalid email" }).optional(),
-    userName: z.string().min(3, { message: "Username must be 3+ chars" }).optional(),
+    email: z.preprocess((val) => (typeof val === "string" && val.trim() === "" ? undefined : val),
+        z.string().email({ message: "Invalid email" })
+    ).optional(),
+    userName: z.preprocess((val) => (typeof val === "string" && val.trim() === "" ? undefined : val),
+        z.string().min(3, { message: "Username must be 3+ chars" })
+    ).optional(),
     password: z.string().min(6, { message: "Password must be at least 6 characters" }),
 }).refine((data) => {
     const hasEmail = !!data.email;
@@ -29,8 +40,8 @@ const LoginSchema = z.object({
 });
 
 const LoginForm = () => {
-    const form = useForm<z.infer<typeof LoginSchema>>({
-        resolver: zodResolver(LoginSchema),
+    const form = useForm<LoginValues>({
+        resolver: zodResolver(LoginSchema) as unknown as Resolver<LoginValues>,
         defaultValues: {
             email: "",
             userName: "",
@@ -38,22 +49,22 @@ const LoginForm = () => {
         },
     })
 
-    const onSubmit = async (values: z.infer<typeof LoginSchema>) => {
+    const onSubmit: SubmitHandler<LoginValues> = async (values) => {
         try {
-            // Remove empty identifier to satisfy backend XOR
+ //W---------{ Remove empty identifier to satisfy backend XOR }----------
             const payload: { password: string; email?: string; userName?: string } = { password: values.password };
             if (values.email && !values.userName) payload.email = values.email;
             if (values.userName && !values.email) payload.userName = values.userName;
-
-            const res = await axios.post(API_URLS.auth.login, payload);
             
-            // Store token and user data in localStorage
+            const res = await axios.post<{ access_token: string; user: unknown }>(API_URLS.auth.login, payload);
+            
+ //W---------{ Store token and user data in localStorage }----------
             localStorage.setItem('access_token', res.data.access_token);
             localStorage.setItem('user_data', JSON.stringify(res.data.user));
             
             console.log("Logged in:", res.data);
             
-            // Redirect to home page
+ //W---------{ Redirect to home page }----------
             window.location.href = '/';
         } catch (err: unknown) {
             const error = err as { response?: { data?: { message?: string } }; message?: string };

@@ -2,12 +2,12 @@ import { API_URLS } from "@/config/configURL";
 import { UserLogin, UserProfile, AuthResponse, UpdateAvatarDto } from "@/interface/user";
 import axios from "axios";
 
-// Create axios instance with default config
+//W---------{ Create axios instance with default config }----------
 const authApi = axios.create({
-  baseURL: API_URLS.auth.login.split('/auth')[0], // Get base URL
+  baseURL: API_URLS.auth.login.split('/auth')[0], //W---------{ Get base URL }----------
 });
 
-// Add request interceptor to include auth token
+//W---------{ Add request interceptor to include auth token }----------
 authApi.interceptors.request.use((config) => {
   const token = localStorage.getItem('access_token');
   if (token) {
@@ -17,12 +17,12 @@ authApi.interceptors.request.use((config) => {
   return config;
 });
 
-// Add response interceptor to handle token refresh
+//W---------{ Add response interceptor to handle token refresh }----------
 authApi.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      // Token expired or invalid, redirect to login
+ //W---------{ Token expired or invalid, redirect to login }----------
       localStorage.removeItem('access_token');
       localStorage.removeItem('user');
       window.location.href = '/login';
@@ -31,12 +31,12 @@ authApi.interceptors.response.use(
   }
 );
 
-// ---------------- { LOGIN } ----------------
+//W---------{ ---------------- { LOGIN } ---------------- }----------
 export const loginUser = async (credentials: UserLogin): Promise<AuthResponse> => {
   try {
     const res = await authApi.post<AuthResponse>(API_URLS.auth.login, credentials);
     
-    // Store token and user data in localStorage
+ //W---------{ Store token and user data in localStorage }----------
     localStorage.setItem('access_token', res.data.access_token);
     localStorage.setItem('user', JSON.stringify(res.data.user));
     
@@ -48,25 +48,25 @@ export const loginUser = async (credentials: UserLogin): Promise<AuthResponse> =
   }
 };
 
-// ---------------- { LOGOUT } ----------------
+//W---------{ ---------------- { LOGOUT } ---------------- }----------
 export const logoutUser = async (): Promise<void> => {
   try {
-    // Clear local storage
+ //W---------{ Clear local storage }----------
     localStorage.removeItem('access_token');
     localStorage.removeItem('user');
     
-    // Call logout endpoint if available
+ //W---------{ Call logout endpoint if available }----------
     await authApi.post(API_URLS.auth.logout);
   } catch (error: unknown) {
     const err = error as { response?: { data?: unknown }; message?: string };
     console.error("Error logging out:", err.response?.data || err.message);
-    // Even if logout fails on server, clear local storage
+ //W---------{ Even if logout fails on server, clear local storage }----------
     localStorage.removeItem('access_token');
     localStorage.removeItem('user');
   }
 };
 
-// ---------------- { GET USER PROFILE } ----------------
+//W---------{ ---------------- { GET USER PROFILE } ---------------- }----------
 export const getUserProfile = async (): Promise<UserProfile> => {
   try {
     const res = await authApi.get<{ user: UserProfile }>(API_URLS.auth.profile);
@@ -78,12 +78,12 @@ export const getUserProfile = async (): Promise<UserProfile> => {
   }
 };
 
-// ---------------- { UPDATE AVATAR } ----------------
+//W---------{ ---------------- { UPDATE AVATAR } ---------------- }----------
 export const updateUserAvatar = async (avatarData: UpdateAvatarDto): Promise<UserProfile> => {
   try {
     const res = await authApi.patch<{ user: UserProfile }>(API_URLS.auth.updateAvatar, avatarData);
     
-    // Update user data in localStorage
+ //W---------{ Update user data in localStorage }----------
     localStorage.setItem('user', JSON.stringify(res.data.user));
     
     return res.data.user;
@@ -94,13 +94,13 @@ export const updateUserAvatar = async (avatarData: UpdateAvatarDto): Promise<Use
   }
 };
 
-// ---------------- { CHECK AUTH STATUS } ----------------
+//W---------{ ---------------- { CHECK AUTH STATUS } ---------------- }----------
 export const isAuthenticated = (): boolean => {
   const token = localStorage.getItem('access_token');
   return !!token;
 };
 
-// ---------------- { GET CURRENT USER } ----------------
+//W---------{ ---------------- { GET CURRENT USER } ---------------- }----------
 export const getCurrentUser = (): UserProfile | null => {
   try {
     const userStr = localStorage.getItem('user');
@@ -111,7 +111,7 @@ export const getCurrentUser = (): UserProfile | null => {
   }
 };
 
-// ---------------- { REFRESH TOKEN } ----------------
+//W---------{ ---------------- { REFRESH TOKEN } ---------------- }----------
 export const refreshToken = async (): Promise<string | null> => {
   try {
     const res = await authApi.post<{ access_token: string }>('/auth/refresh');
@@ -121,7 +121,7 @@ export const refreshToken = async (): Promise<string | null> => {
   } catch (error: unknown) {
     const err = error as { response?: { data?: unknown }; message?: string };
     console.error("Error refreshing token:", err.response?.data || err.message);
-    // If refresh fails, logout user
+ //W---------{ If refresh fails, logout user }----------
     logoutUser();
     return null;
   }

@@ -1,4 +1,4 @@
-// store.ts
+//W---------{ store.ts }----------
 import { configureStore } from "@reduxjs/toolkit";
 import userReducer from "./reduxSlice/userSlice";
 

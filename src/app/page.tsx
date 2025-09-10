@@ -1,10 +1,10 @@
-// import { useSelector, useDispatch } from "react-redux";
-// import { RootState, AppDispatch } from "@/context/store";
+//W---------{ import { useSelector, useDispatch } from "react-redux"; }----------
+//W---------{ import { RootState, AppDispatch } from "@/context/store"; }----------
 import Header from "@/components/layouts/Header";
 
 export default function page() {
-  // const users = useSelector((state: RootState) => state.user.users);
-  // const dispatch = useDispatch<AppDispatch>();
+ //W---------{ const users = useSelector((state: RootState) => state.user.users); }----------
+ //W---------{ const dispatch = useDispatch<AppDispatch>(); }----------
   return (
     <>
       <Header />

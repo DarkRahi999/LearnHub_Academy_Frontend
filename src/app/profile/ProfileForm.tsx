@@ -52,7 +52,7 @@ const ProfileForm = () => {
         },
     })
 
-    // Load user profile data
+ //W---------{ Load user profile data }----------
     useEffect(() => {
         const loadUserProfile = async () => {
             try {
@@ -60,7 +60,7 @@ const ProfileForm = () => {
                 const userData = await getUserProfile();
                 setUser(userData);
                 
-                // Populate form with user data
+ //W---------{ Populate form with user data }----------
                 form.reset({
                     firstName: userData.firstName,
                     lastName: userData.lastName || "",
@@ -75,7 +75,7 @@ const ProfileForm = () => {
                 });
             } catch (error) {
                 console.error("Error loading profile:", error);
-                // Try to get user from localStorage as fallback
+ //W---------{ Try to get user from localStorage as fallback }----------
                 const localUser = getCurrentUser();
                 if (localUser) {
                     setUser(localUser);
@@ -100,11 +100,11 @@ const ProfileForm = () => {
         loadUserProfile();
     }, [form]);
 
-    // Handle avatar update
+ //W---------{ Handle avatar update }----------
     const handleAvatarUpdate = async (values: z.infer<typeof ProfileFormSchema>) => {
         try {
             setUpdating(true);
-            const updatedUser = await updateUserAvatar({ avatarUrl: values.avatarUrl });
+            const updatedUser = await updateUserAvatar({ avatarUrl: values.avatarUrl ?? "" });
             setUser(updatedUser);
             alert("Avatar updated successfully!");
         } catch (error) {
@@ -115,12 +115,12 @@ const ProfileForm = () => {
         }
     };
 
-    // Handle form submission
+ //W---------{ Handle form submission }----------
     const onSubmit = async (values: z.infer<typeof ProfileFormSchema>) => {
         try {
             setUpdating(true);
-            // For now, only update avatar as that's the only endpoint available
-            // In the future, you can add more update endpoints
+ //W---------{ For now, only update avatar as that's the only endpoint available }----------
+ //W---------{ In the future, you can add more update endpoints }----------
             await handleAvatarUpdate(values);
         } catch (error) {
             console.error("Error updating profile:", error);
@@ -156,7 +156,7 @@ const ProfileForm = () => {
                         {/* Avatar Section */}
                         <div className="flex flex-col items-center mb-6">
                             <Image 
-                                src={user.avatarUrl || 'https://via.placeholder.com/150'} 
+                                src={user.avatarUrl || 'https://via.placeholder.com/150'}
                                 alt="Profile Avatar" 
                                 width={96}
                                 height={96}

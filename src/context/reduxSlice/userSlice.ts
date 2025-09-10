@@ -1,7 +1,11 @@
-import { User } from "@/interface/user";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 //W---------{ State Type define }----------
+interface User {
+  id: number;
+  name: string;
+  email: string;
+}
 interface UserState {
   users: User[];
 }
