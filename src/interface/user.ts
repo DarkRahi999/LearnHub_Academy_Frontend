@@ -10,8 +10,7 @@ export interface UserSignup {
   firstName: string;
   lastName?: string;
   email: string;
-  userName: string;
-  phone?: string;
+  phone: string;
   password: string;
   dob?: string;
   gender: Gender;
@@ -22,8 +21,7 @@ export interface UserSignup {
 }
 
 export interface UserLogin {
-  email?: string;
-  userName?: string;
+  email: string;
   password: string;
 }
 
@@ -32,8 +30,7 @@ export interface UserProfile {
   firstName: string;
   lastName?: string;
   email: string;
-  userName: string;
-  phone?: string;
+  phone: string;
   dob?: string;
   gender: Gender;
   nationality?: string;
@@ -48,4 +45,16 @@ export interface AuthResponse {
 
 export interface UpdateAvatarDto {
   avatarUrl: string;
+}
+
+// Forgot Password related interfaces
+export interface ForgotPasswordDto {
+  email: string;
+}
+
+export interface ResetPasswordDto {
+  email: string;
+  otp: string;
+  newPassword: string;
+  confirmPassword: string;
 }

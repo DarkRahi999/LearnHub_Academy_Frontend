@@ -1,6 +1,7 @@
 "use client"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
+import { useState } from "react"
 import {
     Form,
     FormControl,
@@ -15,13 +16,13 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { UserSignup } from "@/interface/user"
 import { createUser } from "@/services/signup.service";
 import { z } from "zod"
+import toast from "react-hot-toast"
 
 export const SignupFormSchema = z.object({
     firstName: z.string().min(2, { message: "Name must be at least 2 characters" }),
     lastName: z.string().min(2, { message: "Name must be at least 2 characters" }).optional(),
-    userName: z.string().min(3, { message: "Username must be at least 3 characters" }),
-    phone: z.string().regex(/^01[0-9]{9}$/, { message: "Invalid phone number" }).optional(),
-    email: z.string().email({ message: "Invalid email address" }).regex(/@gmail\.com$/, { message: "Email must be a gmail address" }),
+    phone: z.string().regex(/^01[0-9]{9}$/, { message: "Invalid phone number" }),
+    email: z.string({ message: "Invalid email address" }).regex(/@gmail\.com$/, { message: "Email must be a gmail address" }),
     gender: z.enum(["male", "female", "other"]),
     dob: z.string().optional(),
     avatarUrl: z.string().optional(),
@@ -32,12 +33,12 @@ export const SignupFormSchema = z.object({
 });
 
 const SignupForm = () => {
+    const [step, setStep] = useState<1 | 2 | 3>(1)
     const form = useForm<z.infer<typeof SignupFormSchema>>({
         resolver: zodResolver(SignupFormSchema),
         defaultValues: {
             firstName: "",
             lastName: "",
-            userName: "",
             phone: "",
             email: "",
             gender: "male",
@@ -64,19 +65,43 @@ const SignupForm = () => {
             
             console.log("User created:", newUser);
             
+            toast.success("Account created successfully! Welcome to LearnHub Academy!");
+            
  //W---------{ Redirect to home page }----------
             window.location.href = '/';
 
         } catch (error) {
             console.error("Signup failed:", error);
+            const errorMessage = error instanceof Error ? error.message : 'Signup failed. Please try again.';
+            toast.error(errorMessage);
         }
     }
+
+    const goNext = async () => {
+        const fields = step === 1
+            ? ["firstName", "lastName", "phone"] as const
+            : step === 2
+                ? ["email", "password", "acceptTerms"] as const
+                : ["gender", "dob", "avatarUrl"] as const;
+        const ok = await form.trigger(fields, { shouldFocus: true });
+        if (ok) setStep((prev) => (prev < 3 ? (prev + 1) as 1 | 2 | 3 : prev));
+    }
+
+    const goBack = () => setStep((prev) => (prev > 1 ? (prev - 1) as 1 | 2 | 3 : prev));
 
     return (
         <div className="p-2 xs:p-4">
             <Form {...form}>
                 <form action="" onSubmit={form.handleSubmit(onSubmit)} method="post">
                     <div className="grid gap-2 border-2 rounded-md p-3 xs:p-4">
+                        <div className="flex items-center justify-center gap-2 text-sm mb-2">
+                            <span className={step >= 1 ? "font-semibold" : "text-muted-foreground"}>1. Basic</span>
+                            <span>›</span>
+                            <span className={step >= 2 ? "font-semibold" : "text-muted-foreground"}>2. Account</span>
+                            <span>›</span>
+                            <span className={step >= 3 ? "font-semibold" : "text-muted-foreground"}>3. Optional</span>
+                        </div>
+                        {step === 1 && (
                         <div className="grid gap-2 grid-cols-1 xs:grid-cols-2">
                             <FormField
                                 control={form.control}
@@ -104,20 +129,9 @@ const SignupForm = () => {
                                     </FormItem>
                                 )}
                             />
-                            <FormField
-                                control={form.control}
-                                name="userName"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel className="text-sm font-semibold">Username:</FormLabel>
-                                        <FormControl>
-                                            <Input placeholder="Choose a username..." {...field} />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
                         </div>
+                        )}
+                        {step === 1 && (
                         <div className="grid gap-2 grid-cols-1 xs:grid-cols-3">
                             <div className="xs:col-span-2">
                                 <FormField
@@ -134,29 +148,9 @@ const SignupForm = () => {
                                     )}
                                 />
                             </div>
-                            <FormField
-                                control={form.control}
-                                name="gender"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel className="text-sm font-semibold">Gender:</FormLabel>
-                                        <Select onValueChange={field.onChange} defaultValue={field.value}>
-                                            <FormControl className="w-full">
-                                                <SelectTrigger>
-                                                    <SelectValue placeholder="Select Your Gender" />
-                                                </SelectTrigger>
-                                            </FormControl>
-                                            <SelectContent>
-                                                <SelectItem value="male">Male</SelectItem>
-                                                <SelectItem value="female">Female</SelectItem>
-                                                <SelectItem value="other">Other</SelectItem>
-                                            </SelectContent>
-                                        </Select>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
                         </div>
+                        )}
+                        {step === 2 && (
                         <div className="grid gap-2 grid-cols-1 xs:grid-cols-3">
                             <div className="xs:col-span-2">
                                 <FormField
@@ -186,34 +180,11 @@ const SignupForm = () => {
                                     </FormItem>
                                 )}
                             />
-                            <FormField
-                                control={form.control}
-                                name="dob"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel className="text-sm font-semibold">Date of Birth:</FormLabel>
-                                        <FormControl>
-                                            <Input type="date" placeholder="Select your DOB" {...field} />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
                         </div>
+                        )}
+
+                        {step === 2 && (
                         <div className="grid gap-2 grid-cols-1 xs:grid-cols-2">
-                            <FormField
-                                control={form.control}
-                                name="avatarUrl"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel className="text-sm font-semibold">Avatar URL (Optional):</FormLabel>
-                                        <FormControl>
-                                            <Input placeholder="https://example.com/avatar.jpg (optional)" {...field} />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
                             <FormField
                                 control={form.control}
                                 name="acceptTerms"
@@ -231,9 +202,73 @@ const SignupForm = () => {
                                 )}
                             />
                         </div>
-                        <div className="flex justify-end gap-2 py-4">
-                            <Button type="reset" onClick={() => form.reset()} >Reset</Button>
-                            <Button type="submit">Submit</Button>
+                        )}
+                        {step === 3 && (
+                        <div className="grid gap-2 grid-cols-1 xs:grid-cols-2">
+                            <FormField
+                                control={form.control}
+                                name="gender"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel className="text-sm font-semibold">Gender:</FormLabel>
+                                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                            <FormControl className="w-full">
+                                                <SelectTrigger>
+                                                    <SelectValue placeholder="Select Your Gender" />
+                                                </SelectTrigger>
+                                            </FormControl>
+                                            <SelectContent>
+                                                <SelectItem value="male">Male</SelectItem>
+                                                <SelectItem value="female">Female</SelectItem>
+                                                <SelectItem value="other">Other</SelectItem>
+                                            </SelectContent>
+                                        </Select>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="dob"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel className="text-sm font-semibold">Date of Birth:</FormLabel>
+                                        <FormControl>
+                                            <Input type="date" placeholder="Select your DOB" {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="avatarUrl"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel className="text-sm font-semibold">Avatar URL (Optional):</FormLabel>
+                                        <FormControl>
+                                            <Input placeholder="https://example.com/avatar.jpg (optional)" {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                        </div>
+                        )}
+                        <div className="flex justify-between gap-2 py-4">
+                            <div>
+                                {step > 1 && (
+                                    <Button type="button" variant="ghost" onClick={goBack}>Back</Button>
+                                )}
+                            </div>
+                            <div className="flex gap-2">
+                                <Button type="reset" onClick={() => { form.reset(); setStep(1); }} >Reset</Button>
+                                {step < 3 ? (
+                                    <Button type="button" onClick={goNext}>Next</Button>
+                                ) : (
+                                    <Button type="submit">Submit</Button>
+                                )}
+                            </div>
                         </div>
                     </div>
                 </form>

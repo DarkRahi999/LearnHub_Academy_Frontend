@@ -1,4 +1,4 @@
-export const API_BASE_URL = process.env.Backend_API_URL || "http://localhost:8080/api";
+export const API_BASE_URL = process.env.Backend_API_URL || "http://localhost:8001/api";
 
 export const API_URLS = {
   signup: {
@@ -13,5 +13,7 @@ export const API_URLS = {
     profile: `${API_BASE_URL}/auth/profile`,
     register: `${API_BASE_URL}/auth/signup`,
     updateAvatar: `${API_BASE_URL}/auth/profile/avatar`,
+    forgotPassword: `${API_BASE_URL}/auth/forgot-password`,
+    resetPassword: `${API_BASE_URL}/auth/reset-password`,
   },
 };

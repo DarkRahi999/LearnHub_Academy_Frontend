@@ -19,15 +19,15 @@ export function NavButton({
             size="icon"
             aria-label={label}
             title={label}
-            className="rounded-full"
+            className="rounded-full transition-all duration-300 ease-in-out hover:scale-110 hover:bg-primary/10 group"
             asChild
         >
             {href ? (
                 <Link href={href}>
-                    <Icon />
+                    <Icon className="transition-transform duration-300 group-hover:scale-110" />
                 </Link>
             ) : (
-                <Icon />
+                <Icon className="transition-transform duration-300 group-hover:scale-110" />
             )}
         </Button>
     )

@@ -15,28 +15,16 @@ import { Input } from "@/components/ui/input";
 import { z } from "zod"
 import axios from "axios"
 import { API_URLS } from "@/config/configURL"
+import toast from "react-hot-toast"
 
 type LoginValues = {
-    email?: string
-    userName?: string
+    email: string
     password: string
 }
 
 const LoginSchema = z.object({
-    email: z.preprocess((val) => (typeof val === "string" && val.trim() === "" ? undefined : val),
-        z.string().email({ message: "Invalid email" })
-    ).optional(),
-    userName: z.preprocess((val) => (typeof val === "string" && val.trim() === "" ? undefined : val),
-        z.string().min(3, { message: "Username must be 3+ chars" })
-    ).optional(),
+    email: z.string().email({ message: "Invalid email" }),
     password: z.string().min(6, { message: "Password must be at least 6 characters" }),
-}).refine((data) => {
-    const hasEmail = !!data.email;
-    const hasUser = !!data.userName;
-    return (hasEmail || hasUser) && !(hasEmail && hasUser);
-}, {
-    message: "Provide exactly one of email or username",
-    path: ["email"],
 });
 
 const LoginForm = () => {
@@ -44,17 +32,13 @@ const LoginForm = () => {
         resolver: zodResolver(LoginSchema) as unknown as Resolver<LoginValues>,
         defaultValues: {
             email: "",
-            userName: "",
             password: "",
         },
     })
 
     const onSubmit: SubmitHandler<LoginValues> = async (values) => {
         try {
- //W---------{ Remove empty identifier to satisfy backend XOR }----------
-            const payload: { password: string; email?: string; userName?: string } = { password: values.password };
-            if (values.email && !values.userName) payload.email = values.email;
-            if (values.userName && !values.email) payload.userName = values.userName;
+            const payload: { password: string; email: string } = { password: values.password, email: values.email };
             
             const res = await axios.post<{ access_token: string; user: unknown }>(API_URLS.auth.login, payload);
             
@@ -64,41 +48,35 @@ const LoginForm = () => {
             
             console.log("Logged in:", res.data);
             
+            toast.success("Login successful! Welcome back!");
+            
  //W---------{ Redirect to home page }----------
             window.location.href = '/';
         } catch (err: unknown) {
             const error = err as { response?: { data?: { message?: string } }; message?: string };
             console.error(error?.response?.data || error?.message || err);
-            alert(error?.response?.data?.message || 'Login failed');
+            const errorMessage = error?.response?.data?.message || 'Login failed. Please check your credentials.';
+            toast.error(errorMessage);
         }
     }
 
     return (
         <div className="p-2 xs:p-4">
+            <div className="text-center mb-4">
+                <h2 className="text-xl font-bold">Login</h2>
+            </div>
+            
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-3 border rounded-md p-3 xs:p-4">
-                    <div className="grid grid-cols-1 xs:grid-cols-2 gap-3">
+                    <div className="grid grid-cols-1 gap-3">
                         <FormField
                             control={form.control}
                             name="email"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel className="text-sm font-semibold">Email (or Username)</FormLabel>
+                                    <FormLabel className="text-sm font-semibold">Email</FormLabel>
                                     <FormControl>
                                         <Input placeholder="user@example.com" {...field} />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                        <FormField
-                            control={form.control}
-                            name="userName"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel className="text-sm font-semibold">Username (or Email)</FormLabel>
-                                    <FormControl>
-                                        <Input placeholder="your_username" {...field} />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -118,9 +96,17 @@ const LoginForm = () => {
                             </FormItem>
                         )}
                     />
-                    <div className="flex justify-end gap-2 pt-2">
-                        <Button type="reset" onClick={() => form.reset()}>Reset</Button>
-                        <Button type="submit">Login</Button>
+                    <div className="flex justify-between items-center pt-2">
+                        <a 
+                            href="/forgot-password" 
+                            className="text-sm text-primary hover:text-primary/80 underline"
+                        >
+                            Forgot Password?
+                        </a>
+                        <div className="flex gap-2">
+                            <Button type="reset" onClick={() => form.reset()}>Reset</Button>
+                            <Button type="submit">Login</Button>
+                        </div>
                     </div>
                 </form>
             </Form>

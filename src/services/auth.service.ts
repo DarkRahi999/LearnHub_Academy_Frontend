@@ -126,3 +126,32 @@ export const refreshToken = async (): Promise<string | null> => {
     return null;
   }
 };
+
+//W---------{ ---------------- { FORGOT PASSWORD } ---------------- }----------
+export const forgotPassword = async (email: string): Promise<{ message: string }> => {
+  try {
+    const res = await authApi.post<{ message: string }>(API_URLS.auth.forgotPassword, { email });
+    return res.data;
+  } catch (error: unknown) {
+    const err = error as { response?: { data?: { message?: string } }; message?: string };
+    console.error("Error requesting password reset:", err.response?.data || err.message);
+    throw new Error(err.response?.data?.message || 'Failed to send password reset OTP');
+  }
+};
+
+//W---------{ ---------------- { RESET PASSWORD } ---------------- }----------
+export const resetPassword = async (email: string, otp: string, newPassword: string, confirmPassword: string): Promise<{ message: string }> => {
+  try {
+    const res = await authApi.post<{ message: string }>(API_URLS.auth.resetPassword, { 
+      email, 
+      otp, 
+      newPassword, 
+      confirmPassword 
+    });
+    return res.data;
+  } catch (error: unknown) {
+    const err = error as { response?: { data?: { message?: string } }; message?: string };
+    console.error("Error resetting password:", err.response?.data || err.message);
+    throw new Error(err.response?.data?.message || 'Failed to reset password');
+  }
+};

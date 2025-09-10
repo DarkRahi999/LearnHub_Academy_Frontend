@@ -48,11 +48,11 @@ export default function Header() {
     };
 
     return (
-        <header className="animate-slide bg-background border-b sticky top-0 z-20 px-4 xs:px-6 sm:px-8 lg:px-12 h-12 p-2">
+        <header className="bg-background/95 backdrop-blur-md border-b sticky top-0 z-20 px-4 xs:px-6 sm:px-8 lg:px-12 h-12 p-2 transition-all duration-300 ease-in-out shadow-sm hover:shadow-md">
             <div className="flex h-8 items-center justify-between w-full max-w-7xl mx-auto">
                 <div className="flex items-center gap-2">
-                    <Link href="/" className="flex justify-center items-center gap-2 ml-0" title="Home">
-                        <h1 className="text-lg xs:text-xl font-bold m-0 mt-1">
+                    <Link href="/" className="flex justify-center items-center gap-2 ml-0 group transition-all duration-300 ease-in-out hover:scale-105" title="Home">
+                        <h1 className="text-lg xs:text-xl font-bold m-0 mt-1 transition-colors duration-300 group-hover:text-primary">
                             <span className="xs:hidden">LearnHub Academy</span>
                             <span className="hidden xs:inline">LearnHub Academy</span>
                         </h1>
@@ -62,18 +62,18 @@ export default function Header() {
                 {/* Desktop Menu */}
                 <div className="hidden sm:flex items-center gap-1 xs:gap-2">
                     {loading ? (
-                        <div className="w-8 h-8 animate-pulse bg-gray-200 rounded"></div>
+                        <div className="w-8 h-8 animate-pulse bg-gray-200 rounded-full"></div>
                     ) : !user ? (
                         <>
-                            <Button variant="ghost" asChild size="sm" className="text-xs sm:text-sm">
+                            <Button variant="ghost" asChild size="sm" className="text-xs sm:text-sm transition-all duration-300 ease-in-out hover:scale-105 hover:bg-primary/10">
                                 <Link href="/signup" title="Sign Up">
-                                    <User className="w-4 h-4 mr-1" />
+                                    <User className="w-4 h-4 mr-1 transition-transform duration-300 group-hover:scale-110" />
                                     Sign Up
                                 </Link>
                             </Button>
-                            <Button variant="ghost" asChild size="sm" className="text-xs sm:text-sm sm:mr-2">
+                            <Button variant="ghost" asChild size="sm" className="text-xs sm:text-sm sm:mr-2 transition-all duration-300 ease-in-out hover:scale-105 hover:bg-primary/10">
                                 <Link href="/login" title="Login">
-                                    <LogIn className="w-4 h-4 mr-1" />
+                                    <LogIn className="w-4 h-4 mr-1 transition-transform duration-300 group-hover:scale-110" />
                                     Login
                                 </Link>
                             </Button>
@@ -81,24 +81,29 @@ export default function Header() {
                         </>
                     ) : (
                         <>
-                            <div className="flex items-center gap-1 xs:gap-2">
+                            <div className="flex items-center gap-1 xs:gap-2 transition-all duration-300 ease-in-out hover:scale-105">
                                 <Image
                                     src={user.avatarUrl}
                                     alt={`${user.firstName} ${user.lastName || ''}`}
                                     width={32}
                                     height={32}
-                                    className="w-6 h-6 xs:w-8 xs:h-8 rounded-full object-cover"
+                                    className="w-6 h-6 xs:w-8 xs:h-8 rounded-full object-cover transition-all duration-300 ease-in-out hover:ring-2 hover:ring-primary/50 hover:scale-110"
                                     unoptimized
                                 />
-                                <span className="text-xs xs:text-sm font-medium hidden sm:inline">
+                                <span className="text-xs xs:text-sm font-medium hidden sm:inline transition-colors duration-300 hover:text-primary">
                                     {user.firstName}{user.lastName ? ` ${user.lastName}` : ''}
                                 </span>
                             </div>
                             <NavButton href="/profile" label="Profile" icon={UsersRound} />
                             <NavButton href="/notices" label="Notices" icon={File} />
                             <ModeToggle />
-                            <Button variant="ghost" onClick={logout} className="rounded-3xl" title="Logout">
-                                <LogOut />
+                            <Button 
+                                variant="ghost" 
+                                onClick={logout} 
+                                className="rounded-3xl transition-all duration-300 ease-in-out hover:scale-105 hover:bg-destructive/10 hover:text-destructive" 
+                                title="Logout"
+                            >
+                                <LogOut className="transition-transform duration-300 hover:scale-110" />
                             </Button>
                         </>
                     )}
@@ -111,9 +116,11 @@ export default function Header() {
                         variant="ghost"
                         size="sm"
                         onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                        className="p-2"
+                        className="p-2 transition-all duration-300 ease-in-out hover:scale-105 hover:bg-primary/10"
                     >
-                        {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+                        <div className="transition-transform duration-300 ease-in-out">
+                            {isMobileMenuOpen ? <X className="w-5 h-5 rotate-180" /> : <Menu className="w-5 h-5" />}
+                        </div>
                     </Button>
                 </div>
             </div>
@@ -123,12 +130,12 @@ export default function Header() {
                 <>
                     {/* Backdrop */}
                     <div
-                        className="fixed top-12 left-0 right-0 bottom-0 bg-black/30 backdrop-blur-md z-40 sm:hidden"
+                        className="fixed top-12 left-0 right-0 bottom-0 bg-black/30 backdrop-blur-md z-40 sm:hidden animate-in fade-in duration-300"
                         onClick={() => setIsMobileMenuOpen(false)}
                     />
 
                     {/* Menu Panel */}
-                    <div className="fixed top-12 right-0 w-1/2 max-w-xs h-screen bg-background/95 backdrop-blur-md border-l border-border shadow-2xl z-50 sm:hidden">
+                    <div className="fixed top-12 right-0 w-1/2 max-w-xs h-screen bg-background/95 backdrop-blur-md border-l border-border shadow-2xl z-50 sm:hidden animate-in slide-in-from-right duration-300 ease-out">
                         <div className="px-4 py-6 space-y-3">
                             {loading ? (
                                 <div className="w-full h-8 animate-pulse bg-muted rounded-lg"></div>
@@ -136,15 +143,15 @@ export default function Header() {
                                 <>
                                     <div className="space-y-2">
                                         <h3 className="text-sm font-semibold text-muted-foreground mb-3">Account</h3>
-                                        <Button variant="ghost" asChild className="w-full justify-start h-12 text-left hover:bg-accent/50">
+                                        <Button variant="ghost" asChild className="w-full justify-start h-12 text-left transition-all duration-300 ease-in-out hover:bg-accent/50 hover:scale-105 hover:translate-x-2">
                                             <Link href="/signup" onClick={() => setIsMobileMenuOpen(false)}>
-                                                <User className="w-5 h-5 mr-3" />
+                                                <User className="w-5 h-5 mr-3 transition-transform duration-300 group-hover:scale-110" />
                                                 Sign Up
                                             </Link>
                                         </Button>
-                                        <Button variant="ghost" asChild className="w-full justify-start h-12 text-left hover:bg-accent/50">
+                                        <Button variant="ghost" asChild className="w-full justify-start h-12 text-left transition-all duration-300 ease-in-out hover:bg-accent/50 hover:scale-105 hover:translate-x-2">
                                             <Link href="/login" onClick={() => setIsMobileMenuOpen(false)}>
-                                                <LogIn className="w-5 h-5 mr-3" />
+                                                <LogIn className="w-5 h-5 mr-3 transition-transform duration-300 group-hover:scale-110" />
                                                 Login
                                             </Link>
                                         </Button>
@@ -171,15 +178,15 @@ export default function Header() {
                                         </div>
 
                                         <h3 className="text-sm font-semibold text-muted-foreground mb-3">Navigation</h3>
-                                        <Button variant="ghost" asChild className="w-full justify-start h-12 text-left hover:bg-accent/50">
+                                        <Button variant="ghost" asChild className="w-full justify-start h-12 text-left transition-all duration-300 ease-in-out hover:bg-accent/50 hover:scale-105 hover:translate-x-2">
                                             <Link href="/profile" onClick={() => setIsMobileMenuOpen(false)}>
-                                                <UsersRound className="w-5 h-5 mr-3" />
+                                                <UsersRound className="w-5 h-5 mr-3 transition-transform duration-300 group-hover:scale-110" />
                                                 Profile
                                             </Link>
                                         </Button>
-                                        <Button variant="ghost" asChild className="w-full justify-start h-12 text-left hover:bg-accent/50">
+                                        <Button variant="ghost" asChild className="w-full justify-start h-12 text-left transition-all duration-300 ease-in-out hover:bg-accent/50 hover:scale-105 hover:translate-x-2">
                                             <Link href="/notices" onClick={() => setIsMobileMenuOpen(false)}>
-                                                <File className="w-5 h-5 mr-3" />
+                                                <File className="w-5 h-5 mr-3 transition-transform duration-300 group-hover:scale-110" />
                                                 Notices
                                             </Link>
                                         </Button>
@@ -191,9 +198,9 @@ export default function Header() {
                                                     logout();
                                                     setIsMobileMenuOpen(false);
                                                 }}
-                                                className="w-full justify-start h-12 text-left hover:bg-destructive/10 hover:text-destructive"
+                                                className="w-full justify-start h-12 text-left transition-all duration-300 ease-in-out hover:bg-destructive/10 hover:text-destructive hover:scale-105 hover:translate-x-2"
                                             >
-                                                <LogOut className="w-5 h-5 mr-3" />
+                                                <LogOut className="w-5 h-5 mr-3 transition-transform duration-300 group-hover:scale-110" />
                                                 Logout
                                             </Button>
                                         </div>

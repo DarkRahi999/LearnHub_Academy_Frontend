@@ -1,4 +1,4 @@
-import SignupForm from './SingupForm';
+import SignupForm from './SignupForm';
 import Header from '@/components/layouts/Header';
 
 export default function SignupPage() {

@@ -21,7 +21,6 @@ import { z } from "zod"
 export const ProfileFormSchema = z.object({
     firstName: z.string().min(2, { message: "Name must be at least 2 characters" }),
     lastName: z.string().min(2, { message: "Name must be at least 2 characters" }).optional(),
-    userName: z.string().min(3, { message: "Username must be at least 3 characters" }),
     phone: z.string().regex(/^01[0-9]{9}$/, { message: "Invalid phone number" }).optional(),
     email: z.string().email({ message: "Invalid email address" }),
     gender: z.enum(["male", "female", "other"]),
@@ -41,7 +40,6 @@ const ProfileForm = () => {
         defaultValues: {
             firstName: "",
             lastName: "",
-            userName: "",
             phone: "",
             email: "",
             gender: "male",
@@ -64,7 +62,6 @@ const ProfileForm = () => {
                 form.reset({
                     firstName: userData.firstName,
                     lastName: userData.lastName || "",
-                    userName: userData.userName,
                     phone: userData.phone || "",
                     email: userData.email,
                     gender: userData.gender,
@@ -82,7 +79,6 @@ const ProfileForm = () => {
                     form.reset({
                         firstName: localUser.firstName,
                         lastName: localUser.lastName || "",
-                        userName: localUser.userName,
                         phone: localUser.phone || "",
                         email: localUser.email,
                         gender: localUser.gender,
@@ -187,19 +183,6 @@ const ProfileForm = () => {
                                         <FormLabel className="text-sm font-semibold">Last Name:</FormLabel>
                                         <FormControl>
                                             <Input placeholder="Enter Your Last name..." {...field} />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-                            <FormField
-                                control={form.control}
-                                name="userName"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel className="text-sm font-semibold">Username:</FormLabel>
-                                        <FormControl>
-                                            <Input placeholder="Choose a username..." {...field} />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
