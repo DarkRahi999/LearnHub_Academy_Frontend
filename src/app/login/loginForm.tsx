@@ -41,23 +41,24 @@ const LoginForm = () => {
     const onSubmit = async (values: z.infer<typeof LoginSchema>) => {
         try {
             // Remove empty identifier to satisfy backend XOR
-            const payload: any = { password: values.password };
+            const payload: { password: string; email?: string; userName?: string } = { password: values.password };
             if (values.email && !values.userName) payload.email = values.email;
             if (values.userName && !values.email) payload.userName = values.userName;
 
             const res = await axios.post(API_URLS.auth.login, payload);
             
             // Store token and user data in localStorage
-            localStorage.setItem('access_token', (res.data as any).access_token);
-            localStorage.setItem('user_data', JSON.stringify((res.data as any).user));
+            localStorage.setItem('access_token', res.data.access_token);
+            localStorage.setItem('user_data', JSON.stringify(res.data.user));
             
             console.log("Logged in:", res.data);
             
             // Redirect to home page
             window.location.href = '/';
-        } catch (err: any) {
-            console.error(err?.response?.data || err?.message || err);
-            alert(err?.response?.data?.message || 'Login failed');
+        } catch (err: unknown) {
+            const error = err as { response?: { data?: { message?: string } }; message?: string };
+            console.error(error?.response?.data || error?.message || err);
+            alert(error?.response?.data?.message || 'Login failed');
         }
     }
 

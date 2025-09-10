@@ -1,12 +1,14 @@
 import Header from "@/components/layouts/Header";
+import ProfileForm from "./ProfileForm";
 
 export default function page() {
   return (
     <>
       <Header />
-      <h2 className="scroll-m-20 h-screen text-4xl font-semibold tracking-tight first:mt-0 flex justify-center items-center">
-        Profile will be coming soon!!
-      </h2>
+      <div className="container mx-auto py-6">
+        <h1 className="text-3xl font-bold mb-6 text-center">User Profile</h1>
+        <ProfileForm />
+      </div>
     </>
   );
 }

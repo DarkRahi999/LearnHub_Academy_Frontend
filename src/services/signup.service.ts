@@ -1,18 +1,19 @@
 import { API_URLS } from "@/config/configURL";
-import { UserSignup } from "@/interface/user";
+import { UserSignup, AuthResponse } from "@/interface/user";
 import axios from "axios";
 
 // ---------------- { CREATE user / Signup } ----------------
 export const createUser = async (user: Omit<UserSignup, "id">):
-  Promise<UserSignup> => {
+  Promise<AuthResponse> => {
   try {
-    const res = await axios.post<UserSignup>(
-      API_URLS.signup.create,
+    const res = await axios.post<AuthResponse>(
+      API_URLS.auth.register,
       user
     );
     return res.data;
-  } catch (error: any) {
-    console.error("Error creating user:", error.response?.data || error.message);
+  } catch (error: unknown) {
+    const err = error as { response?: { data?: unknown }; message?: string };
+    console.error("Error creating user:", err.response?.data || err.message);
     throw error;
   }
 };

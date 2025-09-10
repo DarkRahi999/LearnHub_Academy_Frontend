@@ -24,7 +24,7 @@ export const SignupFormSchema = z.object({
     email: z.string().email({ message: "Invalid email address" }).regex(/@gmail\.com$/, { message: "Email must be a gmail address" }),
     gender: z.enum(["male", "female", "other"]),
     dob: z.string().optional(),
-    avatarUrl: z.string().min(1, { message: "Avatar URL is required" }),
+    avatarUrl: z.string().optional(),
     acceptTerms: z.boolean().refine(v => v === true, { message: "You must accept terms and conditions" }),
     password: z.string().min(6, { message: "Password must be at least 6 characters" })
         .regex(/[A-Z]/, { message: "Password must contain at least one uppercase letter" })
@@ -35,7 +35,7 @@ interface IProps {
     props: UserSignup
 }
 
-const page = ({ }: IProps) => {
+const SignupForm = ({ }: IProps) => {
     const form = useForm<z.infer<typeof SignupFormSchema>>({
         resolver: zodResolver(SignupFormSchema),
         defaultValues: {
@@ -60,11 +60,11 @@ const page = ({ }: IProps) => {
                 ...values,
             };
 
-            const newUser = await createUser(payload as any); // axios POST call
+            const newUser = await createUser(payload as Omit<UserSignup, "id">); // axios POST call
             
             // Store token and user data in localStorage
-            localStorage.setItem('access_token', (newUser as any).access_token);
-            localStorage.setItem('user_data', JSON.stringify((newUser as any).user));
+            localStorage.setItem('access_token', newUser.access_token);
+            localStorage.setItem('user_data', JSON.stringify(newUser.user));
             
             console.log("User created:", newUser);
             
@@ -210,9 +210,9 @@ const page = ({ }: IProps) => {
                                 name="avatarUrl"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel className="text-sm font-semibold">Avatar URL:</FormLabel>
+                                        <FormLabel className="text-sm font-semibold">Avatar URL (Optional):</FormLabel>
                                         <FormControl>
-                                            <Input placeholder="https://example.com/avatar.jpg" {...field} />
+                                            <Input placeholder="https://example.com/avatar.jpg (optional)" {...field} />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
@@ -246,4 +246,4 @@ const page = ({ }: IProps) => {
     )
 }
 
-export default page
+export default SignupForm

@@ -9,12 +9,12 @@ import { useState, useEffect } from 'react';
 
 // Temporary auth state - replace with your auth context
 interface User {
-  id: number;
-  email: string;
-  userName: string;
-  firstName: string;
-  lastName?: string;
-  avatarUrl: string;
+    id: number;
+    email: string;
+    userName: string;
+    firstName: string;
+    lastName?: string;
+    avatarUrl: string;
 }
 
 export default function Header() {
@@ -26,7 +26,7 @@ export default function Header() {
         // Check for stored token and user data
         const token = localStorage.getItem('access_token');
         const userData = localStorage.getItem('user_data');
-        
+
         if (token && userData) {
             try {
                 setUser(JSON.parse(userData));
@@ -57,7 +57,7 @@ export default function Header() {
                         </h1>
                     </Link>
                 </div>
-                
+
                 {/* Desktop Menu */}
                 <div className="hidden sm:flex items-center gap-1 xs:gap-2">
                     {loading ? (
@@ -81,8 +81,8 @@ export default function Header() {
                     ) : (
                         <>
                             <div className="flex items-center gap-1 xs:gap-2">
-                                <img 
-                                    src={user.avatarUrl} 
+                                <img
+                                    src={user.avatarUrl}
                                     alt={`${user.firstName} ${user.lastName || ''}`}
                                     className="w-6 h-6 xs:w-8 xs:h-8 rounded-full object-cover"
                                 />
@@ -103,9 +103,9 @@ export default function Header() {
                 {/* Mobile Menu Button */}
                 <div className="flex sm:hidden items-center gap-2">
                     <ModeToggle />
-                    <Button 
-                        variant="ghost" 
-                        size="sm" 
+                    <Button
+                        variant="ghost"
+                        size="sm"
                         onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                         className="p-2"
                     >
@@ -118,11 +118,11 @@ export default function Header() {
             {isMobileMenuOpen && (
                 <>
                     {/* Backdrop */}
-                    <div 
+                    <div
                         className="fixed top-12 left-0 right-0 bottom-0 bg-black/30 backdrop-blur-md z-40 sm:hidden"
                         onClick={() => setIsMobileMenuOpen(false)}
                     />
-                    
+
                     {/* Menu Panel */}
                     <div className="fixed top-12 right-0 w-1/2 max-w-xs h-screen bg-background/95 backdrop-blur-md border-l border-border shadow-2xl z-50 sm:hidden">
                         <div className="px-4 py-6 space-y-3">
@@ -150,8 +150,8 @@ export default function Header() {
                                 <>
                                     <div className="space-y-2">
                                         <div className="flex items-center gap-3 py-3 px-3 bg-muted/30 rounded-lg mb-4">
-                                            <img 
-                                                src={user.avatarUrl} 
+                                            <img
+                                                src={user.avatarUrl}
                                                 alt={`${user.firstName} ${user.lastName || ''}`}
                                                 className="w-10 h-10 rounded-full object-cover ring-2 ring-primary/20"
                                             />
@@ -162,39 +162,39 @@ export default function Header() {
                                                 <p className="text-xs text-muted-foreground">{user.email}</p>
                                             </div>
                                         </div>
-                                        
+
                                         <h3 className="text-sm font-semibold text-muted-foreground mb-3">Navigation</h3>
                                         <Button variant="ghost" asChild className="w-full justify-start h-12 text-left hover:bg-accent/50">
                                             <Link href="/profile" onClick={() => setIsMobileMenuOpen(false)}>
                                                 <UsersRound className="w-5 h-5 mr-3" />
                                                 Profile
                                             </Link>
-                            </Button>
+                                        </Button>
                                         <Button variant="ghost" asChild className="w-full justify-start h-12 text-left hover:bg-accent/50">
                                             <Link href="/notices" onClick={() => setIsMobileMenuOpen(false)}>
                                                 <File className="w-5 h-5 mr-3" />
                                                 Notices
                                             </Link>
-                            </Button>
-                                        
+                                        </Button>
+
                                         <div className="pt-4 border-t border-border">
-                                            <Button 
-                                                variant="ghost" 
+                                            <Button
+                                                variant="ghost"
                                                 onClick={() => {
                                                     logout();
                                                     setIsMobileMenuOpen(false);
-                                                }} 
+                                                }}
                                                 className="w-full justify-start h-12 text-left hover:bg-destructive/10 hover:text-destructive"
                                             >
                                                 <LogOut className="w-5 h-5 mr-3" />
                                                 Logout
-                            </Button>
+                                            </Button>
                                         </div>
                                     </div>
-                        </>
+                                </>
                             )}
-                </div>
-            </div>
+                        </div>
+                    </div>
                 </>
             )}
         </header>
