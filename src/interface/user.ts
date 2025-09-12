@@ -5,6 +5,34 @@ export enum Gender {
   Other = 'other',
 }
 
+export enum UserRole {
+  SUPER_ADMIN = 'super_admin',
+  ADMIN = 'admin',
+  USER = 'user',
+}
+
+export enum Permission {
+  // User permissions
+  VIEW_PROFILE = 'view_profile',
+  UPDATE_PROFILE = 'update_profile',
+  VIEW_NOTICES = 'view_notices',
+  VIEW_POSTS = 'view_posts',
+  
+  // Admin permissions
+  CREATE_NOTICE = 'create_notice',
+  UPDATE_NOTICE = 'update_notice',
+  DELETE_NOTICE = 'delete_notice',
+  MANAGE_USERS = 'manage_users',
+  
+  // Super Admin permissions
+  CREATE_POST = 'create_post',
+  UPDATE_POST = 'update_post',
+  DELETE_POST = 'delete_post',
+  MANAGE_ADMINS = 'manage_admins',
+  MANAGE_PERMISSIONS = 'manage_permissions',
+  SYSTEM_SETTINGS = 'system_settings',
+}
+
 export interface UserSignup {
   id?: number;
   firstName: string;
@@ -33,6 +61,7 @@ export interface UserProfile {
   phone: string;
   dob?: string;
   gender: Gender;
+  role: UserRole;
   nationality?: string;
   religion?: string;
   avatarUrl: string;

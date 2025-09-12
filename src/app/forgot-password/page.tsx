@@ -1,23 +1,14 @@
-import ForgotPasswordForm from './ForgotPasswordForm';
-import Header from '@/components/layouts/Header';
+import Header from "@/components/layouts/Header";
+import ForgotPasswordForm from "./ForgotPasswordForm";
 
 export default function ForgotPasswordPage() {
-    return (
-        <>
-            <Header />
-            <div className="min-h-screen flex items-center justify-center bg-background">
-                <div className="max-w-md w-full space-y-8">
-                    <div>
-                        <h2 className="mt-6 text-center text-3xl font-extrabold text-foreground">
-                            Forgot Password
-                        </h2>
-                        <p className="mt-2 text-center text-sm text-muted-foreground">
-                            Enter your email address and we&apos;ll send you an OTP to reset your password
-                        </p>
-                    </div>
-                    <ForgotPasswordForm />
-                </div>
-            </div>
-        </>
-    );
+  return (
+    <>
+      <Header />
+      <div className="container mx-auto py-6">
+        <h1 className="text-3xl font-bold mb-6 text-center">Forgot Password</h1>
+        <ForgotPasswordForm />
+      </div>
+    </>
+  );
 }

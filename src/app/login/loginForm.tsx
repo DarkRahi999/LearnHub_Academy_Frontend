@@ -13,8 +13,9 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { z } from "zod"
-import axios from "axios"
-import { API_URLS } from "@/config/configURL"
+import { useDispatch } from "react-redux";
+import { loginSuccess } from "@/context/reduxSlice/userSlice";
+import { loginUser } from "@/services/auth.service";
 import toast from "react-hot-toast"
 
 type LoginValues = {
@@ -28,6 +29,7 @@ const LoginSchema = z.object({
 });
 
 const LoginForm = () => {
+    const dispatch = useDispatch();
     const form = useForm<LoginValues>({
         resolver: zodResolver(LoginSchema) as unknown as Resolver<LoginValues>,
         defaultValues: {
@@ -40,17 +42,16 @@ const LoginForm = () => {
         try {
             const payload: { password: string; email: string } = { password: values.password, email: values.email };
             
-            const res = await axios.post<{ access_token: string; user: unknown }>(API_URLS.auth.login, payload);
+            const res = await loginUser(payload);
             
- //W---------{ Store token and user data in localStorage }----------
-            localStorage.setItem('access_token', res.data.access_token);
-            localStorage.setItem('user_data', JSON.stringify(res.data.user));
+            // Dispatch login success to Redux store
+            dispatch(loginSuccess({ user: res.user, token: res.access_token }));
             
-            console.log("Logged in:", res.data);
+            console.log("Logged in:", res);
             
             toast.success("Login successful! Welcome back!");
             
- //W---------{ Redirect to home page }----------
+            // Redirect to home page
             window.location.href = '/';
         } catch (err: unknown) {
             const error = err as { response?: { data?: { message?: string } }; message?: string };

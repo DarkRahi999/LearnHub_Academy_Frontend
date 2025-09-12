@@ -1,136 +1,128 @@
-"use client"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm, SubmitHandler } from "react-hook-form"
-import type { Resolver } from "react-hook-form"
-import { useState } from "react"
-import {
-    Form,
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-} from "@/components/ui/form"
+"use client";
+
+import { useState } from "react";
+import { useForm, SubmitHandler } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { z } from "zod"
-import { forgotPassword } from "@/services/auth.service"
-import toast from "react-hot-toast"
-
-type ForgotPasswordValues = {
-    email: string
-}
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { forgotPassword } from "@/services/auth.service";
+import toast from "react-hot-toast";
+import { ArrowLeft, Mail } from "lucide-react";
+import Link from "next/link";
 
 const ForgotPasswordSchema = z.object({
-    email: z.string().email({ message: "Invalid email address" }),
+  email: z.string().email({ message: "Invalid email address" }),
 });
 
-const ForgotPasswordForm = () => {
-    const [isLoading, setIsLoading] = useState(false);
-    const [isSuccess, setIsSuccess] = useState(false);
-    const [email, setEmail] = useState('');
+type ForgotPasswordFormData = z.infer<typeof ForgotPasswordSchema>;
 
-    const form = useForm<ForgotPasswordValues>({
-        resolver: zodResolver(ForgotPasswordSchema) as unknown as Resolver<ForgotPasswordValues>,
-        defaultValues: {
-            email: "",
-        },
-    })
+export default function ForgotPasswordForm() {
+  const [isLoading, setIsLoading] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(false);
 
-    const onSubmit: SubmitHandler<ForgotPasswordValues> = async (values) => {
-        try {
-            setIsLoading(true);
-            await forgotPassword(values.email);
-            setEmail(values.email);
-            setIsSuccess(true);
-            toast.success("Password reset OTP sent to your email!");
-        } catch (error) {
-            console.error('Error requesting password reset:', error);
-            const errorMessage = error instanceof Error ? error.message : 'Failed to send password reset OTP';
-            toast.error(errorMessage);
-        } finally {
-            setIsLoading(false);
-        }
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<ForgotPasswordFormData>({
+    resolver: zodResolver(ForgotPasswordSchema),
+  });
+
+  const onSubmit: SubmitHandler<ForgotPasswordFormData> = async (data) => {
+    try {
+      setIsLoading(true);
+      await forgotPassword(data.email);
+      setIsSubmitted(true);
+      toast.success("Password reset instructions sent to your email!");
+    } catch (error: unknown) {
+      console.error("Forgot password error:", error);
+      const errorMessage = (error as { response?: { data?: { message?: string } } })?.response?.data?.message || "Failed to send reset email. Please try again.";
+      toast.error(errorMessage);
+    } finally {
+      setIsLoading(false);
     }
+  };
 
-    if (isSuccess) {
-        return (
-            <div className="p-2 xs:p-4">
-                <div className="text-center border rounded-md p-6">
-                    <div className="mb-4">
-                        <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-green-100">
-                            <svg className="h-6 w-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                            </svg>
-                        </div>
-                    </div>
-                    <h3 className="text-lg font-medium text-foreground mb-2">
-                        OTP Sent Successfully!
-                    </h3>
-                    <p className="text-sm text-muted-foreground mb-4">
-                        We&apos;ve sent a password reset OTP to <strong>{email}</strong>
-                    </p>
-                    <p className="text-xs text-muted-foreground mb-6">
-                        Please check your email and click the link below to reset your password.
-                    </p>
-                    <div className="space-y-3">
-                        <Button 
-                            onClick={() => window.location.href = `/reset-password?email=${encodeURIComponent(email)}`}
-                            className="w-full"
-                        >
-                            Reset Password
-                        </Button>
-                        <Button 
-                            variant="outline" 
-                            onClick={() => window.location.href = '/login'}
-                            className="w-full"
-                        >
-                            Back to Login
-                        </Button>
-                    </div>
-                </div>
-            </div>
-        )
-    }
-
+  if (isSubmitted) {
     return (
-        <div className="p-2 xs:p-4">
-            <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-3 border rounded-md p-3 xs:p-4">
-                    <FormField
-                        control={form.control}
-                        name="email"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel className="text-sm font-semibold">Email Address</FormLabel>
-                                <FormControl>
-                                    <Input 
-                                        type="email" 
-                                        placeholder="user@example.com" 
-                                        {...field} 
-                                    />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-                    
-                    <div className="flex justify-between items-center pt-2">
-                        <Button 
-                            type="button" 
-                            variant="outline" 
-                            onClick={() => window.location.href = '/login'}
-                        >
-                            Back to Login
-                        </Button>
-                        <Button type="submit" disabled={isLoading}>
-                            {isLoading ? 'Sending...' : 'Send OTP'}
-                        </Button>
-                    </div>
-                </form>
-            </Form>
-        </div>
-    )
-}
+      <div className="max-w-md mx-auto">
+        <Card>
+          <CardHeader className="text-center">
+            <div className="mx-auto w-12 h-12 bg-green-100 dark:bg-green-900 rounded-full flex items-center justify-center mb-4">
+              <Mail className="w-6 h-6 text-green-600 dark:text-green-400" />
+            </div>
+            <CardTitle className="text-xl">Check Your Email</CardTitle>
+            <CardDescription>
+              We&apos;ve sent password reset instructions to your email address.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <p className="text-sm text-muted-foreground text-center">
+              Please check your email and follow the instructions to reset your password.
+            </p>
+            <div className="flex flex-col gap-2">
+              <Button asChild variant="outline" className="w-full">
+                <Link href="/login">
+                  <ArrowLeft className="w-4 h-4 mr-2" />
+                  Back to Login
+                </Link>
+              </Button>
+              <Button asChild className="w-full">
+                <Link href="/forgot-password">
+                  Send Another Email
+                </Link>
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
-export default ForgotPasswordForm
+  return (
+    <div className="max-w-md mx-auto">
+      <Card>
+        <CardHeader className="text-center">
+          <CardTitle className="text-xl">Reset Your Password</CardTitle>
+          <CardDescription>
+            Enter your email address and we&apos;ll send you instructions to reset your password.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+            <div className="space-y-2">
+              <label htmlFor="email" className="text-sm font-medium">
+                Email Address
+              </label>
+              <Input
+                id="email"
+                type="email"
+                placeholder="Enter your email"
+                {...register("email")}
+                className={errors.email ? "border-red-500" : ""}
+              />
+              {errors.email && (
+                <p className="text-sm text-red-500">{errors.email.message}</p>
+              )}
+            </div>
+
+            <Button type="submit" className="w-full" disabled={isLoading}>
+              {isLoading ? "Sending..." : "Send Reset Instructions"}
+            </Button>
+
+            <div className="text-center">
+              <Button asChild variant="ghost" className="text-sm">
+                <Link href="/login">
+                  <ArrowLeft className="w-4 h-4 mr-2" />
+                  Back to Login
+                </Link>
+              </Button>
+            </div>
+          </form>
+        </CardContent>
+      </Card>
+    </div>
+  );
+}

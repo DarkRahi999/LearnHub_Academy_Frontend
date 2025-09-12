@@ -3,6 +3,7 @@ import { Salsa, Roboto_Condensed } from "next/font/google";
 import { ReactNode } from "react";
 import Providers from "../provider/storeProvider";
 import { ThemeProvider } from "@/provider/themeProvider";
+import AuthProvider from "@/components/auth/AuthProvider";
 import { Toaster } from "react-hot-toast";
 import "../style/globals.css";
 
@@ -104,31 +105,33 @@ export default function RootLayout({ children }: { children: ReactNode }) {
             disableTransitionOnChange
           >
             <Providers>
-              <main>{children}</main>
-              <Toaster 
-                position="top-right"
-                toastOptions={{
-                  duration: 4000,
-                  style: {
-                    background: '#363636',
-                    color: '#fff',
-                  },
-                  success: {
-                    duration: 3000,
-                    style: {
-                      background: '#10b981',
-                      color: '#fff',
-                    },
-                  },
-                  error: {
+              <AuthProvider>
+                <main>{children}</main>
+                <Toaster 
+                  position="top-right"
+                  toastOptions={{
                     duration: 4000,
                     style: {
-                      background: '#ef4444',
+                      background: '#363636',
                       color: '#fff',
                     },
-                  },
-                }}
-              />
+                    success: {
+                      duration: 3000,
+                      style: {
+                        background: '#10b981',
+                        color: '#fff',
+                      },
+                    },
+                    error: {
+                      duration: 4000,
+                      style: {
+                        background: '#ef4444',
+                        color: '#fff',
+                      },
+                    },
+                  }}
+                />
+              </AuthProvider>
             </Providers>
           </ThemeProvider>
       </body>

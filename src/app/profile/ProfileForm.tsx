@@ -130,7 +130,10 @@ const ProfileForm = () => {
 
                 {/* Floating button moved below */}
             </div>
-            <div className="flex justify-end">
+            <div className="flex flex-col sm:flex-row gap-3 justify-end">
+                <Button asChild variant="outline" className="shadow-md">
+                    <a href="/forgot-password">Forgot Password</a>
+                </Button>
                 <Button asChild className="shadow-md">
                     <a href="/profile/update">Update Profile</a>
                 </Button>

@@ -1,26 +1,19 @@
 "use client";
 
-import { LogOut, UsersRound, User, LogIn, Menu, X, MessageCircleMore, MonitorCog } from 'lucide-react';
+import { LogOut, UsersRound, User, LogIn, Menu, X, MessageCircleMore, MonitorCog, Shield } from 'lucide-react';
 import { Button } from '../ui/button';
 import { NavButton } from '../own/NavButton';
 import { ModeToggle } from './ModeToggle';
+import RoleGuard from '../auth/RoleGuard';
+import RoleBadge from '../auth/RoleBadge';
+import { UserRole } from '@/interface/user';
 import Link from 'next/link';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import Image from 'next/image';
-
-//W---------={ Temporary auth state - replace with your auth context }=----------
-interface User {
-    id: number;
-    email: string;
-    userName: string;
-    firstName: string;
-    lastName?: string;
-    avatarUrl: string;
-}
+import { useAuth } from '@/hooks/useAuth';
 
 export default function Header() {
-    const [user, setUser] = useState<User | null>(null);
-    const [loading, setLoading] = useState(true);
+    const { user, isLoading: loading, logout } = useAuth();
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [isDesktopProfileOpen, setIsDesktopProfileOpen] = useState(false);
 
@@ -28,30 +21,6 @@ export default function Header() {
         const v = (url || '').trim();
         if (!v || v === 'null' || v === 'undefined') return '/default-user.svg';
         return v;
-    };
-
-    useEffect(() => {
-        //W---------={ Check for stored token and user data }=----------
-        const token = localStorage.getItem('access_token');
-        const userData = localStorage.getItem('user_data');
-
-        if (token && userData) {
-            try {
-                setUser(JSON.parse(userData));
-            } catch (error) {
-                console.error('Error parsing user data:', error);
-                localStorage.removeItem('access_token');
-                localStorage.removeItem('user_data');
-            }
-        }
-        setLoading(false);
-    }, []);
-
-    const logout = () => {
-        localStorage.removeItem('access_token');
-        localStorage.removeItem('user_data');
-        setUser(null);
-        window.location.href = '/';
     };
 
     return (
@@ -91,8 +60,11 @@ export default function Header() {
                         </>
                     ) : (
                         <>
-                            <NavButton href="/post" label="posts" icon={MonitorCog} />
-                            <NavButton href="/notice" label="Notices" icon={MessageCircleMore} />
+                            <NavButton href="/posts" label="Posts" icon={MonitorCog} />
+                            <NavButton href="/notices" label="Notices" icon={MessageCircleMore} />
+                            <RoleGuard allowedRoles={[UserRole.ADMIN, UserRole.SUPER_ADMIN]}>
+                                <NavButton href="/admin" label="Admin" icon={Shield} />
+                            </RoleGuard>
                             <ModeToggle />
                             <button
                                 onClick={() => setIsDesktopProfileOpen((prev) => !prev)}
@@ -187,9 +159,12 @@ export default function Header() {
                                                 unoptimized
                                             />
                                             <div>
-                                                <p className="text-sm font-medium">
-                                                    {user.firstName}{user.lastName ? ` ${user.lastName}` : ''}
-                                                </p>
+                                                <div className="flex items-center gap-2 mb-1">
+                                                    <p className="text-sm font-medium">
+                                                        {user.firstName}{user.lastName ? ` ${user.lastName}` : ''}
+                                                    </p>
+                                                    <RoleBadge role={user.role} />
+                                                </div>
                                                 <p className="text-xs text-muted-foreground">{user.email}</p>
                                             </div>
                                         </div>
@@ -208,17 +183,31 @@ export default function Header() {
                                             </Link>
                                         </Button>
                                         <Button variant="ghost" asChild className="w-full justify-start h-12 text-left transition-all duration-300 ease-in-out hover:bg-accent/50 hover:scale-105 hover:translate-x-2">
+                                            <Link href="/forgot-password" onClick={() => setIsMobileMenuOpen(false)}>
+                                                <UsersRound className="w-5 h-5 mr-3 transition-transform duration-300 group-hover:scale-110" />
+                                                Forgot Password
+                                            </Link>
+                                        </Button>
+                                        <Button variant="ghost" asChild className="w-full justify-start h-12 text-left transition-all duration-300 ease-in-out hover:bg-accent/50 hover:scale-105 hover:translate-x-2">
                                             <Link href="/notices" onClick={() => setIsMobileMenuOpen(false)}>
                                                 <MessageCircleMore className="w-5 h-5 mr-3 transition-transform duration-300 group-hover:scale-110" />
                                                 Notices
                                             </Link>
                                         </Button>
                                         <Button variant="ghost" asChild className="w-full justify-start h-12 text-left transition-all duration-300 ease-in-out hover:bg-accent/50 hover:scale-105 hover:translate-x-2">
-                                            <Link href="/notices" onClick={() => setIsMobileMenuOpen(false)}>
+                                            <Link href="/posts" onClick={() => setIsMobileMenuOpen(false)}>
                                                 <MonitorCog className="w-5 h-5 mr-3 transition-transform duration-300 group-hover:scale-110" />
-                                                Recent Posts
+                                                Posts
                                             </Link>
                                         </Button>
+                                        <RoleGuard allowedRoles={[UserRole.ADMIN, UserRole.SUPER_ADMIN]}>
+                                            <Button variant="ghost" asChild className="w-full justify-start h-12 text-left transition-all duration-300 ease-in-out hover:bg-accent/50 hover:scale-105 hover:translate-x-2">
+                                                <Link href="/admin" onClick={() => setIsMobileMenuOpen(false)}>
+                                                    <Shield className="w-5 h-5 mr-3 transition-transform duration-300 group-hover:scale-110" />
+                                                    Admin Panel
+                                                </Link>
+                                            </Button>
+                                        </RoleGuard>
 
                                         <div className="pt-4 border-t border-border">
                                             <Button
@@ -272,7 +261,10 @@ export default function Header() {
                                                 unoptimized
                                             />
                                             <div>
-                                                <p className="text-sm font-medium">{user.firstName}{user.lastName ? ` ${user.lastName}` : ''}</p>
+                                                <div className="flex items-center gap-2 mb-1">
+                                                    <p className="text-sm font-medium">{user.firstName}{user.lastName ? ` ${user.lastName}` : ''}</p>
+                                                    <RoleBadge role={user.role} />
+                                                </div>
                                                 <p className="text-xs text-muted-foreground">{user.email}</p>
                                             </div>
                                         </>
@@ -299,6 +291,12 @@ export default function Header() {
                                     <Link href="/profile/update" onClick={() => setIsDesktopProfileOpen(false)}>
                                         <UsersRound className="w-5 h-5 mr-3" />
                                         Update Profile
+                                    </Link>
+                                </Button>
+                                <Button variant="ghost" asChild className="w-full justify-start h-12 text-left transition-all duration-300 ease-in-out hover:bg-accent/50 hover:translate-x-2">
+                                    <Link href="/forgot-password" onClick={() => setIsDesktopProfileOpen(false)}>
+                                        <UsersRound className="w-5 h-5 mr-3" />
+                                        Forgot Password
                                     </Link>
                                 </Button>
                                 <div className="pt-2 border-t border-border">
