@@ -9,15 +9,15 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { UserProfile } from "@/interface/user";
-import { getCurrentUser, getUserProfile, updateUserAvatar } from "@/services/auth.service";
+import { UserProfile, Gender } from "@/interface/user";
+import { getCurrentUser, getUserProfile, updateUserProfile } from "@/services/auth.service";
 import { z } from "zod";
 
 const ProfileFormSchema = z.object({
-  firstName: z.string().min(2),
+  firstName: z.string().min(2, { message: "First name must be at least 2 characters" }),
   lastName: z.string().optional(),
   phone: z.string().optional(),
-  email: z.string().email(),
+  email: z.string().email({ message: "Please enter a valid email address" }),
   gender: z.enum(["male", "female", "other"]),
   dob: z.string().optional(),
   nationality: z.string().optional(),
@@ -107,7 +107,19 @@ export default function UpdateProfilePage() {
   const onSubmit = async (values: z.infer<typeof ProfileFormSchema>) => {
     try {
       setSaving(true);
-      await updateUserAvatar({ avatarUrl: values.avatarUrl ?? "" });
+      // Update all profile fields, not just avatar
+      const updatedUser = await updateUserProfile({
+        firstName: values.firstName,
+        lastName: values.lastName,
+        email: values.email,
+        phone: values.phone,
+        gender: values.gender as Gender,
+        dob: values.dob,
+        nationality: values.nationality,
+        religion: values.religion,
+        avatarUrl: values.avatarUrl,
+      });
+      setUser(updatedUser);
       setSuccessMsg("Profile updated successfully");
       setErrorMsg("");
       setTimeout(() => {

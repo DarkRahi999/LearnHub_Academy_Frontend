@@ -1,6 +1,6 @@
 "use client";
 
-import { File, LogOut, UsersRound, User, LogIn, Menu, X } from 'lucide-react';
+import { LogOut, UsersRound, User, LogIn, Menu, X, MessageCircleMore, MonitorCog } from 'lucide-react';
 import { Button } from '../ui/button';
 import { NavButton } from '../own/NavButton';
 import { ModeToggle } from './ModeToggle';
@@ -91,7 +91,8 @@ export default function Header() {
                         </>
                     ) : (
                         <>
-                            <NavButton href="/notices" label="Notices" icon={File} />
+                            <NavButton href="/post" label="posts" icon={MonitorCog} />
+                            <NavButton href="/notice" label="Notices" icon={MessageCircleMore} />
                             <ModeToggle />
                             <button
                                 onClick={() => setIsDesktopProfileOpen((prev) => !prev)}
@@ -208,8 +209,14 @@ export default function Header() {
                                         </Button>
                                         <Button variant="ghost" asChild className="w-full justify-start h-12 text-left transition-all duration-300 ease-in-out hover:bg-accent/50 hover:scale-105 hover:translate-x-2">
                                             <Link href="/notices" onClick={() => setIsMobileMenuOpen(false)}>
-                                                <File className="w-5 h-5 mr-3 transition-transform duration-300 group-hover:scale-110" />
+                                                <MessageCircleMore className="w-5 h-5 mr-3 transition-transform duration-300 group-hover:scale-110" />
                                                 Notices
+                                            </Link>
+                                        </Button>
+                                        <Button variant="ghost" asChild className="w-full justify-start h-12 text-left transition-all duration-300 ease-in-out hover:bg-accent/50 hover:scale-105 hover:translate-x-2">
+                                            <Link href="/notices" onClick={() => setIsMobileMenuOpen(false)}>
+                                                <MonitorCog className="w-5 h-5 mr-3 transition-transform duration-300 group-hover:scale-110" />
+                                                Recent Posts
                                             </Link>
                                         </Button>
 
@@ -281,7 +288,7 @@ export default function Header() {
                             </div>
 
                             <div className="space-y-2">
-                                <h3 className="text-sm font-semibold text-muted-foreground">Navigation</h3>
+                                <h3 className="text-sm font-semibold text-muted-foreground">Settings</h3>
                                 <Button variant="ghost" asChild className="w-full justify-start h-12 text-left transition-all duration-300 ease-in-out hover:bg-accent/50 hover:translate-x-2">
                                     <Link href="/profile" onClick={() => setIsDesktopProfileOpen(false)}>
                                         <UsersRound className="w-5 h-5 mr-3" />
