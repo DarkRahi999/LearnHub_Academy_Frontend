@@ -2,7 +2,7 @@ import { API_URLS } from "@/config/configURL";
 import { UserSignup, AuthResponse } from "@/interface/user";
 import axios from "axios";
 
-//W---------{ ---------------- { CREATE user / Signup } ---------------- }----------
+//W------------------------={ CREATE user / Signup }=-----------------------
 export const createUser = async (user: Omit<UserSignup, "id">):
   Promise<AuthResponse> => {
   try {
@@ -18,7 +18,7 @@ export const createUser = async (user: Omit<UserSignup, "id">):
   }
 };
 
-//W---------{ ---------------- { GET user by ID } ---------------- }----------
+//W------------------------={ GET user by ID }=-------------------------
 export const getUserById = async (id: number):
   Promise<UserSignup> => {
   try {
@@ -32,7 +32,7 @@ export const getUserById = async (id: number):
   }
 };
 
-//W---------{ ---------------- { UPDATE user } ---------------- }----------
+//W------------------------={ UPDATE user }=--------------------------
 export const updateUser = async (id: number, user: Partial<UserSignup>):
   Promise<UserSignup> => {
   try {
@@ -47,7 +47,7 @@ export const updateUser = async (id: number, user: Partial<UserSignup>):
   }
 };
 
-//W---------{ ---------------- { DELETE user } ---------------- }----------
+//W------------------------={ DELETE user }=--------------------------
 export const deleteUser = async (id: number):
   Promise<void> => {
   try {

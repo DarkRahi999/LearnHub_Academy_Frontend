@@ -152,7 +152,7 @@ const ProfileForm = () => {
                         {/* Avatar Section */}
                         <div className="flex flex-col items-center mb-6">
                             <Image 
-                                src={user.avatarUrl || 'https://via.placeholder.com/150'}
+                                src={user.avatarUrl || '/default-user.svg'}
                                 alt="Profile Avatar" 
                                 width={96}
                                 height={96}

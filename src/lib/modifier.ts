@@ -1,1 +1,1 @@
-//W---------{ common mini functions are written here }----------
+//W---------={ common mini functions are written here }=----------

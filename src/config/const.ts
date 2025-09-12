@@ -1,3 +1,2 @@
-//W---------{ const are declared here }----------
-
+//W---------={ const are declared here }=----------
 export const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL ;

@@ -8,7 +8,7 @@ import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 
-//W---------{ Temporary auth state - replace with your auth context }----------
+//W---------={ Temporary auth state - replace with your auth context }=----------
 interface User {
     id: number;
     email: string;
@@ -24,7 +24,7 @@ export default function Header() {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
     useEffect(() => {
- //W---------{ Check for stored token and user data }----------
+        //W---------={ Check for stored token and user data }=----------
         const token = localStorage.getItem('access_token');
         const userData = localStorage.getItem('user_data');
 
@@ -48,10 +48,13 @@ export default function Header() {
     };
 
     return (
-        <header className="bg-background/95 backdrop-blur-md border-b sticky top-0 z-20 px-4 xs:px-6 sm:px-8 lg:px-12 h-12 p-2 transition-all duration-300 ease-in-out shadow-sm hover:shadow-md">
+        <header className="animate-slide bg-background border-b sticky top-0 z-20 px-4 xs:px-6 sm:px-8 lg:px-12 h-12 p-2 transition-all duration-300 ease-in-out shadow-sm hover:shadow-md">
             <div className="flex h-8 items-center justify-between w-full max-w-7xl mx-auto">
                 <div className="flex items-center gap-2">
-                    <Link href="/" className="flex justify-center items-center gap-2 ml-0 group transition-all duration-300 ease-in-out hover:scale-105" title="Home">
+                    <Link href="/"
+                        className="flex justify-center items-center gap-2 ml-0 group transition-all duration-300 ease-in-out hover:scale-105"
+                        title="Home"
+                    >
                         <h1 className="text-lg xs:text-xl font-bold m-0 mt-1 transition-colors duration-300 group-hover:text-primary">
                             <span className="xs:hidden">LearnHub Academy</span>
                             <span className="hidden xs:inline">LearnHub Academy</span>
@@ -59,7 +62,7 @@ export default function Header() {
                     </Link>
                 </div>
 
-                {/* Desktop Menu */}
+                {/*________________ Desktop Menu _______________*/}
                 <div className="hidden sm:flex items-center gap-1 xs:gap-2">
                     {loading ? (
                         <div className="w-8 h-8 animate-pulse bg-gray-200 rounded-full"></div>
@@ -97,10 +100,10 @@ export default function Header() {
                             <NavButton href="/profile" label="Profile" icon={UsersRound} />
                             <NavButton href="/notices" label="Notices" icon={File} />
                             <ModeToggle />
-                            <Button 
-                                variant="ghost" 
-                                onClick={logout} 
-                                className="rounded-3xl transition-all duration-300 ease-in-out hover:scale-105 hover:bg-destructive/10 hover:text-destructive" 
+                            <Button
+                                variant="ghost"
+                                onClick={logout}
+                                className="rounded-3xl transition-all duration-300 ease-in-out hover:scale-105 hover:bg-destructive/10 hover:text-destructive"
                                 title="Logout"
                             >
                                 <LogOut className="transition-transform duration-300 hover:scale-110" />
@@ -109,7 +112,7 @@ export default function Header() {
                     )}
                 </div>
 
-                {/* Mobile Menu Button */}
+                {/*________________ Mobile Menu Button ________________*/}
                 <div className="flex sm:hidden items-center gap-2">
                     <ModeToggle />
                     <Button
@@ -125,17 +128,18 @@ export default function Header() {
                 </div>
             </div>
 
-            {/* Mobile Menu Dropdown */}
+            {/*________________ Mobile Menu Dropdown ________________*/}
             {isMobileMenuOpen && (
                 <>
-                    {/* Backdrop */}
+                    {/*________________ Backdrop ________________*/}
                     <div
-                        className="fixed top-12 left-0 right-0 bottom-0 bg-black/30 backdrop-blur-md z-40 sm:hidden animate-in fade-in duration-300"
+                        className="fixed top-12 left-0 right-0 bottom-0 bg-black/30 backdrop-blur-md z-40 sm:hidden"
                         onClick={() => setIsMobileMenuOpen(false)}
                     />
 
-                    {/* Menu Panel */}
-                    <div className="fixed top-12 right-0 w-1/2 max-w-xs h-screen bg-background/95 backdrop-blur-md border-l border-border shadow-2xl z-50 sm:hidden animate-in slide-in-from-right duration-300 ease-out">
+
+                    {/*________________ Menu Panel ________________*/}
+                    <div className="fixed top-12 right-0 w-1/2 max-w-xs h-screen bg-background/95 border-l border-border shadow-2xl z-50 sm:hidden">
                         <div className="px-4 py-6 space-y-3">
                             {loading ? (
                                 <div className="w-full h-8 animate-pulse bg-muted rounded-lg"></div>
@@ -145,13 +149,13 @@ export default function Header() {
                                         <h3 className="text-sm font-semibold text-muted-foreground mb-3">Account</h3>
                                         <Button variant="ghost" asChild className="w-full justify-start h-12 text-left transition-all duration-300 ease-in-out hover:bg-accent/50 hover:scale-105 hover:translate-x-2">
                                             <Link href="/signup" onClick={() => setIsMobileMenuOpen(false)}>
-                                                <User className="w-5 h-5 mr-3 transition-transform duration-300 group-hover:scale-110" />
+                                                <User className="w-5 h-5 mr-3" />
                                                 Sign Up
                                             </Link>
                                         </Button>
                                         <Button variant="ghost" asChild className="w-full justify-start h-12 text-left transition-all duration-300 ease-in-out hover:bg-accent/50 hover:scale-105 hover:translate-x-2">
                                             <Link href="/login" onClick={() => setIsMobileMenuOpen(false)}>
-                                                <LogIn className="w-5 h-5 mr-3 transition-transform duration-300 group-hover:scale-110" />
+                                                <LogIn className="w-5 h-5 mr-3" />
                                                 Login
                                             </Link>
                                         </Button>
@@ -210,7 +214,8 @@ export default function Header() {
                         </div>
                     </div>
                 </>
-            )}
-        </header>
+            )
+            }
+        </header >
     )
 }
