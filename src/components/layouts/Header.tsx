@@ -22,6 +22,13 @@ export default function Header() {
     const [user, setUser] = useState<User | null>(null);
     const [loading, setLoading] = useState(true);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const [isDesktopProfileOpen, setIsDesktopProfileOpen] = useState(false);
+
+    const avatarSrc = (url?: string) => {
+        const v = (url || '').trim();
+        if (!v || v === 'null' || v === 'undefined') return '/default-user.svg';
+        return v;
+    };
 
     useEffect(() => {
         //W---------={ Check for stored token and user data }=----------
@@ -63,7 +70,7 @@ export default function Header() {
                 </div>
 
                 {/*________________ Desktop Menu _______________*/}
-                <div className="hidden sm:flex items-center gap-1 xs:gap-2">
+                <div className="hidden sm:flex items-center gap-2">
                     {loading ? (
                         <div className="w-8 h-8 animate-pulse bg-gray-200 rounded-full"></div>
                     ) : !user ? (
@@ -84,30 +91,29 @@ export default function Header() {
                         </>
                     ) : (
                         <>
-                            <div className="flex items-center gap-1 xs:gap-2 transition-all duration-300 ease-in-out hover:scale-105">
+                            <NavButton href="/notices" label="Notices" icon={File} />
+                            <ModeToggle />
+                            <button
+                                onClick={() => setIsDesktopProfileOpen((prev) => !prev)}
+                                className="group flex items-center gap-1 xs:gap-2 focus:outline-none focus:ring-2 focus:ring-primary/50 rounded-full px-2 py-1 transition-all duration-300 ease-in-out hover:bg-primary/10 hover:scale-110"
+                                title="Account"
+                            >
                                 <Image
-                                    src={user.avatarUrl}
+                                    src={avatarSrc(user.avatarUrl)}
                                     alt={`${user.firstName} ${user.lastName || ''}`}
                                     width={32}
                                     height={32}
-                                    className="w-6 h-6 xs:w-8 xs:h-8 rounded-full object-cover transition-all duration-300 ease-in-out hover:ring-2 hover:ring-primary/50 hover:scale-110"
+                                    className="w-6 h-6 xs:w-8 xs:h-8 rounded-full object-cover transition-transform duration-300 group-hover:scale-110"
+                                    onError={(e) => {
+                                        const img = e.currentTarget as HTMLImageElement;
+                                        if (!img.src.includes('/default-user.svg')) {
+                                            img.src = '/default-user.svg';
+                                        }
+                                    }}
                                     unoptimized
                                 />
-                                <span className="text-xs xs:text-sm font-medium hidden sm:inline transition-colors duration-300 hover:text-primary">
-                                    {user.firstName}{user.lastName ? ` ${user.lastName}` : ''}
-                                </span>
-                            </div>
-                            <NavButton href="/profile" label="Profile" icon={UsersRound} />
-                            <NavButton href="/notices" label="Notices" icon={File} />
-                            <ModeToggle />
-                            <Button
-                                variant="ghost"
-                                onClick={logout}
-                                className="rounded-3xl transition-all duration-300 ease-in-out hover:scale-105 hover:bg-destructive/10 hover:text-destructive"
-                                title="Logout"
-                            >
-                                <LogOut className="transition-transform duration-300 hover:scale-110" />
-                            </Button>
+                                {/* Name hidden per request */}
+                            </button>
                         </>
                     )}
                 </div>
@@ -166,11 +172,17 @@ export default function Header() {
                                     <div className="space-y-2">
                                         <div className="flex items-center gap-3 py-3 px-3 bg-muted/30 rounded-lg mb-4">
                                             <Image
-                                                src={user.avatarUrl}
+                                                src={avatarSrc(user.avatarUrl)}
                                                 alt={`${user.firstName} ${user.lastName || ''}`}
                                                 width={40}
                                                 height={40}
                                                 className="w-10 h-10 rounded-full object-cover ring-2 ring-primary/20"
+                                                onError={(e) => {
+                                                    const img = e.currentTarget as HTMLImageElement;
+                                                    if (!img.src.includes('/default-user.svg')) {
+                                                        img.src = '/default-user.svg';
+                                                    }
+                                                }}
                                                 unoptimized
                                             />
                                             <div>
@@ -186,6 +198,12 @@ export default function Header() {
                                             <Link href="/profile" onClick={() => setIsMobileMenuOpen(false)}>
                                                 <UsersRound className="w-5 h-5 mr-3 transition-transform duration-300 group-hover:scale-110" />
                                                 Profile
+                                            </Link>
+                                        </Button>
+                                        <Button variant="ghost" asChild className="w-full justify-start h-12 text-left transition-all duration-300 ease-in-out hover:bg-accent/50 hover:scale-105 hover:translate-x-2">
+                                            <Link href="/profile/update" onClick={() => setIsMobileMenuOpen(false)}>
+                                                <UsersRound className="w-5 h-5 mr-3 transition-transform duration-300 group-hover:scale-110" />
+                                                Update Profile
                                             </Link>
                                         </Button>
                                         <Button variant="ghost" asChild className="w-full justify-start h-12 text-left transition-all duration-300 ease-in-out hover:bg-accent/50 hover:scale-105 hover:translate-x-2">
@@ -216,6 +234,84 @@ export default function Header() {
                 </>
             )
             }
+
+            {/*________________ Desktop Profile Backdrop (like mobile) ________________*/}
+            {isDesktopProfileOpen && (
+                <>
+                    {/* Backdrop - desktop only */}
+                    <div
+                        className="fixed top-12 left-0 right-0 bottom-0 bg-black/30 backdrop-blur-md z-40 hidden sm:block"
+                        onClick={() => setIsDesktopProfileOpen(false)}
+                    />
+                    {/* Right Panel */}
+                    <div className="fixed top-12 right-0 h-screen w-1/4 bg-background/95 border-l border-border shadow-2xl z-50 hidden sm:block">
+                        <div className="px-4 py-4">
+                            <div className="flex items-center justify-between mb-4">
+                                <div className="flex items-center gap-3">
+                                    {user && (
+                                        <>
+                                            <Image
+                                                src={avatarSrc(user.avatarUrl)}
+                                                alt={`${user.firstName} ${user.lastName || ''}`}
+                                                width={40}
+                                                height={40}
+                                                className="w-10 h-10 rounded-full object-cover ring-2 ring-primary/20"
+                                                onError={(e) => {
+                                                    const img = e.currentTarget as HTMLImageElement;
+                                                    if (!img.src.includes('/default-user.svg')) {
+                                                        img.src = '/default-user.svg';
+                                                    }
+                                                }}
+                                                unoptimized
+                                            />
+                                            <div>
+                                                <p className="text-sm font-medium">{user.firstName}{user.lastName ? ` ${user.lastName}` : ''}</p>
+                                                <p className="text-xs text-muted-foreground">{user.email}</p>
+                                            </div>
+                                        </>
+                                    )}
+                                </div>
+                                <button
+                                    className="p-2 rounded-md hover:bg-accent/50 transition-colors"
+                                    aria-label="Close"
+                                    onClick={() => setIsDesktopProfileOpen(false)}
+                                >
+                                    <X className="w-5 h-5" />
+                                </button>
+                            </div>
+
+                            <div className="space-y-2">
+                                <h3 className="text-sm font-semibold text-muted-foreground">Navigation</h3>
+                                <Button variant="ghost" asChild className="w-full justify-start h-12 text-left transition-all duration-300 ease-in-out hover:bg-accent/50 hover:translate-x-2">
+                                    <Link href="/profile" onClick={() => setIsDesktopProfileOpen(false)}>
+                                        <UsersRound className="w-5 h-5 mr-3" />
+                                        Profile
+                                    </Link>
+                                </Button>
+                                <Button variant="ghost" asChild className="w-full justify-start h-12 text-left transition-all duration-300 ease-in-out hover:bg-accent/50 hover:translate-x-2">
+                                    <Link href="/profile/update" onClick={() => setIsDesktopProfileOpen(false)}>
+                                        <UsersRound className="w-5 h-5 mr-3" />
+                                        Update Profile
+                                    </Link>
+                                </Button>
+                                <div className="pt-2 border-t border-border">
+                                    <Button
+                                        variant="ghost"
+                                        onClick={() => {
+                                            setIsDesktopProfileOpen(false);
+                                            logout();
+                                        }}
+                                        className="w-full justify-start h-12 text-left transition-all duration-300 ease-in-out hover:bg-destructive/10 hover:text-destructive hover:translate-x-2"
+                                    >
+                                        <LogOut className="w-5 h-5 mr-3" />
+                                        Logout
+                                    </Button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </>
+            )}
         </header >
     )
 }

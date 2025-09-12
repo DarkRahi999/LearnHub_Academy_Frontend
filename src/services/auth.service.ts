@@ -82,15 +82,24 @@ export const getUserProfile = async (): Promise<UserProfile> => {
 //W--------------------------={ UPDATE AVATAR }=------------------------
 export const updateUserAvatar = async (avatarData: UpdateAvatarDto): Promise<UserProfile> => {
   try {
-    const res = await authApi.patch<{ user: UserProfile }>(API_URLS.auth.updateAvatar, avatarData);
-    
- //W------------={ Update user data in localStorage }=------------
+    const res = await authApi.patch<{ user: UserProfile }>(API_URLS.auth.profile, avatarData);
     localStorage.setItem('user', JSON.stringify(res.data.user));
-    
     return res.data.user;
   } catch (error: unknown) {
     const err = error as { response?: { data?: unknown }; message?: string };
     console.error("Error updating avatar:", err.response?.data || err.message);
+    throw error;
+  }
+};
+
+export const updateUserProfile = async (payload: Partial<UserProfile>): Promise<UserProfile> => {
+  try {
+    const res = await authApi.patch<{ user: UserProfile }>(API_URLS.auth.profile, payload);
+    localStorage.setItem('user', JSON.stringify(res.data.user));
+    return res.data.user;
+  } catch (error: unknown) {
+    const err = error as { response?: { data?: unknown }; message?: string };
+    console.error("Error updating profile:", err.response?.data || err.message);
     throw error;
   }
 };

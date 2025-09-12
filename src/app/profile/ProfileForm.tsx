@@ -35,6 +35,23 @@ const ProfileForm = () => {
     const [loading, setLoading] = useState(true);
     const [updating, setUpdating] = useState(false);
 
+    const avatarSrc = (url?: string) => {
+        const v = (url || "").trim();
+        if (!v || v === "null" || v === "undefined") return "/default-user.svg";
+        // If backend provided app-relative path, keep it; else return as is
+        return v.startsWith("http") ? v : v;
+    };
+
+    const formatDateDMY = (value?: string) => {
+        if (!value) return "—";
+        const date = new Date(value);
+        if (isNaN(date.getTime())) return value;
+        const dd = String(date.getDate()).padStart(2, '0');
+        const mm = String(date.getMonth() + 1).padStart(2, '0');
+        const yyyy = date.getFullYear();
+        return `${dd}-${mm}-${yyyy}`;
+    };
+
     const form = useForm<z.infer<typeof ProfileFormSchema>>({
         resolver: zodResolver(ProfileFormSchema),
         defaultValues: {
@@ -144,169 +161,60 @@ const ProfileForm = () => {
 
     return (
         <div className="p-2 xs:p-4">
-            <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-                    <div className="grid gap-2 border-2 rounded-md p-3 xs:p-4">
-                        <h3 className="text-lg font-semibold mb-4">Profile Information</h3>
-                        
-                        {/* Avatar Section */}
-                        <div className="flex flex-col items-center mb-6">
+            {/* Read-only section (no card/border) */}
+            <div className="p-0">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-start gap-4 sm:gap-6 mb-6">
                             <Image 
-                                src={user.avatarUrl || '/default-user.svg'}
+                        src={avatarSrc(user.avatarUrl)}
                                 alt="Profile Avatar" 
                                 width={96}
                                 height={96}
-                                className="w-24 h-24 rounded-full object-cover border-2 border-gray-300"
-                            />
-                            <p className="text-sm text-gray-600 mt-2">Current Avatar</p>
-                        </div>
-
-                        <div className="grid gap-2 grid-cols-1 xs:grid-cols-2">
-                            <FormField
-                                control={form.control}
-                                name="firstName"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel className="text-sm font-semibold">First Name:</FormLabel>
-                                        <FormControl>
-                                            <Input placeholder="Enter Your First name..." {...field} />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-                            <FormField
-                                control={form.control}
-                                name="lastName"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel className="text-sm font-semibold">Last Name:</FormLabel>
-                                        <FormControl>
-                                            <Input placeholder="Enter Your Last name..." {...field} />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-                            <FormField
-                                control={form.control}
-                                name="email"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel className="text-sm font-semibold">Email:</FormLabel>
-                                        <FormControl>
-                                            <Input placeholder="Enter Your Email Address..." {...field} />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-                        </div>
-
-                        <div className="grid gap-2 grid-cols-1 xs:grid-cols-3">
-                            <FormField
-                                control={form.control}
-                                name="phone"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel className="text-sm font-semibold">Phone Number:</FormLabel>
-                                        <FormControl>
-                                            <Input placeholder="Enter Your Phone Number..." {...field} />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-                            <FormField
-                                control={form.control}
-                                name="gender"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel className="text-sm font-semibold">Gender:</FormLabel>
-                                        <Select onValueChange={field.onChange} defaultValue={field.value}>
-                                            <FormControl className="w-full">
-                                                <SelectTrigger>
-                                                    <SelectValue placeholder="Select Your Gender" />
-                                                </SelectTrigger>
-                                            </FormControl>
-                                            <SelectContent>
-                                                <SelectItem value="male">Male</SelectItem>
-                                                <SelectItem value="female">Female</SelectItem>
-                                                <SelectItem value="other">Other</SelectItem>
-                                            </SelectContent>
-                                        </Select>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-                            <FormField
-                                control={form.control}
-                                name="dob"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel className="text-sm font-semibold">Date of Birth:</FormLabel>
-                                        <FormControl>
-                                            <Input type="date" placeholder="Select your DOB" {...field} />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-                        </div>
-
-                        <div className="grid gap-2 grid-cols-1 xs:grid-cols-3">
-                            <FormField
-                                control={form.control}
-                                name="nationality"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel className="text-sm font-semibold">Nationality:</FormLabel>
-                                        <FormControl>
-                                            <Input placeholder="Enter Your Nationality..." {...field} />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-                            <FormField
-                                control={form.control}
-                                name="religion"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel className="text-sm font-semibold">Religion:</FormLabel>
-                                        <FormControl>
-                                            <Input placeholder="Enter Your Religion..." {...field} />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-                            <FormField
-                                control={form.control}
-                                name="avatarUrl"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel className="text-sm font-semibold">Avatar URL (Optional):</FormLabel>
-                                        <FormControl>
-                                            <Input placeholder="https://example.com/avatar.jpg (optional)" {...field} />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-                        </div>
-
-                        <div className="flex justify-end gap-2 py-4">
-                            <Button type="reset" onClick={() => form.reset()} disabled={updating}>
-                                Reset
-                            </Button>
-                            <Button type="submit" disabled={updating}>
-                                {updating ? "Updating..." : "Update Profile"}
-                            </Button>
-                        </div>
+                        className="w-24 h-24 rounded-full object-cover border"
+                        onError={(e) => {
+                            const img = e.currentTarget as HTMLImageElement;
+                            if (!img.src.includes('/default-user.svg')) {
+                                img.src = '/default-user.svg';
+                            }
+                        }}
+                        unoptimized
+                    />
+                    <div className="text-center sm:text-left">
+                        <h2 className="text-xl sm:text-2xl font-semibold">{user.firstName} {user.lastName || ""}</h2>
+                        <p className="text-sm text-muted-foreground">{user.email}</p>
                     </div>
-                </form>
-            </Form>
+                        </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {/* Removed User ID per request */}
+                    <div className="p-1">
+                        <p className="text-xs text-muted-foreground">Phone</p>
+                        <p className="text-sm font-medium">{user.phone || "—"}</p>
+                        </div>
+                    <div className="p-1">
+                        <p className="text-xs text-muted-foreground">Gender</p>
+                        <p className="text-sm font-medium capitalize">{user.gender}</p>
+                        </div>
+                    <div className="p-1">
+                        <p className="text-xs text-muted-foreground">Date of Birth</p>
+                        <p className="text-sm font-medium">{formatDateDMY(user.dob)}</p>
+                        </div>
+                    <div className="p-1">
+                        <p className="text-xs text-muted-foreground">Nationality</p>
+                        <p className="text-sm font-medium">{user.nationality || "—"}</p>
+                        </div>
+                    <div className="p-1">
+                        <p className="text-xs text-muted-foreground">Religion</p>
+                        <p className="text-sm font-medium">{user.religion || "—"}</p>
+                    </div>
+                </div>
+
+                {/* Floating button moved below */}
+            </div>
+            <div className="flex justify-end">
+                <Button asChild className="shadow-md">
+                    <a href="/profile/update">Update Profile</a>
+                </Button>
+            </div>
         </div>
     )
 }

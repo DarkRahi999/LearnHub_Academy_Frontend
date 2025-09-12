@@ -12,7 +12,6 @@ export const API_URLS = {
     logout: `${API_BASE_URL}/auth/logout`,
     profile: `${API_BASE_URL}/auth/profile`,
     register: `${API_BASE_URL}/auth/signup`,
-    updateAvatar: `${API_BASE_URL}/auth/profile/avatar`,
     forgotPassword: `${API_BASE_URL}/auth/forgot-password`,
     resetPassword: `${API_BASE_URL}/auth/reset-password`,
   },
