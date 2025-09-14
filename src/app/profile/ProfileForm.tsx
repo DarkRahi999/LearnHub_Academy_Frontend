@@ -40,7 +40,7 @@ const ProfileForm = () => {
     };
 
 
- //W---------{ Load user profile data }----------
+    //W---------{ Load user profile data }----------
     useEffect(() => {
         const loadUserProfile = async () => {
             try {
@@ -49,7 +49,7 @@ const ProfileForm = () => {
                 setUser(userData);
             } catch (error) {
                 console.error("Error loading profile:", error);
- //W---------{ Try to get user from localStorage as fallback }----------
+                //W---------{ Try to get user from localStorage as fallback }----------
                 const localUser = getCurrentUser();
                 if (localUser) {
                     setUser(localUser);
@@ -83,12 +83,12 @@ const ProfileForm = () => {
         <div className="p-2 xs:p-4">
             {/* Read-only section (no card/border) */}
             <div className="p-0">
-                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-start gap-4 sm:gap-6 mb-6">
-                            <Image 
+                <div className="flex flex-col items-center sm:flex sm:flex-row sm:items-center sm:justify-start gap-4 sm:gap-6 mb-6">
+                    <Image
                         src={avatarSrc(user.avatarUrl)}
-                                alt="Profile Avatar" 
-                                width={96}
-                                height={96}
+                        alt="Profile Avatar"
+                        width={96}
+                        height={96}
                         className="w-24 h-24 rounded-full object-cover border"
                         onError={(e) => {
                             const img = e.currentTarget as HTMLImageElement;
@@ -102,26 +102,26 @@ const ProfileForm = () => {
                         <h2 className="text-xl sm:text-2xl font-semibold">{user.firstName} {user.lastName || ""}</h2>
                         <p className="text-sm text-muted-foreground">{user.email}</p>
                     </div>
-                        </div>
+                </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                     {/* Removed User ID per request */}
                     <div className="p-1">
                         <p className="text-xs text-muted-foreground">Phone</p>
                         <p className="text-sm font-medium">{user.phone || "—"}</p>
-                        </div>
+                    </div>
                     <div className="p-1">
                         <p className="text-xs text-muted-foreground">Gender</p>
                         <p className="text-sm font-medium capitalize">{user.gender}</p>
-                        </div>
+                    </div>
                     <div className="p-1">
                         <p className="text-xs text-muted-foreground">Date of Birth</p>
                         <p className="text-sm font-medium">{formatDateDMY(user.dob)}</p>
-                        </div>
+                    </div>
                     <div className="p-1">
                         <p className="text-xs text-muted-foreground">Nationality</p>
                         <p className="text-sm font-medium">{user.nationality || "—"}</p>
-                        </div>
+                    </div>
                     <div className="p-1">
                         <p className="text-xs text-muted-foreground">Religion</p>
                         <p className="text-sm font-medium">{user.religion || "—"}</p>

@@ -47,7 +47,6 @@ const LoginForm = () => {
             // Dispatch login success to Redux store
             dispatch(loginSuccess({ user: res.user, token: res.access_token }));
             
-            console.log("Logged in:", res);
             
             toast.success("Login successful! Welcome back!");
             

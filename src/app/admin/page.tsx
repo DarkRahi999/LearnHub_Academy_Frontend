@@ -69,7 +69,6 @@ export default function AdminDashboard() {
             </div>
           </RoleGuard>
 
-          {/* Super Admin Actions */}
           <RoleGuard requiredPermissions={[Permission.CREATE_POST]}>
             <div className="border rounded-lg p-6">
               <h3 className="text-xl font-semibold mb-4">Post Management</h3>

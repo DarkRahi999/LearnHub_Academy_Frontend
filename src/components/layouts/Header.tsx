@@ -11,9 +11,14 @@ import Link from 'next/link';
 import { useState } from 'react';
 import Image from 'next/image';
 import { useAuth } from '@/hooks/useAuth';
+import { useNotificationBadge } from '@/hooks/useNotificationBadge';
+import { NotificationBadge } from '@/components/ui/notification-badge';
 
 export default function Header() {
     const { user, isLoading: loading, logout } = useAuth();
+    // Only initialize notification badge when user is authenticated
+    const notificationData = user ? useNotificationBadge() : null;
+    const unreadCount = notificationData?.unreadCount || 0;
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [isDesktopProfileOpen, setIsDesktopProfileOpen] = useState(false);
 
@@ -61,7 +66,12 @@ export default function Header() {
                     ) : (
                         <>
                             <NavButton href="/posts" label="Posts" icon={MonitorCog} />
-                            <NavButton href="/notices" label="Notices" icon={MessageCircleMore} />
+                            <NavButton 
+                                href="/notices" 
+                                label="Notices" 
+                                icon={MessageCircleMore} 
+                                badge={<NotificationBadge count={unreadCount} />}
+                            />
                             <RoleGuard allowedRoles={[UserRole.ADMIN, UserRole.SUPER_ADMIN]}>
                                 <NavButton href="/admin" label="Admin" icon={Shield} />
                             </RoleGuard>
@@ -189,9 +199,10 @@ export default function Header() {
                                             </Link>
                                         </Button>
                                         <Button variant="ghost" asChild className="w-full justify-start h-12 text-left transition-all duration-300 ease-in-out hover:bg-accent/50 hover:scale-105 hover:translate-x-2">
-                                            <Link href="/notices" onClick={() => setIsMobileMenuOpen(false)}>
+                                            <Link href="/notices" onClick={() => setIsMobileMenuOpen(false)} className="relative">
                                                 <MessageCircleMore className="w-5 h-5 mr-3 transition-transform duration-300 group-hover:scale-110" />
                                                 Notices
+                                                <NotificationBadge count={unreadCount} className="absolute top-1 right-1" />
                                             </Link>
                                         </Button>
                                         <Button variant="ghost" asChild className="w-full justify-start h-12 text-left transition-all duration-300 ease-in-out hover:bg-accent/50 hover:scale-105 hover:translate-x-2">

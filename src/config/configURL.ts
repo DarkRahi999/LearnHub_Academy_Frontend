@@ -15,4 +15,18 @@ export const API_URLS = {
     forgotPassword: `${API_BASE_URL}/auth/forgot-password`,
     resetPassword: `${API_BASE_URL}/auth/reset-password`,
   },
+  notices: {
+    getAll: `${API_BASE_URL}/notices`,
+    getById: (id: number) => `${API_BASE_URL}/notices/${id}`,
+    create: `${API_BASE_URL}/notices`,
+    update: (id: number) => `${API_BASE_URL}/notices/${id}`,
+    delete: (id: number) => `${API_BASE_URL}/notices/${id}`,
+  },
+  posts: {
+    getAll: `${API_BASE_URL}/posts`,
+    getById: (id: number) => `${API_BASE_URL}/posts/${id}`,
+    create: `${API_BASE_URL}/posts`,
+    update: (id: number) => `${API_BASE_URL}/posts/${id}`,
+    delete: (id: number) => `${API_BASE_URL}/posts/${id}`,
+  },
 };

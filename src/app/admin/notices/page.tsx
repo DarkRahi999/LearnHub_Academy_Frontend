@@ -5,32 +5,96 @@ import Header from '@/components/layouts/Header';
 import RoleGuard from '@/components/auth/RoleGuard';
 import { Permission } from '@/interface/user';
 import { Button } from '@/components/ui/button';
-
-interface Notice {
-  id: number;
-  title: string;
-  content: string;
-  isActive: boolean;
-  createdAt: string;
-  createdBy: {
-    id: number;
-    firstName: string;
-    lastName?: string;
-    email: string;
-  };
-}
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Calendar, User, Edit, Trash2, Plus } from 'lucide-react';
+import { noticeService, Notice, CreateNoticeDto } from '@/services/notice.service';
 
 export default function NoticeManagement() {
-  const [notices] = useState<Notice[]>([]);
+  const [notices, setNotices] = useState<Notice[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [showCreateForm, setShowCreateForm] = useState(false);
+  const [editingNotice, setEditingNotice] = useState<Notice | null>(null);
+  const [formData, setFormData] = useState<CreateNoticeDto>({
+    subHeading: '',
+    description: '',
+  });
 
   useEffect(() => {
-    // TODO: Implement API call to fetch notices
-    setLoading(false);
+    fetchNotices();
   }, []);
 
+  const fetchNotices = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const data = await noticeService.getAllNotices();
+      setNotices(data.notices);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'An error occurred while fetching notices');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleCreateNotice = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      setError(null);
+      await noticeService.createNotice(formData);
+      setFormData({ subHeading: '', description: '' });
+      setShowCreateForm(false);
+      fetchNotices();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to create notice');
+    }
+  };
+
+  const handleUpdateNotice = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingNotice) return;
+    
+    try {
+      setError(null);
+      await noticeService.updateNotice(editingNotice.id, formData);
+      setFormData({ subHeading: '', description: '' });
+      setEditingNotice(null);
+      fetchNotices();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to update notice');
+    }
+  };
+
+  const handleDeleteNotice = async (id: number) => {
+    if (!confirm('Are you sure you want to delete this notice?')) return;
+    
+    try {
+      setError(null);
+      await noticeService.deleteNotice(id);
+      fetchNotices();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to delete notice');
+    }
+  };
+
+  const startEdit = (notice: Notice) => {
+    setEditingNotice(notice);
+    setFormData({
+      subHeading: notice.subHeading,
+      description: notice.description,
+    });
+    setShowCreateForm(false);
+  };
+
+  const cancelEdit = () => {
+    setEditingNotice(null);
+    setFormData({ subHeading: '', description: '' });
+    setShowCreateForm(false);
+  };
+
   return (
-    <RoleGuard 
+    <RoleGuard
       requiredPermissions={[Permission.CREATE_NOTICE]}
       fallback={
         <div className="flex justify-center items-center h-64">
@@ -42,35 +106,145 @@ export default function NoticeManagement() {
       <div className="container mx-auto py-6">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-3xl font-bold">Notice Management</h1>
-          <Button>Create New Notice</Button>
+          <Button onClick={() => setShowCreateForm(true)} className="flex items-center gap-2">
+            <Plus className="w-4 h-4" />
+            Create New Notice
+          </Button>
         </div>
+
+        {error && (
+          <div className="mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded">
+            {error}
+          </div>
+        )}
+
+
+        {/* Create/Edit Form */}
+        {(showCreateForm || editingNotice) && (
+          <Card className="mb-6">
+            <CardHeader>
+              <CardTitle>
+                {editingNotice ? 'Edit Notice' : 'Create New Notice'}
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <form onSubmit={editingNotice ? handleUpdateNotice : handleCreateNotice} className="space-y-4">
+                <div>
+                  <label htmlFor="subHeading" className="block text-sm font-medium mb-2">
+                    Sub Heading
+                  </label>
+                  <input
+                    type="text"
+                    id="subHeading"
+                    value={formData.subHeading}
+                    onChange={(e) => setFormData({ ...formData, subHeading: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    required
+                    minLength={5}
+                    maxLength={200}
+                  />
+                </div>
+                <div>
+                  <label htmlFor="description" className="block text-sm font-medium mb-2">
+                    Description
+                  </label>
+                  <textarea
+                    id="description"
+                    value={formData.description}
+                    onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    rows={4}
+                    required
+                    minLength={10}
+                  />
+                </div>
+                <div className="flex gap-2">
+                  <Button type="submit">
+                    {editingNotice ? 'Update Notice' : 'Create Notice'}
+                  </Button>
+                  <Button type="button" variant="outline" onClick={cancelEdit}>
+                    Cancel
+                  </Button>
+                </div>
+              </form>
+            </CardContent>
+          </Card>
+        )}
 
         {loading ? (
           <div className="flex justify-center items-center h-40">
-            <div className="text-lg">Loading notices...</div>
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
           </div>
         ) : (
           <div className="space-y-4">
             {notices.length === 0 ? (
-              <div className="text-center py-8">
-                <p className="text-gray-500">No notices found</p>
-              </div>
+              <Card>
+                <CardContent className="text-center py-12">
+                  <div className="text-muted-foreground">
+                    <Calendar className="w-12 h-12 mx-auto mb-4 opacity-50" />
+                    <h3 className="text-lg font-semibold mb-2">No notices found</h3>
+                    <p>Create your first notice to get started.</p>
+                  </div>
+                </CardContent>
+              </Card>
             ) : (
               notices.map((notice) => (
-                <div key={notice.id} className="border rounded-lg p-6">
-                  <div className="flex justify-between items-start mb-2">
-                    <h3 className="text-xl font-semibold">{notice.title}</h3>
-                    <div className="flex gap-2">
-                      <Button variant="outline" size="sm">Edit</Button>
-                      <Button variant="destructive" size="sm">Delete</Button>
+                <Card key={notice.id} className="hover:shadow-lg transition-shadow">
+                  <CardHeader>
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1">
+                        <CardTitle className="text-xl mb-2">{notice.subHeading}</CardTitle>
+                        <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                          <div className="flex items-center gap-1">
+                            <User className="w-4 h-4" />
+                            <span>
+                              {notice.createdBy.firstName} {notice.createdBy.lastName || ''}
+                            </span>
+                          </div>
+                          <div className="flex items-center gap-1">
+                            <Calendar className="w-4 h-4" />
+                            <span>
+                              {new Date(notice.createdAt).toLocaleDateString()}
+                              {notice.editedAt && (
+                                <span className="ml-1 text-xs text-muted-foreground">
+                                  (edited {new Date(notice.editedAt).toLocaleDateString()})
+                                </span>
+                              )}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Badge variant={notice.isActive ? "default" : "secondary"}>
+                          {notice.isActive ? "Active" : "Inactive"}
+                        </Badge>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => startEdit(notice)}
+                          className="flex items-center gap-1"
+                        >
+                          <Edit className="w-4 h-4" />
+                          Edit
+                        </Button>
+                        <Button
+                          variant="destructive"
+                          size="sm"
+                          onClick={() => handleDeleteNotice(notice.id)}
+                          className="flex items-center gap-1"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                          Delete
+                        </Button>
+                      </div>
                     </div>
-                  </div>
-                  <p className="text-gray-600 mb-2">{notice.content}</p>
-                  <div className="text-sm text-gray-500">
-                    Created by {notice.createdBy.firstName} {notice.createdBy.lastName} on{' '}
-                    {new Date(notice.createdAt).toLocaleDateString()}
-                  </div>
-                </div>
+                  </CardHeader>
+                  <CardContent>
+                    <CardDescription className="text-base leading-relaxed">
+                      {notice.description}
+                    </CardDescription>
+                  </CardContent>
+                </Card>
               ))
             )}
           </div>

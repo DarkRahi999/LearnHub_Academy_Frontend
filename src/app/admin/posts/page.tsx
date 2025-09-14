@@ -31,7 +31,7 @@ export default function PostManagement() {
   }, []);
 
   return (
-    <RoleGuard 
+    <RoleGuard
       requiredPermissions={[Permission.CREATE_POST]}
       fallback={
         <div className="flex justify-center items-center h-64">
@@ -62,11 +62,10 @@ export default function PostManagement() {
                   <div className="flex justify-between items-start mb-2">
                     <div className="flex items-center gap-2">
                       <h3 className="text-xl font-semibold">{post.title}</h3>
-                      <span className={`px-2 py-1 rounded-full text-xs ${
-                        post.isPublished 
-                          ? 'bg-green-100 text-green-800' 
+                      <span className={`px-2 py-1 rounded-full text-xs ${post.isPublished
+                          ? 'bg-green-100 text-green-800'
                           : 'bg-yellow-100 text-yellow-800'
-                      }`}>
+                        }`}>
                         {post.isPublished ? 'Published' : 'Draft'}
                       </span>
                     </div>

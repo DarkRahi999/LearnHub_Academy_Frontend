@@ -63,7 +63,6 @@ const SignupForm = () => {
             localStorage.setItem('access_token', newUser.access_token);
             localStorage.setItem('user_data', JSON.stringify(newUser.user));
             
-            console.log("User created:", newUser);
             
             toast.success("Account created successfully! Welcome to LearnHub Academy!");
             

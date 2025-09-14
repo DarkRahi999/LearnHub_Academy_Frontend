@@ -98,42 +98,42 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${salsa.variable} ${roboto.variable} antialiased`}>
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="system"
-            enableSystem
-            disableTransitionOnChange
-          >
-            <Providers>
-              <AuthProvider>
-                <main>{children}</main>
-                <Toaster 
-                  position="top-right"
-                  toastOptions={{
-                    duration: 4000,
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <Providers>
+            <AuthProvider>
+              <main>{children}</main>
+              <Toaster
+                position="top-right"
+                toastOptions={{
+                  duration: 4000,
+                  style: {
+                    background: '#363636',
+                    color: '#fff',
+                  },
+                  success: {
+                    duration: 3000,
                     style: {
-                      background: '#363636',
+                      background: '#10b981',
                       color: '#fff',
                     },
-                    success: {
-                      duration: 3000,
-                      style: {
-                        background: '#10b981',
-                        color: '#fff',
-                      },
+                  },
+                  error: {
+                    duration: 4000,
+                    style: {
+                      background: '#ef4444',
+                      color: '#fff',
                     },
-                    error: {
-                      duration: 4000,
-                      style: {
-                        background: '#ef4444',
-                        color: '#fff',
-                      },
-                    },
-                  }}
-                />
-              </AuthProvider>
-            </Providers>
-          </ThemeProvider>
+                  },
+                }}
+              />
+            </AuthProvider>
+          </Providers>
+        </ThemeProvider>
       </body>
     </html>
   );

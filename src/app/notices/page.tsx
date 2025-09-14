@@ -1,161 +1,252 @@
 "use client";
 
-import { useEffect, useState } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Calendar, User } from 'lucide-react';
-import { API_BASE_URL } from '@/config/configURL';
+import { useEffect, useState, useCallback } from 'react';
+import { Card, CardContent } from '@/components/ui/card';
+import { Calendar, Search, Filter, Plus } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
-
-interface Notice {
-  id: number;
-  title: string;
-  content: string;
-  author: {
-    firstName: string;
-    lastName?: string;
-  };
-  createdAt: string;
-  updatedAt: string;
-  isActive: boolean;
-}
+import { noticeService, Notice } from '@/services/notice.service';
+import { useNotificationBadge } from '@/hooks/useNotificationBadge';
+import { NoticeCard } from '@/components/ui/notice-card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { UserRole } from '@/interface/user';
+import Header from '@/components/layouts/Header';
 
 export default function NoticesPage() {
-  const { user, isLoading } = useAuth();
+  const { user, isLoading: authLoading } = useAuth();
+  const { markAsRead } = useNotificationBadge();
   const [notices, setNotices] = useState<Notice[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [filteredNotices, setFilteredNotices] = useState<Notice[]>([]);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [showActiveOnly, setShowActiveOnly] = useState(true);
 
+  const fetchNotices = useCallback(async () => {
+    if (!user) return;
+    
+    try {
+      setLoading(true);
+      setError(null);
+      const data = await noticeService.getAllNotices();
+      setNotices(data.notices);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'An error occurred while fetching notices');
+    } finally {
+      setLoading(false);
+    }
+  }, [user]);
+
+  // Initial fetch when user is ready
   useEffect(() => {
-    const fetchNotices = async () => {
-      try {
-        setLoading(true);
-        const token = localStorage.getItem('access_token');
-        
-        const response = await fetch(`${API_BASE_URL}/notices`, {
-          headers: {
-            'Authorization': `Bearer ${token}`,
-          },
-        });
-
-        if (!response.ok) {
-          throw new Error('Failed to fetch notices');
-        }
-
-        const data = await response.json();
-        setNotices(data);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'An error occurred');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    if (!isLoading && user) {
+    if (!authLoading && user) {
       fetchNotices();
     }
-  }, [user, isLoading]);
+  }, [authLoading, user, fetchNotices]);
 
-  if (isLoading) {
+  // Filter notices based on search term and active status
+  useEffect(() => {
+    let filtered = notices.filter(notice => 
+      showActiveOnly ? notice.isActive : true
+    );
+    
+    if (searchTerm) {
+      filtered = filtered.filter(notice => 
+        notice.subHeading.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        notice.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        `${notice.createdBy.firstName} ${notice.createdBy.lastName}`.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
+    
+    setFilteredNotices(filtered);
+  }, [notices, searchTerm, showActiveOnly]);
+
+  const canCreateNotice = user?.role === UserRole.ADMIN || user?.role === UserRole.SUPER_ADMIN;
+
+  const handleCreateNotice = () => {
+    alert('Create Notice functionality will be implemented here!');
+  };
+
+  const handleNoticeClick = async (notice: Notice) => {
+    if (!notice.isRead) {
+      await markAsRead(notice.id);
+      // Update local state optimistically
+      setNotices(prev => prev.map(n => 
+        n.id === notice.id ? { ...n, isRead: true } : n
+      ));
+    }
+  };
+
+  // Show loading only during auth or when fetching notices
+  if (authLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-gray-600 dark:text-gray-400">Loading...</p>
+        </div>
       </div>
     );
   }
 
   if (!user) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
-            Access Denied
-          </h1>
-          <p className="text-gray-600 dark:text-gray-400">
-            Please log in to view notices.
-          </p>
-        </div>
-      </div>
-    );
-  }
-
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-red-50 to-pink-100 dark:from-gray-900 dark:to-gray-800">
+        <Card className="max-w-md mx-4">
+          <CardContent className="text-center py-12">
+            <div className="text-red-600 dark:text-red-400 mb-4">
+              <Calendar className="w-16 h-16 mx-auto mb-4" />
+            </div>
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
+              Access Denied
+            </h1>
+            <p className="text-gray-600 dark:text-gray-400">
+              Please log in to view notices.
+            </p>
+          </CardContent>
+        </Card>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold text-red-600 mb-4">Error</h1>
-          <p className="text-gray-600 dark:text-gray-400">{error}</p>
-        </div>
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-red-50 to-pink-100 dark:from-gray-900 dark:to-gray-800">
+        <Card className="max-w-md mx-4">
+          <CardContent className="text-center py-12">
+            <div className="text-red-600 dark:text-red-400 mb-4">
+              <Calendar className="w-16 h-16 mx-auto mb-4" />
+            </div>
+            <h1 className="text-2xl font-bold text-red-600 mb-4">Error</h1>
+            <p className="text-gray-600 dark:text-gray-400">{error}</p>
+            <Button onClick={fetchNotices} className="mt-4">
+              Retry
+            </Button>
+          </CardContent>
+        </Card>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="container mx-auto px-4 py-8">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-foreground mb-2">Notices</h1>
-          <p className="text-muted-foreground">
-            Stay updated with the latest announcements and important information.
-          </p>
-        </div>
-
-        {notices.length === 0 ? (
-          <Card>
-            <CardContent className="text-center py-12">
-              <div className="text-muted-foreground">
-                <Calendar className="w-12 h-12 mx-auto mb-4 opacity-50" />
-                <h3 className="text-lg font-semibold mb-2">No notices available</h3>
-                <p>There are no notices to display at the moment.</p>
+    <>
+      <Header />
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+        <div className="container mx-auto px-4 py-8">
+          {/* Header Section */}
+          <div className="mb-8">
+            <div className="flex items-center justify-between mb-6">
+              <div>
+                <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent mb-2">
+                  📢 Notices
+                </h1>
+                <p className="text-gray-600 dark:text-gray-400 text-lg">
+                  Stay updated with the latest announcements and important information.
+                </p>
               </div>
-            </CardContent>
-          </Card>
-        ) : (
-          <div className="grid gap-6">
-            {notices.map((notice) => (
-              <Card key={notice.id} className="hover:shadow-lg transition-shadow">
-                <CardHeader>
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1">
-                      <CardTitle className="text-xl mb-2">{notice.title}</CardTitle>
-                      <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                        <div className="flex items-center gap-1">
-                          <User className="w-4 h-4" />
-                          <span>
-                            {notice.author.firstName} {notice.author.lastName || ''}
-                          </span>
-                        </div>
-                        <div className="flex items-center gap-1">
-                          <Calendar className="w-4 h-4" />
-                          <span>
-                            {new Date(notice.createdAt).toLocaleDateString()}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                    <Badge variant={notice.isActive ? "default" : "secondary"}>
-                      {notice.isActive ? "Active" : "Inactive"}
-                    </Badge>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <CardDescription className="text-base leading-relaxed">
-                    {notice.content}
-                  </CardDescription>
-                </CardContent>
-              </Card>
-            ))}
+              
+              {canCreateNotice && (
+                <Button 
+                  onClick={handleCreateNotice}
+                  className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white"
+                >
+                  <Plus className="w-4 h-4 mr-2" />
+                  Create Notice
+                </Button>
+              )}
+            </div>
+            
+            {/* Search and Filter Bar */}
+            <div className="flex flex-col sm:flex-row gap-4 mb-6">
+              <div className="relative flex-1">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                <Input
+                  type="text"
+                  placeholder="Search notices by title, content, or author..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-10 bg-white/80 backdrop-blur-sm border-gray-200 focus:border-blue-400"
+                />
+              </div>
+              
+              <Button
+                variant={showActiveOnly ? "default" : "outline"}
+                onClick={() => setShowActiveOnly(!showActiveOnly)}
+                className="min-w-fit"
+              >
+                <Filter className="w-4 h-4 mr-2" />
+                {showActiveOnly ? 'Active Only' : 'Show All'}
+              </Button>
+            </div>
+            
+            {/* Stats */}
+            <div className="flex gap-4 text-sm text-gray-600 dark:text-gray-400">
+              <span className="bg-white/80 dark:bg-gray-800/80 px-3 py-1 rounded-full">
+                Total: {notices.length} notices
+              </span>
+              <span className="bg-white/80 dark:bg-gray-800/80 px-3 py-1 rounded-full">
+                Showing: {filteredNotices.length} notices
+              </span>
+              {searchTerm && (
+                <span className="bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 px-3 py-1 rounded-full">
+                  Search: "{searchTerm}"
+                </span>
+              )}
+            </div>
           </div>
-        )}
+
+          {/* Loading Indicator */}
+          {loading && (
+            <div className="text-center py-8">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
+              <p className="text-gray-600 dark:text-gray-400">Loading notices...</p>
+            </div>
+          )}
+
+          {/* Notices Grid */}
+          {!loading && (
+            <>
+              {filteredNotices.length === 0 ? (
+                <Card className="bg-white/80 backdrop-blur-sm border-gray-200">
+                  <CardContent className="text-center py-16">
+                    <div className="text-gray-500 dark:text-gray-400">
+                      <Calendar className="w-16 h-16 mx-auto mb-6 opacity-50" />
+                      <h3 className="text-xl font-semibold mb-3">
+                        {searchTerm ? 'No matching notices found' : 'No notices available'}
+                      </h3>
+                      <p className="text-gray-600 dark:text-gray-400 max-w-md mx-auto">
+                        {searchTerm 
+                          ? `No notices match your search term "${searchTerm}". Try different keywords.`
+                          : 'There are no notices to display at the moment. Check back later for updates.'
+                        }
+                      </p>
+                      {searchTerm && (
+                        <Button 
+                          variant="ghost" 
+                          onClick={() => setSearchTerm('')}
+                          className="mt-4"
+                        >
+                          Clear Search
+                        </Button>
+                      )}
+                    </div>
+                  </CardContent>
+                </Card>
+              ) : (
+                <div className="grid gap-6">
+                  {filteredNotices.map((notice) => (
+                    <NoticeCard 
+                      key={notice.id} 
+                      notice={notice}
+                      onClick={() => handleNoticeClick(notice)}
+                    />
+                  ))}
+                </div>
+              )}
+            </>
+          )}
+        </div>
       </div>
-    </div>
+    </>
   );
 }
