@@ -189,7 +189,7 @@ export default function NoticesPage() {
               </span>
               {searchTerm && (
                 <span className="bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 px-3 py-1 rounded-full">
-                  Search: "{searchTerm}"
+                  Search: &quot;{searchTerm}&quot;
                 </span>
               )}
             </div>
@@ -216,7 +216,7 @@ export default function NoticesPage() {
                       </h3>
                       <p className="text-gray-600 dark:text-gray-400 max-w-md mx-auto">
                         {searchTerm 
-                          ? `No notices match your search term "${searchTerm}". Try different keywords.`
+                          ? `No notices match your search term &quot;${searchTerm}&quot;. Try different keywords.`
                           : 'There are no notices to display at the moment. Check back later for updates.'
                         }
                       </p>

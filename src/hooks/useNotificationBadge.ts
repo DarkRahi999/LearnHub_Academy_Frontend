@@ -57,7 +57,7 @@ export function useNotificationBadge(): NotificationContextType {
     }, 60000); // Refresh every 60 seconds instead of 30
     
     return () => clearInterval(interval);
-  }, []);
+  }, [fetchUnreadCount]);
 
   return {
     unreadCount,

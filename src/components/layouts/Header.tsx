@@ -1,6 +1,6 @@
 "use client";
 
-import { LogOut, UsersRound, User, LogIn, Menu, X, MessageCircleMore, MonitorCog, Shield } from 'lucide-react';
+import { LogOut, UsersRound, User, LogIn, Menu, X, BellRing, Newspaper, Shield } from 'lucide-react';
 import { Button } from '../ui/button';
 import { NavButton } from '../own/NavButton';
 import { ModeToggle } from './ModeToggle';
@@ -16,9 +16,9 @@ import { NotificationBadge } from '@/components/ui/notification-badge';
 
 export default function Header() {
     const { user, isLoading: loading, logout } = useAuth();
-    // Only initialize notification badge when user is authenticated
-    const notificationData = user ? useNotificationBadge() : null;
-    const unreadCount = notificationData?.unreadCount || 0;
+    // Initialize notification badge hook always (not conditionally)
+    const notificationData = useNotificationBadge();
+    const unreadCount = user ? (notificationData?.unreadCount || 0) : 0;
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [isDesktopProfileOpen, setIsDesktopProfileOpen] = useState(false);
 
@@ -29,14 +29,14 @@ export default function Header() {
     };
 
     return (
-        <header className="animate-slide bg-background border-b sticky top-0 z-20 px-4 xs:px-6 sm:px-8 lg:px-12 h-12 p-2 transition-all duration-300 ease-in-out shadow-sm hover:shadow-md">
+        <header className="animate-slide-in-down bg-background border-b sticky top-0 z-20 px-4 xs:px-6 sm:px-8 lg:px-12 h-12 p-2 transition-all duration-300 ease-in-out shadow-sm hover:shadow-lg animate-pulse-glow">
             <div className="flex h-8 items-center justify-between w-full max-w-7xl mx-auto">
                 <div className="flex items-center gap-2">
                     <Link href="/"
                         className="flex justify-center items-center gap-2 ml-0 group transition-all duration-300 ease-in-out hover:scale-105"
                         title="Home"
                     >
-                        <h1 className="text-lg xs:text-xl font-bold m-0 mt-1 transition-colors duration-300 group-hover:text-primary">
+                        <h1 className="text-lg xs:text-xl font-bold m-0 mt-1 transition-colors duration-300 group-hover:text-primary text-foreground dark:text-white">
                             <span className="xs:hidden">LearnHub Academy</span>
                             <span className="hidden xs:inline">LearnHub Academy</span>
                         </h1>
@@ -65,13 +65,31 @@ export default function Header() {
                         </>
                     ) : (
                         <>
-                            <NavButton href="/posts" label="Posts" icon={MonitorCog} />
-                            <NavButton 
-                                href="/notices" 
-                                label="Notices" 
-                                icon={MessageCircleMore} 
-                                badge={<NotificationBadge count={unreadCount} />}
-                            />
+                            {/* Posts/Blog Button - Icon only on small screens, Icon + text on md+ */}
+                            <Button
+                                variant="ghost"
+                                asChild
+                                className="transition-all duration-300 ease-in-out hover:scale-110 hover:bg-primary/10 group relative animate-fade-in-up"
+                            >
+                                <Link href="/posts" title="Blog">
+                                    <Newspaper className="w-5 h-5 transition-transform duration-300 group-hover:scale-110" />
+                                    <span className="hidden md:inline ml-2">Blog</span>
+                                </Link>
+                            </Button>
+                            
+                            {/* Notices Button - Icon only on small screens, Icon + text on md+ */}
+                            <Button
+                                variant="ghost"
+                                asChild
+                                className="transition-all duration-300 ease-in-out hover:scale-110 hover:bg-primary/10 group relative animate-fade-in-up"
+                            >
+                                <Link href="/notices" title="Notices">
+                                    <BellRing className="w-5 h-5 transition-transform duration-300 group-hover:scale-110" />
+                                    <span className="hidden md:inline ml-2">Notice</span>
+                                    <NotificationBadge count={unreadCount} />
+                                </Link>
+                            </Button>
+                            
                             <RoleGuard allowedRoles={[UserRole.ADMIN, UserRole.SUPER_ADMIN]}>
                                 <NavButton href="/admin" label="Admin" icon={Shield} />
                             </RoleGuard>
@@ -122,8 +140,9 @@ export default function Header() {
                 <>
                     {/*________________ Backdrop ________________*/}
                     <div
-                        className="fixed top-12 left-0 right-0 bottom-0 bg-black/30 backdrop-blur-md z-40 sm:hidden"
+                        className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 sm:hidden transition-opacity duration-300"
                         onClick={() => setIsMobileMenuOpen(false)}
+                        style={{ top: '3rem' }}
                     />
 
 
@@ -200,14 +219,14 @@ export default function Header() {
                                         </Button>
                                         <Button variant="ghost" asChild className="w-full justify-start h-12 text-left transition-all duration-300 ease-in-out hover:bg-accent/50 hover:scale-105 hover:translate-x-2">
                                             <Link href="/notices" onClick={() => setIsMobileMenuOpen(false)} className="relative">
-                                                <MessageCircleMore className="w-5 h-5 mr-3 transition-transform duration-300 group-hover:scale-110" />
+                                                <BellRing className="w-5 h-5 mr-3 transition-transform duration-300 group-hover:scale-110" />
                                                 Notices
                                                 <NotificationBadge count={unreadCount} className="absolute top-1 right-1" />
                                             </Link>
                                         </Button>
                                         <Button variant="ghost" asChild className="w-full justify-start h-12 text-left transition-all duration-300 ease-in-out hover:bg-accent/50 hover:scale-105 hover:translate-x-2">
                                             <Link href="/posts" onClick={() => setIsMobileMenuOpen(false)}>
-                                                <MonitorCog className="w-5 h-5 mr-3 transition-transform duration-300 group-hover:scale-110" />
+                                                <Newspaper className="w-5 h-5 mr-3 transition-transform duration-300 group-hover:scale-110" />
                                                 Posts
                                             </Link>
                                         </Button>

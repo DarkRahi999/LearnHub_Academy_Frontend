@@ -8,6 +8,7 @@ type Props = {
     label: string,
     href?: string,
     badge?: ReactNode,
+    showTextOnMd?: boolean, // New prop to show text on medium screens
 }
 
 export function NavButton({
@@ -15,24 +16,33 @@ export function NavButton({
     label,
     href,
     badge,
+    showTextOnMd = false,
 }: Props) {
     return (
         <Button
             variant="ghost"
-            size="icon"
+            size={showTextOnMd ? "default" : "icon"}
             aria-label={label}
             title={label}
-            className="rounded-full transition-all duration-300 ease-in-out hover:scale-110 hover:bg-primary/10 group relative"
+            className={`transition-all duration-300 ease-in-out hover:scale-110 hover:bg-primary/10 group relative animate-fade-in-up ${
+                showTextOnMd ? "" : "rounded-full"
+            }`}
             asChild
         >
             {href ? (
                 <Link href={href}>
                     <Icon className="transition-transform duration-300 group-hover:scale-110" />
+                    {showTextOnMd && (
+                        <span className="hidden md:inline ml-2">{label}</span>
+                    )}
                     {badge}
                 </Link>
             ) : (
                 <>
                     <Icon className="transition-transform duration-300 group-hover:scale-110" />
+                    {showTextOnMd && (
+                        <span className="hidden md:inline ml-2">{label}</span>
+                    )}
                     {badge}
                 </>
             )}
