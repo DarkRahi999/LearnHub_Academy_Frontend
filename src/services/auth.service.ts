@@ -10,17 +10,9 @@ const authApi = axios.create({
 //W---------={ Add request interceptor to include auth token }=----------
 authApi.interceptors.request.use((config) => {
   const token = localStorage.getItem('access_token');
-  // Only log in development and for debugging
-  if (process.env.NODE_ENV === 'development' && Math.random() < 0.1) {
-    console.log('Making API request to:', config.url);
-    console.log('Token available:', token ? 'Yes' : 'No');
-  }
   if (token) {
     config.headers = config.headers || {};
     config.headers.Authorization = `Bearer ${token}`;
-    if (process.env.NODE_ENV === 'development' && Math.random() < 0.1) {
-      console.log('Authorization header set');
-    }
   }
   return config;
 });
@@ -28,21 +20,10 @@ authApi.interceptors.request.use((config) => {
 //W---------={ Add response interceptor to handle token refresh }=----------
 authApi.interceptors.response.use(
   (response) => {
-    // Only log in development and for debugging
-    if (process.env.NODE_ENV === 'development' && Math.random() < 0.1) {
-      console.log('API response received:', response.status, response.config.url);
-    }
     return response;
   },
   (error) => {
-    // Only log errors in development
-    if (process.env.NODE_ENV === 'development') {
-      console.log('API error:', error.response?.status, error.config?.url);
-    }
     if (error.response?.status === 401) {
-      if (process.env.NODE_ENV === 'development') {
-        console.log('401 Unauthorized - Token expired or invalid, redirecting to login');
-      }
  //W---------={ Token expired or invalid, redirect to login }=----------
       localStorage.removeItem('access_token');
       localStorage.removeItem('user');
@@ -55,23 +36,12 @@ authApi.interceptors.response.use(
 //W-----------------------={ LOGIN }=--------------------------
 export const loginUser = async (credentials: UserLogin): Promise<AuthResponse> => {
   try {
-    if (process.env.NODE_ENV === 'development') {
-      console.log('Login attempt with:', credentials.email);
-    }
     const res = await authApi.post<AuthResponse>(API_URLS.auth.login, credentials);
-    
-    if (process.env.NODE_ENV === 'development') {
-      console.log('Login successful, token received:', res.data.access_token ? 'Yes' : 'No');
-      console.log('User data:', res.data.user);
-    }
     
  //W---------={ Store token and user data in localStorage }=----------
     localStorage.setItem('access_token', res.data.access_token);
     localStorage.setItem('user', JSON.stringify(res.data.user));
     
-    if (process.env.NODE_ENV === 'development') {
-      console.log('Token stored in localStorage');
-    }
     return res.data;
   } catch (error: unknown) {
     const err = error as { response?: { data?: unknown }; message?: string };

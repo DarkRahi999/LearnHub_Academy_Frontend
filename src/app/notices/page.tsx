@@ -11,6 +11,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { UserRole } from '@/interface/user';
 import Header from '@/components/layouts/Header';
+import Link from 'next/link';
 
 export default function NoticesPage() {
   const { user, isLoading: authLoading } = useAuth();
@@ -24,7 +25,7 @@ export default function NoticesPage() {
 
   const fetchNotices = useCallback(async () => {
     if (!user) return;
-    
+
     try {
       setLoading(true);
       setError(null);
@@ -46,32 +47,28 @@ export default function NoticesPage() {
 
   // Filter notices based on search term and active status
   useEffect(() => {
-    let filtered = notices.filter(notice => 
+    let filtered = notices.filter(notice =>
       showActiveOnly ? notice.isActive : true
     );
-    
+
     if (searchTerm) {
-      filtered = filtered.filter(notice => 
+      filtered = filtered.filter(notice =>
         notice.subHeading.toLowerCase().includes(searchTerm.toLowerCase()) ||
         notice.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
         `${notice.createdBy.firstName} ${notice.createdBy.lastName}`.toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
-    
+
     setFilteredNotices(filtered);
   }, [notices, searchTerm, showActiveOnly]);
 
   const canCreateNotice = user?.role === UserRole.ADMIN || user?.role === UserRole.SUPER_ADMIN;
 
-  const handleCreateNotice = () => {
-    alert('Create Notice functionality will be implemented here!');
-  };
-
   const handleNoticeClick = async (notice: Notice) => {
     if (!notice.isRead) {
       await markAsRead(notice.id);
       // Update local state optimistically
-      setNotices(prev => prev.map(n => 
+      setNotices(prev => prev.map(n =>
         n.id === notice.id ? { ...n, isRead: true } : n
       ));
     }
@@ -137,25 +134,26 @@ export default function NoticesPage() {
           <div className="mb-8">
             <div className="flex items-center justify-between mb-6">
               <div>
-                <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent mb-2">
+                <h1 className="text-4xl font-bold bg-gradient-to-r from-gray-400 to-gray-900 bg-clip-text text-transparent mb-2">
                   📢 Notices
                 </h1>
                 <p className="text-gray-600 dark:text-gray-400 text-lg">
                   Stay updated with the latest announcements and important information.
                 </p>
               </div>
-              
+
               {canCreateNotice && (
-                <Button 
-                  onClick={handleCreateNotice}
-                  className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white"
-                >
-                  <Plus className="w-4 h-4 mr-2" />
-                  Create Notice
-                </Button>
+                <Link href="/admin/notices">
+                  <Button
+                    className="bg-black hover:to-gray-700 text-white"
+                  >
+                    <Plus className="w-4 h-4 mr-2" />
+                    Create Notice
+                  </Button>
+                </Link>
               )}
             </div>
-            
+
             {/* Search and Filter Bar */}
             <div className="flex flex-col sm:flex-row gap-4 mb-6">
               <div className="relative flex-1">
@@ -168,7 +166,7 @@ export default function NoticesPage() {
                   className="pl-10 bg-white/80 backdrop-blur-sm border-gray-200 focus:border-blue-400"
                 />
               </div>
-              
+
               <Button
                 variant={showActiveOnly ? "default" : "outline"}
                 onClick={() => setShowActiveOnly(!showActiveOnly)}
@@ -178,7 +176,7 @@ export default function NoticesPage() {
                 {showActiveOnly ? 'Active Only' : 'Show All'}
               </Button>
             </div>
-            
+
             {/* Stats */}
             <div className="flex gap-4 text-sm text-gray-600 dark:text-gray-400">
               <span className="bg-white/80 dark:bg-gray-800/80 px-3 py-1 rounded-full">
@@ -215,14 +213,14 @@ export default function NoticesPage() {
                         {searchTerm ? 'No matching notices found' : 'No notices available'}
                       </h3>
                       <p className="text-gray-600 dark:text-gray-400 max-w-md mx-auto">
-                        {searchTerm 
+                        {searchTerm
                           ? `No notices match your search term &quot;${searchTerm}&quot;. Try different keywords.`
                           : 'There are no notices to display at the moment. Check back later for updates.'
                         }
                       </p>
                       {searchTerm && (
-                        <Button 
-                          variant="ghost" 
+                        <Button
+                          variant="ghost"
                           onClick={() => setSearchTerm('')}
                           className="mt-4"
                         >
@@ -235,8 +233,8 @@ export default function NoticesPage() {
               ) : (
                 <div className="grid gap-6">
                   {filteredNotices.map((notice) => (
-                    <NoticeCard 
-                      key={notice.id} 
+                    <NoticeCard
+                      key={notice.id}
                       notice={notice}
                       onClick={() => handleNoticeClick(notice)}
                     />

@@ -94,7 +94,7 @@ export default function AdminDashboard() {
               <h3 className="text-xl font-semibold mb-4">System Settings</h3>
               <p className="text-gray-600 mb-4">Configure system-wide settings</p>
               <Button asChild>
-                <a href="/admin/settings">System Settings</a>
+                <a href="/admin/system-settings">System Settings</a>
               </Button>
             </div>
           </RoleGuard>

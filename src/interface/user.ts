@@ -42,6 +42,7 @@ export interface UserSignup {
   password: string;
   dob?: string;
   gender: Gender;
+  role?: UserRole;
   nationality?: string;
   religion?: string;
   acceptTerms: boolean;
@@ -65,6 +66,10 @@ export interface UserProfile {
   nationality?: string;
   religion?: string;
   avatarUrl: string;
+  isBlocked?: boolean;
+  lastLoginAt?: string;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface AuthResponse {

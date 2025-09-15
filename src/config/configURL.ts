@@ -15,6 +15,16 @@ export const API_URLS = {
     forgotPassword: `${API_BASE_URL}/auth/forgot-password`,
     resetPassword: `${API_BASE_URL}/auth/reset-password`,
   },
+  users: {
+    getAll: `${API_BASE_URL}/auth/users`,
+    getById: (id: number) => `${API_BASE_URL}/auth/users/${id}`,
+    create: `${API_BASE_URL}/auth/users/create`,
+    update: (id: number) => `${API_BASE_URL}/auth/users/${id}`,
+    updateRole: (id: number) => `${API_BASE_URL}/auth/users/${id}/role`,
+    updateStatus: (id: number) => `${API_BASE_URL}/auth/users/${id}/status`,
+    delete: (id: number) => `${API_BASE_URL}/auth/users/${id}`,
+    bulkAction: `${API_BASE_URL}/auth/users/bulk-action`,
+  },
   notices: {
     getAll: `${API_BASE_URL}/notices`,
     getById: (id: number) => `${API_BASE_URL}/notices/${id}`,
