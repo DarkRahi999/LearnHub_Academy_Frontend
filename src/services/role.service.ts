@@ -5,14 +5,21 @@ export class RoleService {
     [UserRole.USER]: [
       Permission.VIEW_PROFILE,
       Permission.UPDATE_PROFILE,
+      Permission.VIEW_NOTICES,
+      Permission.VIEW_POSTS,
     ],
     [UserRole.ADMIN]: [
       Permission.VIEW_PROFILE,
       Permission.UPDATE_PROFILE,
+      Permission.VIEW_NOTICES,
+      Permission.VIEW_POSTS,
       Permission.CREATE_NOTICE,
       Permission.UPDATE_NOTICE,
       Permission.DELETE_NOTICE,
       Permission.MANAGE_USERS,
+      Permission.CREATE_POST,
+      Permission.UPDATE_POST,
+      Permission.DELETE_POST,
     ],
     [UserRole.SUPER_ADMIN]: [
       Permission.VIEW_PROFILE,

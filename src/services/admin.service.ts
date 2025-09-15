@@ -1,4 +1,4 @@
-import { UserProfile, UserRole } from '@/interface/user';
+import { UserProfile } from '@/interface/user';
 import { API_BASE_URL } from '@/config/configURL';
 
 export interface AdminSearchParams {

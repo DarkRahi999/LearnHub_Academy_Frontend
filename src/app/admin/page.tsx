@@ -72,7 +72,7 @@ export default function AdminDashboard() {
           <RoleGuard requiredPermissions={[Permission.CREATE_POST]}>
             <div className="border rounded-lg p-6">
               <h3 className="text-xl font-semibold mb-4">Post Management</h3>
-              <p className="text-gray-600 mb-4">Create and manage posts (Super Admin only)</p>
+              <p className="text-gray-600 mb-4">Create and manage posts</p>
               <Button asChild>
                 <a href="/admin/posts">Manage Posts</a>
               </Button>

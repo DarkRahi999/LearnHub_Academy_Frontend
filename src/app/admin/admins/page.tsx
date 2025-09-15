@@ -20,13 +20,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
 
 interface AdminWithActions extends UserProfile {
   canDemote: boolean;
@@ -45,18 +38,16 @@ export default function AdminManagement() {
     page: 1,
     limit: 10
   });
-  
+
   // Dialog states
   const [showPromoteDialog, setShowPromoteDialog] = useState(false);
   const [showDemoteDialog, setShowDemoteDialog] = useState(false);
   const [selectedUser, setSelectedUser] = useState<UserProfile | null>(null);
   const [actionLoading, setActionLoading] = useState(false);
-  
+
   // Stats
   const [stats, setStats] = useState({ totalAdmins: 0, activeAdmins: 0 });
-  
   const { toast } = useToast();
-
   const fetchAdmins = useCallback(async () => {
     try {
       setLoading(true);
@@ -66,7 +57,7 @@ export default function AdminManagement() {
         canDemote: admin.role === UserRole.ADMIN // Can't demote Super Admin
       }));
       setAdmins(adminsWithActions);
-    } catch (error) {
+    } catch {
       toast({
         title: "Error",
         description: "Failed to fetch admins",
@@ -107,16 +98,16 @@ export default function AdminManagement() {
 
   const handlePromoteUser = async () => {
     if (!selectedUser) return;
-    
+
     try {
       setActionLoading(true);
       await adminService.promoteToAdmin(selectedUser.id.toString());
-      
+
       toast({
         title: "Success",
         description: `${selectedUser.firstName} has been promoted to admin`
       });
-      
+
       setShowPromoteDialog(false);
       setSelectedUser(null);
       fetchAdmins();
@@ -135,16 +126,16 @@ export default function AdminManagement() {
 
   const handleDemoteAdmin = async () => {
     if (!selectedUser) return;
-    
+
     try {
       setActionLoading(true);
       await adminService.demoteAdmin(selectedUser.id.toString());
-      
+
       toast({
         title: "Success",
         description: `${selectedUser.firstName} has been demoted to user`
       });
-      
+
       setShowDemoteDialog(false);
       setSelectedUser(null);
       fetchAdmins();
