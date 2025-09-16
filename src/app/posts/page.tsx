@@ -6,6 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { Calendar, User, Tag, Eye } from 'lucide-react';
 import { API_BASE_URL } from '@/config/configURL';
 import { useAuth } from '@/hooks/useAuth';
+import Header from '@/components/layouts/Header';
 
 interface Post {
   id: number;
@@ -22,10 +23,11 @@ interface Post {
 }
 
 export default function PostsPage() {
-  const { user, isLoading } = useAuth();
+  const { user, isLoading: authLoading } = useAuth();
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [initialized, setInitialized] = useState(false);
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -44,7 +46,7 @@ export default function PostsPage() {
         }
 
         const data = await response.json();
-        setPosts(data);
+        setPosts(Array.isArray(data) ? data : data.posts || []);
       } catch (err) {
         setError(err instanceof Error ? err.message : 'An error occurred');
       } finally {
@@ -52,12 +54,21 @@ export default function PostsPage() {
       }
     };
 
-    if (!isLoading && user) {
+    // Only fetch posts when user is authenticated and not already initialized
+    if (!authLoading && user && !initialized) {
+      setInitialized(true);
       fetchPosts();
     }
-  }, [user, isLoading]);
+    
+    // Reset initialized state when user logs out
+    if (!user && initialized) {
+      setInitialized(false);
+      setPosts([]);
+    }
+  }, [user, authLoading, initialized]);
 
-  if (isLoading) {
+  // Consolidated loading state - show loading spinner when either auth or data is loading
+  if (authLoading || (user && loading && !initialized)) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
@@ -65,7 +76,8 @@ export default function PostsPage() {
     );
   }
 
-  if (!user) {
+  // Show access denied when user is not authenticated
+  if (!authLoading && !user) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
@@ -76,14 +88,6 @@ export default function PostsPage() {
             Please log in to view posts.
           </p>
         </div>
-      </div>
-    );
-  }
-
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
       </div>
     );
   }
@@ -100,7 +104,9 @@ export default function PostsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <>
+      <Header />
+      <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-8">
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-foreground mb-2">Posts</h1>
@@ -121,7 +127,7 @@ export default function PostsPage() {
           </Card>
         ) : (
           <div className="grid gap-6">
-            {posts.map((post) => (
+            {posts.map((post: Post) => (
               <Card key={post.id} className="hover:shadow-lg transition-shadow">
                 <CardHeader>
                   <div className="flex items-start justify-between">
@@ -153,7 +159,7 @@ export default function PostsPage() {
                   </CardDescription>
                   {post.tags && post.tags.length > 0 && (
                     <div className="flex flex-wrap gap-2">
-                      {post.tags.map((tag, index) => (
+                      {post.tags.map((tag: string, index: number) => (
                         <Badge key={index} variant="outline" className="text-xs">
                           <Tag className="w-3 h-3 mr-1" />
                           {tag}
@@ -167,6 +173,7 @@ export default function PostsPage() {
           </div>
         )}
       </div>
-    </div>
+      </div>
+    </>
   );
 }

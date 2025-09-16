@@ -16,6 +16,7 @@ import { NotificationBadge } from '@/components/ui/notification-badge';
 
 export default function Header() {
     const { user, isLoading: loading, logout } = useAuth();
+
     // Initialize notification badge hook always (not conditionally)
     const notificationData = useNotificationBadge();
     const unreadCount = user ? (notificationData?.unreadCount || 0) : 0;
@@ -65,7 +66,7 @@ export default function Header() {
                         </>
                     ) : (
                         <>
-                            {/* Posts/Blog Button - Icon only on small screens, Icon + text on md+ */}
+                            {/*______________ For md Screen ______________ */}
                             <Button
                                 variant="ghost"
                                 asChild
@@ -73,11 +74,9 @@ export default function Header() {
                             >
                                 <Link href="/posts" title="Blog">
                                     <Newspaper className="w-5 h-5 transition-transform duration-300 group-hover:scale-110" />
-                                    <span className="hidden md:inline ml-2">Blog</span>
+                                    <span className="hidden md:inline">Blog</span>
                                 </Link>
                             </Button>
-                            
-                            {/* Notices Button - Icon only on small screens, Icon + text on md+ */}
                             <Button
                                 variant="ghost"
                                 asChild
@@ -85,7 +84,7 @@ export default function Header() {
                             >
                                 <Link href="/notices" title="Notices">
                                     <BellRing className="w-5 h-5 transition-transform duration-300 group-hover:scale-110" />
-                                    <span className="hidden md:inline ml-2">Notice</span>
+                                    <span className="hidden md:inline">Notice</span>
                                     <NotificationBadge count={unreadCount} />
                                 </Link>
                             </Button>
@@ -113,7 +112,6 @@ export default function Header() {
                                     }}
                                     unoptimized
                                 />
-                                {/* Name hidden per request */}
                             </button>
                         </>
                     )}

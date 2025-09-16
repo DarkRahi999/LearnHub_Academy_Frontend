@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useMemo } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Calendar, Search, Filter, Plus } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
@@ -13,6 +13,23 @@ import { UserRole } from '@/interface/user';
 import Header from '@/components/layouts/Header';
 import Link from 'next/link';
 
+// Custom hook for debounced values
+function useDebounce<T>(value: T, delay: number): T {
+  const [debouncedValue, setDebouncedValue] = useState<T>(value);
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedValue(value);
+    }, delay);
+
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [value, delay]);
+
+  return debouncedValue;
+}
+
 export default function NoticesPage() {
   const { user, isLoading: authLoading } = useAuth();
   const { markAsRead } = useNotificationBadge();
@@ -22,15 +39,20 @@ export default function NoticesPage() {
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [showActiveOnly, setShowActiveOnly] = useState(true);
+  const [totalCount, setTotalCount] = useState(0);
+  
+  // Debounce search term to avoid too many API calls
+  const debouncedSearchTerm = useDebounce(searchTerm, 300);
 
-  const fetchNotices = useCallback(async () => {
+  const fetchNotices = useCallback(async (search?: string) => {
     if (!user) return;
 
     try {
       setLoading(true);
       setError(null);
-      const data = await noticeService.getAllNotices();
+      const data = await noticeService.getAllNotices(search);
       setNotices(data.notices);
+      setTotalCount(data.total || data.notices.length);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred while fetching notices');
     } finally {
@@ -45,22 +67,17 @@ export default function NoticesPage() {
     }
   }, [authLoading, user, fetchNotices]);
 
-  // Filter notices based on search term and active status
+  // Fetch notices when search term changes (debounced)
   useEffect(() => {
-    let filtered = notices.filter(notice =>
-      showActiveOnly ? notice.isActive : true
-    );
-
-    if (searchTerm) {
-      filtered = filtered.filter(notice =>
-        notice.subHeading.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        notice.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        `${notice.createdBy.firstName} ${notice.createdBy.lastName}`.toLowerCase().includes(searchTerm.toLowerCase())
-      );
+    if (!authLoading && user) {
+      fetchNotices(debouncedSearchTerm);
     }
+  }, [debouncedSearchTerm, authLoading, user, fetchNotices]);
 
-    setFilteredNotices(filtered);
-  }, [notices, searchTerm, showActiveOnly]);
+  // Client-side filter for active status only (since search is now server-side)
+  const displayNotices = useMemo(() => {
+    return notices.filter(notice => showActiveOnly ? notice.isActive : true);
+  }, [notices, showActiveOnly]);
 
   const canCreateNotice = user?.role === UserRole.ADMIN || user?.role === UserRole.SUPER_ADMIN;
 
@@ -72,6 +89,14 @@ export default function NoticesPage() {
         n.id === notice.id ? { ...n, isRead: true } : n
       ));
     }
+  };
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(e.target.value);
+  };
+
+  const clearSearch = () => {
+    setSearchTerm('');
   };
 
   // Show loading only during auth or when fetching notices
@@ -116,7 +141,7 @@ export default function NoticesPage() {
             </div>
             <h1 className="text-2xl font-bold text-red-600 mb-4">Error</h1>
             <p className="text-gray-600 dark:text-gray-400">{error}</p>
-            <Button onClick={fetchNotices} className="mt-4">
+            <Button onClick={() => fetchNotices(debouncedSearchTerm)} className="mt-4">
               Retry
             </Button>
           </CardContent>
@@ -162,7 +187,7 @@ export default function NoticesPage() {
                   type="text"
                   placeholder="Search notices by title, content, or author..."
                   value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
+                  onChange={handleSearchChange}
                   className="pl-10 bg-white/80 backdrop-blur-sm border-gray-200 focus:border-blue-400"
                 />
               </div>
@@ -180,14 +205,19 @@ export default function NoticesPage() {
             {/* Stats */}
             <div className="flex gap-4 text-sm text-gray-600 dark:text-gray-400">
               <span className="bg-white/80 dark:bg-gray-800/80 px-3 py-1 rounded-full">
-                Total: {notices.length} notices
+                Total: {totalCount} notices
               </span>
               <span className="bg-white/80 dark:bg-gray-800/80 px-3 py-1 rounded-full">
-                Showing: {filteredNotices.length} notices
+                Showing: {displayNotices.length} notices
               </span>
               {searchTerm && (
                 <span className="bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 px-3 py-1 rounded-full">
                   Search: &quot;{searchTerm}&quot;
+                </span>
+              )}
+              {loading && (
+                <span className="bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200 px-3 py-1 rounded-full">
+                  🔍 Searching...
                 </span>
               )}
             </div>
@@ -204,7 +234,7 @@ export default function NoticesPage() {
           {/* Notices Grid */}
           {!loading && (
             <>
-              {filteredNotices.length === 0 ? (
+              {displayNotices.length === 0 ? (
                 <Card className="bg-white/80 backdrop-blur-sm border-gray-200">
                   <CardContent className="text-center py-16">
                     <div className="text-gray-500 dark:text-gray-400">
@@ -221,7 +251,7 @@ export default function NoticesPage() {
                       {searchTerm && (
                         <Button
                           variant="ghost"
-                          onClick={() => setSearchTerm('')}
+                          onClick={clearSearch}
                           className="mt-4"
                         >
                           Clear Search
@@ -232,7 +262,7 @@ export default function NoticesPage() {
                 </Card>
               ) : (
                 <div className="grid gap-6">
-                  {filteredNotices.map((notice) => (
+                  {displayNotices.map((notice) => (
                     <NoticeCard
                       key={notice.id}
                       notice={notice}

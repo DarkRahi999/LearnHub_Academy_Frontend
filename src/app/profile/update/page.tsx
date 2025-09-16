@@ -7,11 +7,26 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Label } from "@/components/ui/label";
+import { 
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from "@/components/ui/select";
+import { 
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle
+} from "@/components/ui/card";
 import { UserProfile, Gender } from "@/interface/user";
 import { getCurrentUser, getUserProfile, updateUserProfile } from "@/services/auth.service";
+import { useToast } from "@/hooks/use-toast";
 import { z } from "zod";
+import { User, Mail, Phone, Calendar, Globe, Heart } from "lucide-react";
 
 const ProfileFormSchema = z.object({
   firstName: z.string().min(2, { message: "First name must be at least 2 characters" }),
@@ -26,13 +41,19 @@ const ProfileFormSchema = z.object({
 });
 
 export default function UpdateProfilePage() {
+  const { toast } = useToast();
   const [user, setUser] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [successMsg, setSuccessMsg] = useState<string>("");
-  const [errorMsg, setErrorMsg] = useState<string>("");
 
-  const form = useForm<z.infer<typeof ProfileFormSchema>>({
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    watch,
+    reset,
+    formState: { errors }
+  } = useForm<z.infer<typeof ProfileFormSchema>>({
     resolver: zodResolver(ProfileFormSchema),
     defaultValues: {
       firstName: "",
@@ -46,6 +67,8 @@ export default function UpdateProfilePage() {
       avatarUrl: "",
     },
   });
+
+  const watchedGender = watch('gender');
 
   const avatarSrc = (url?: string) => {
     const v = (url || "").trim();
@@ -64,13 +87,12 @@ export default function UpdateProfilePage() {
   };
 
   useEffect(() => {
-    const load = async () => {
+    const loadUserProfile = async () => {
       try {
         setLoading(true);
         const data = await getUserProfile();
         setUser(data);
-        // Normalize nullish values and format date for input[type=date]
-        form.reset({
+        reset({
           firstName: data.firstName ?? "",
           lastName: data.lastName ?? "",
           phone: data.phone ?? "",
@@ -85,7 +107,7 @@ export default function UpdateProfilePage() {
         const local = getCurrentUser();
         if (local) {
           setUser(local);
-          form.reset({
+          reset({
             firstName: local.firstName ?? "",
             lastName: local.lastName ?? "",
             phone: local.phone ?? "",
@@ -101,13 +123,12 @@ export default function UpdateProfilePage() {
         setLoading(false);
       }
     };
-    load();
-  }, [form]);
+    loadUserProfile();
+  }, [reset]);
 
   const onSubmit = async (values: z.infer<typeof ProfileFormSchema>) => {
     try {
       setSaving(true);
-      // Update all profile fields, not just avatar
       const updatedUser = await updateUserProfile({
         firstName: values.firstName,
         lastName: values.lastName,
@@ -120,48 +141,85 @@ export default function UpdateProfilePage() {
         avatarUrl: values.avatarUrl,
       });
       setUser(updatedUser);
-      setSuccessMsg("Profile updated successfully");
-      setErrorMsg("");
+      toast({
+        title: "Success",
+        description: "Profile updated successfully"
+      });
       setTimeout(() => {
         window.location.href = "/profile";
       }, 800);
-    } catch (e) {
-      console.error(e);
-      setErrorMsg("Failed to update profile");
-      setSuccessMsg("");
+    } catch (error: unknown) {
+      const err = error as { response?: { data?: { message?: string } } };
+      toast({
+        title: "Error",
+        description: err.response?.data?.message || "Failed to update profile",
+        variant: "destructive"
+      });
     } finally {
       setSaving(false);
     }
   };
 
+  const handleCancel = () => {
+    window.location.href = "/profile";
+  };
+
+  if (loading) {
+    return (
+      <>
+        <Header />
+        <div className="container mx-auto py-6">
+          <Card className="max-w-4xl mx-auto">
+            <CardContent className="p-8 text-center">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+              <p>Loading profile...</p>
+            </CardContent>
+          </Card>
+        </div>
+      </>
+    );
+  }
+
+  if (!user) {
+    return (
+      <>
+        <Header />
+        <div className="container mx-auto py-6">
+          <Card className="max-w-4xl mx-auto">
+            <CardContent className="p-8 text-center">
+              <div className="text-lg text-red-500">Failed to load profile data</div>
+            </CardContent>
+          </Card>
+        </div>
+      </>
+    );
+  }
+
   return (
     <>
       <Header />
       <div className="container mx-auto py-6">
-        <h1 className="text-2xl font-bold mb-4 text-center">Update Profile</h1>
-        {successMsg && (
-          <div className="mb-4 rounded-md border border-green-200 bg-green-50 px-3 py-2 text-sm text-green-800">
-            {successMsg}
+        <div className="flex justify-between items-center mb-6">
+          <div>
+            <h1 className="text-3xl font-bold flex items-center gap-2">
+              <User className="h-8 w-8" />
+              Update Profile
+            </h1>
+            <p className="text-gray-600 mt-1">
+              Update your personal information and preferences
+            </p>
           </div>
-        )}
-        {errorMsg && (
-          <div className="mb-4 rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-800">
-            {errorMsg}
-          </div>
-        )}
-        {loading ? (
-          <div className="flex justify-center items-center h-40">Loading...</div>
-        ) : !user ? (
-          <div className="flex justify-center items-center h-40 text-red-500">Profile not found</div>
-        ) : (
-          <div className="max-w-3xl mx-auto border rounded-md p-4">
-            <div className="flex flex-col items-center mb-4">
+        </div>
+
+        <Card className="max-w-4xl mx-auto">
+          <CardHeader>
+            <div className="flex items-center gap-4">
               <Image
                 src={avatarSrc(user.avatarUrl)}
-                alt="Avatar"
-                width={96}
-                height={96}
-                className="w-24 h-24 rounded-full object-cover border"
+                alt="Profile Avatar"
+                width={80}
+                height={80}
+                className="w-20 h-20 rounded-full object-cover border"
                 onError={(e) => {
                   const img = e.currentTarget as HTMLImageElement;
                   if (!img.src.includes('/default-user.svg')) {
@@ -170,116 +228,214 @@ export default function UpdateProfilePage() {
                 }}
                 unoptimized
               />
+              <div>
+                <CardTitle className="text-xl">
+                  {user.firstName} {user.lastName || ""}
+                </CardTitle>
+                <CardDescription className="flex items-center gap-1">
+                  <Mail className="h-4 w-4" />
+                  {user.email}
+                </CardDescription>
+              </div>
             </div>
-            <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-                <div className="grid gap-2 grid-cols-1 xs:grid-cols-2">
-                  <FormField name="firstName" control={form.control} render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-sm">First Name</FormLabel>
-                      <FormControl>
-                        <Input {...field} placeholder="First name" />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )} />
-                  <FormField name="lastName" control={form.control} render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-sm">Last Name</FormLabel>
-                      <FormControl>
-                        <Input {...field} placeholder="Last name" />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )} />
-                  <FormField name="email" control={form.control} render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-sm">Email</FormLabel>
-                      <FormControl>
-                        <Input {...field} placeholder="Email" />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )} />
-                </div>
+          </CardHeader>
+          
+          <CardContent>
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+              {/* Personal Information Section */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold border-b pb-2">Personal Information</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {/* First Name */}
+                  <div className="space-y-2">
+                    <Label htmlFor="firstName">First Name *</Label>
+                    <Input
+                      id="firstName"
+                      {...register('firstName', { 
+                        required: 'First name is required',
+                        minLength: { value: 2, message: 'First name must be at least 2 characters' }
+                      })}
+                      placeholder="Enter first name"
+                    />
+                    {errors.firstName && (
+                      <p className="text-sm text-red-500">{errors.firstName.message}</p>
+                    )}
+                  </div>
 
-                <div className="grid gap-2 grid-cols-1 xs:grid-cols-3">
-                  <FormField name="phone" control={form.control} render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-sm">Phone</FormLabel>
-                      <FormControl>
-                        <Input {...field} placeholder="Phone" />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )} />
-                  <FormField name="gender" control={form.control} render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-sm">Gender</FormLabel>
-                      <Select onValueChange={field.onChange} value={field.value}>
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select gender" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          <SelectItem value="male">Male</SelectItem>
-                          <SelectItem value="female">Female</SelectItem>
-                          <SelectItem value="other">Other</SelectItem>
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )} />
-                  <FormField name="dob" control={form.control} render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-sm">Date of Birth</FormLabel>
-                      <FormControl>
-                        <Input type="date" {...field} placeholder="DOB" />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )} />
-                </div>
+                  {/* Last Name */}
+                  <div className="space-y-2">
+                    <Label htmlFor="lastName">Last Name</Label>
+                    <Input
+                      id="lastName"
+                      {...register('lastName')}
+                      placeholder="Enter last name"
+                    />
+                  </div>
 
-                <div className="grid gap-2 grid-cols-1 xs:grid-cols-3">
-                  <FormField name="nationality" control={form.control} render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-sm">Nationality</FormLabel>
-                      <FormControl>
-                        <Input {...field} placeholder="Nationality" />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )} />
-                  <FormField name="religion" control={form.control} render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-sm">Religion</FormLabel>
-                      <FormControl>
-                        <Input {...field} placeholder="Religion" />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )} />
-                  <FormField name="avatarUrl" control={form.control} render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-sm">Avatar URL</FormLabel>
-                      <FormControl>
-                        <Input {...field} placeholder="https://example.com/avatar.jpg" />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )} />
-                </div>
+                  {/* Email */}
+                  <div className="space-y-2">
+                    <Label htmlFor="email" className="flex items-center gap-1">
+                      <Mail className="h-4 w-4" />
+                      Email *
+                    </Label>
+                    <Input
+                      id="email"
+                      type="email"
+                      {...register('email', { 
+                        required: 'Email is required',
+                        pattern: {
+                          value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                          message: 'Invalid email address'
+                        }
+                      })}
+                      placeholder="Enter email address"
+                    />
+                    {errors.email && (
+                      <p className="text-sm text-red-500">{errors.email.message}</p>
+                    )}
+                  </div>
 
-                <div className="flex justify-end gap-2 pt-2">
-                  <Button type="button" variant="ghost" onClick={() => history.back()}>Cancel</Button>
-                  <Button type="submit" disabled={saving}>{saving ? "Saving..." : "Save Changes"}</Button>
+                  {/* Phone */}
+                  <div className="space-y-2">
+                    <Label htmlFor="phone" className="flex items-center gap-1">
+                      <Phone className="h-4 w-4" />
+                      Phone
+                    </Label>
+                    <Input
+                      id="phone"
+                      {...register('phone')}
+                      placeholder="Enter phone number"
+                    />
+                  </div>
+
+                  {/* Gender */}
+                  <div className="space-y-2">
+                    <Label>Gender *</Label>
+                    <Select 
+                      value={watchedGender} 
+                      onValueChange={(value) => setValue('gender', value as "male" | "female" | "other")}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select gender" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="male">Male</SelectItem>
+                        <SelectItem value="female">Female</SelectItem>
+                        <SelectItem value="other">Other</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  {/* Date of Birth */}
+                  <div className="space-y-2">
+                    <Label htmlFor="dob" className="flex items-center gap-1">
+                      <Calendar className="h-4 w-4" />
+                      Date of Birth
+                    </Label>
+                    <Input
+                      id="dob"
+                      type="date"
+                      {...register('dob')}
+                    />
+                  </div>
                 </div>
-              </form>
-            </Form>
-          </div>
-        )}
+              </div>
+
+              {/* Additional Information Section */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold border-b pb-2">Additional Information</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {/* Nationality */}
+                  <div className="space-y-2">
+                    <Label htmlFor="nationality" className="flex items-center gap-1">
+                      <Globe className="h-4 w-4" />
+                      Nationality
+                    </Label>
+                    <Input
+                      id="nationality"
+                      {...register('nationality')}
+                      placeholder="Enter nationality"
+                    />
+                  </div>
+
+                  {/* Religion */}
+                  <div className="space-y-2">
+                    <Label htmlFor="religion" className="flex items-center gap-1">
+                      <Heart className="h-4 w-4" />
+                      Religion
+                    </Label>
+                    <Input
+                      id="religion"
+                      {...register('religion')}
+                      placeholder="Enter religion"
+                    />
+                  </div>
+
+                  {/* Avatar URL */}
+                  <div className="space-y-2 md:col-span-2">
+                    <Label htmlFor="avatarUrl">Avatar URL</Label>
+                    <Input
+                      id="avatarUrl"
+                      {...register('avatarUrl')}
+                      placeholder="Enter avatar URL (optional)"
+                    />
+                    <p className="text-xs text-gray-500">
+                      Provide a URL to your profile image. Leave empty to use default avatar.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* User Info Section - Read Only */}
+              <div className="border-t pt-4">
+                <h4 className="font-medium mb-3">Account Information</h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm bg-gray-50 p-4 rounded-lg">
+                  <div>
+                    <Label className="text-gray-600">User ID</Label>
+                    <p className="font-mono">{user.id}</p>
+                  </div>
+                  <div>
+                    <Label className="text-gray-600">Account Status</Label>
+                    <p className={`font-medium ${
+                      (user as UserProfile & { isBlocked?: boolean }).isBlocked 
+                        ? 'text-red-600' 
+                        : 'text-green-600'
+                    }`}>
+                      {(user as UserProfile & { isBlocked?: boolean }).isBlocked ? 'Blocked' : 'Active'}
+                    </p>
+                  </div>
+                  <div>
+                    <Label className="text-gray-600">Last Login</Label>
+                    <p>{(user as UserProfile & { lastLoginAt?: string }).lastLoginAt 
+                      ? new Date((user as UserProfile & { lastLoginAt: string }).lastLoginAt).toLocaleString() 
+                      : 'Never'}</p>
+                  </div>
+                  <div>
+                    <Label className="text-gray-600">Member Since</Label>
+                    <p>{(user as UserProfile & { createdAt?: string }).createdAt 
+                      ? new Date((user as UserProfile & { createdAt: string }).createdAt).toLocaleDateString() 
+                      : 'N/A'}</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex justify-end space-x-2 pt-4 border-t">
+                <Button 
+                  type="button" 
+                  variant="outline" 
+                  onClick={handleCancel}
+                  disabled={saving}
+                >
+                  Cancel
+                </Button>
+                <Button type="submit" disabled={saving}>
+                  {saving ? 'Updating...' : 'Update Profile'}
+                </Button>
+              </div>
+            </form>
+          </CardContent>
+        </Card>
       </div>
     </>
   );

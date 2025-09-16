@@ -36,8 +36,13 @@ class NoticeService {
     };
   }
 
-  async getAllNotices(): Promise<{ notices: Notice[] }> {
-    const response = await fetch(`${API_BASE_URL}/notices`, {
+  async getAllNotices(searchTerm?: string): Promise<{ notices: Notice[]; total: number; searchTerm?: string }> {
+    const url = new URL(`${API_BASE_URL}/notices`);
+    if (searchTerm && searchTerm.trim()) {
+      url.searchParams.append('search', searchTerm.trim());
+    }
+
+    const response = await fetch(url.toString(), {
       headers: this.getAuthHeaders(),
     });
 

@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { noticeService } from '@/services/notice.service';
+import { useAuth } from '@/hooks/useAuth';
 
 type NotificationContextType = {
   unreadCount: number;
@@ -9,11 +10,18 @@ type NotificationContextType = {
 };
 
 export function useNotificationBadge(): NotificationContextType {
+  const { user, isLoading: authLoading } = useAuth();
   const [unreadCount, setUnreadCount] = useState(0);
   const [loading, setLoading] = useState(false);
   const isInitialized = useRef(false);
 
   const fetchUnreadCount = useCallback(async () => {
+    // Don't fetch if user is not authenticated
+    if (!user || authLoading) {
+      setUnreadCount(0);
+      return;
+    }
+
     try {
       setLoading(true);
       const response = await noticeService.getUnreadNoticesCount();
@@ -22,12 +30,16 @@ export function useNotificationBadge(): NotificationContextType {
     } catch (error) {
       console.error('Failed to fetch unread count:', error);
       setUnreadCount(0);
+      // Reset initialization flag on error to allow retry
+      isInitialized.current = false;
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [user, authLoading]);
 
   const markAsRead = useCallback(async (noticeId: number) => {
+    if (!user) return;
+    
     try {
       await noticeService.markNoticeAsRead(noticeId);
       // Immediately update the count optimistically
@@ -37,27 +49,42 @@ export function useNotificationBadge(): NotificationContextType {
       // If there's an error, refresh to get accurate count
       await fetchUnreadCount();
     }
-  }, [fetchUnreadCount]);
+  }, [fetchUnreadCount, user]);
 
   const refreshCount = useCallback(() => {
-    fetchUnreadCount();
-  }, [fetchUnreadCount]);
-
-  useEffect(() => {
-    // Only fetch once on mount
-    if (!isInitialized.current) {
+    if (user && !authLoading) {
       fetchUnreadCount();
     }
-    
-    // Set up an interval to periodically refresh the count (less frequent)
+  }, [fetchUnreadCount, user, authLoading]);
+
+  useEffect(() => {
+    // Reset state when user changes (login/logout)
+    if (!user) {
+      setUnreadCount(0);
+      isInitialized.current = false;
+      return;
+    }
+
+    // Only fetch once when user is authenticated and not loading
+    if (user && !authLoading && !isInitialized.current) {
+      fetchUnreadCount();
+    }
+  }, [user, authLoading, fetchUnreadCount]);
+
+  useEffect(() => {
+    // Set up an interval to periodically refresh the count (only when authenticated)
+    if (!user || authLoading) {
+      return;
+    }
+
     const interval = setInterval(() => {
-      if (isInitialized.current) {
+      if (user && !authLoading && isInitialized.current) {
         fetchUnreadCount();
       }
-    }, 60000); // Refresh every 60 seconds instead of 30
+    }, 60000); // Refresh every 60 seconds
     
     return () => clearInterval(interval);
-  }, [fetchUnreadCount]);
+  }, [fetchUnreadCount, user, authLoading]);
 
   return {
     unreadCount,
