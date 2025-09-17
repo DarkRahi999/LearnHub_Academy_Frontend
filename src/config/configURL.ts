@@ -44,4 +44,11 @@ export const API_URLS = {
     promote: `${API_BASE_URL}/auth/admins/promote`,
     demote: `${API_BASE_URL}/auth/admins/demote`,
   },
+  courses: {
+    getAll: `${API_BASE_URL}/courses`,
+    getById: (id: number) => `${API_BASE_URL}/courses/${id}`,
+    create: `${API_BASE_URL}/courses`,
+    update: (id: number) => `${API_BASE_URL}/courses/${id}`,
+    delete: (id: number) => `${API_BASE_URL}/courses/${id}`,
+  },
 };

@@ -11,7 +11,7 @@ import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
 import { adminService, AdminSearchParams } from '@/services/admin.service';
 import { getAllUsers } from '@/services/user.service';
-import { Search, Users, UserPlus, UserMinus, Shield, Crown, AlertTriangle } from 'lucide-react';
+import { Search, Users, UserPlus, UserMinus, Shield, Crown, AlertTriangle, Star } from 'lucide-react';
 import {
   Dialog,
   DialogContent,
@@ -203,6 +203,17 @@ export default function AdminManagement() {
             </h1>
             <p className="text-gray-600 mt-1">
               Manage administrator roles and permissions
+            </p>
+          </div>
+        </div>
+
+        {/* Super Admin Notice */}
+        <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg flex items-start gap-3">
+          <Star className="h-5 w-5 text-blue-500 mt-0.5" />
+          <div>
+            <h3 className="font-medium text-blue-800">Super Admin Feature</h3>
+            <p className="text-blue-700 text-sm">
+              Only Super Admins can promote users to Admin roles and demote Admins to regular users.
             </p>
           </div>
         </div>

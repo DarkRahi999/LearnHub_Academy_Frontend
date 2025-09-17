@@ -34,7 +34,6 @@ export default function NoticesPage() {
   const { user, isLoading: authLoading } = useAuth();
   const { markAsRead } = useNotificationBadge();
   const [notices, setNotices] = useState<Notice[]>([]);
-  const [filteredNotices, setFilteredNotices] = useState<Notice[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');

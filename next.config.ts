@@ -9,6 +9,12 @@ const nextConfig: NextConfig = {
         hostname: 'via.placeholder.com',
       },
     ],
+    // Allow local images to be optimized
+    domains: ['localhost', '127.0.0.1'],
+  },
+  // Enable experimental features if needed
+  experimental: {
+    optimizeCss: true,
   },
 };
 
