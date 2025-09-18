@@ -6,6 +6,8 @@ import { useState, useEffect } from "react";
 import { X } from 'lucide-react';
 import BannerCarousel from "@/components/own/BannerCarousel";
 import Link from "next/link";
+import Title from "@/components/own/Title";
+import TopCourses from "@/components/own/TopCourses";
 
 export default function HomePage() {
   const instituteDetails = {
@@ -138,6 +140,15 @@ export default function HomePage() {
           </div>
         </div>
       </div>
+
+      {/* Add the new components here */}
+      <div className="container mx-auto px-4 pt-6 sm:pt-20">
+        <Title
+          title="Our Top Courses"
+          description="Explore our most popular and recently added courses"
+        />
+      </div>
+      <TopCourses />
     </div>
   );
 }

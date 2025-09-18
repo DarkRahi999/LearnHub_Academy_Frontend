@@ -5,20 +5,7 @@ import { useParams } from 'next/navigation';
 import Header from "@/components/layouts/Header";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
-
-// Define the Course interface
-interface Course {
-  id: number;
-  title: string;
-  description: string;
-  highlight: string;
-  imageUrl?: string;
-  createdAt: string;
-  createdBy: {
-    firstName: string;
-    lastName?: string;
-  };
-}
+import { courseService, Course } from '@/services/course.service';
 
 export default function CourseDetailPage() {
   const params = useParams();
@@ -31,64 +18,14 @@ export default function CourseDetailPage() {
   useEffect(() => {
     const fetchCourse = async () => {
       try {
-        // In a real implementation, you would fetch from your backend API
-        // For now, we'll use mock data with existing images
-        const courseImages = [
-          "/img/courses/hsc1.png",
-          "/img/courses/medi.png",
-          "/img/courses/varcity.png",
-          "/img/courses/ing.png",
-          "/img/courses/hsc2.jpg",
-          "/img/courses/versity2.png"
-        ];
-        
-        const courseTitles = [
-          "HSC Preparation Course",
-          "Advanced Medical Entrance Prep",
-          "University Admission Guide",
-          "English Language Mastery",
-          "HSC Science Stream",
-          "University Success Strategies"
-        ];
-        
-        const courseDescriptions = [
-          "Comprehensive preparation course for Higher Secondary Certificate examination. Cover all subjects with expert guidance and practice materials.\n\nThe course includes:\n1. Complete syllabus coverage\n2. Weekly model tests\n3. Personalized feedback\n4. Study materials and resources\n5. Doubt clearing sessions\n6. Exam strategy sessions\n\nBy the end of this course, you'll be fully prepared for your HSC examination with confidence and knowledge.",
-          "Specialized preparation course for medical college entrance examinations. Focus on biology, chemistry, and physics with practice tests.\n\nCourse modules:\n1. Biology fundamentals and advanced concepts\n2. Chemistry principles and problem-solving\n3. Physics concepts and numerical problems\n4. Medical entrance exam patterns\n5. Time management strategies\n6. Practice tests and mock exams\n\nThis intensive course will prepare you thoroughly for medical college entrance examinations.",
-          "Complete guide for university admissions including application processes, essay writing, and interview preparation for top universities.\n\nWhat you'll learn:\n1. University selection strategies\n2. Application form completion\n3. Personal statement writing\n4. Interview preparation techniques\n5. Scholarship applications\n6. Financial planning for education\n\nGet expert guidance for your university admission journey.",
-          "Master English language skills for academic and professional success. Focus on grammar, vocabulary, writing, and communication skills.\n\nCourse content:\n1. Grammar fundamentals and advanced rules\n2. Vocabulary building techniques\n3. Writing skills development\n4. Reading comprehension\n5. Speaking and presentation skills\n6. Business communication\n\nEnhance your English proficiency for academic and career success.",
-          "Specialized course for HSC science stream students. Cover physics, chemistry, biology, and mathematics with practical examples.\n\nSubjects covered:\n1. Physics - Mechanics, Thermodynamics, Electromagnetism\n2. Chemistry - Organic, Inorganic, Physical Chemistry\n3. Biology - Botany, Zoology, Genetics\n4. Mathematics - Algebra, Calculus, Statistics\n5. Practical applications\n6. Problem-solving techniques\n\nExcel in your science stream with expert guidance.",
-          "Learn strategies for success in university life including time management, study techniques, and career planning for future success.\n\nKey topics:\n1. Time management and productivity\n2. Effective study techniques\n3. Research and writing skills\n4. Networking and relationship building\n5. Career planning and goal setting\n6. Stress management and wellness\n\nNavigate university life successfully with proven strategies."
-        ];
-        
-        const courseHighlights = [
-          "Complete HSC preparation with model tests and expert guidance",
-          "Targeted preparation for medical college entrance exams",
-          "Step-by-step guide for university admissions and scholarships",
-          "Improve your English for academic and professional success",
-          "Complete science stream preparation for HSC examination",
-          "Essential strategies for university success and career planning"
-        ];
-        
+        // Fetch from the backend API
         const courseId = parseInt(id as string);
-        const imageIndex = (courseId - 1) % courseImages.length;
-        
-        const mockCourse: Course = {
-          id: courseId,
-          title: courseTitles[imageIndex] || "Course Title",
-          description: courseDescriptions[imageIndex] || "Course description will be available soon.",
-          highlight: courseHighlights[imageIndex] || "Course highlight information",
-          imageUrl: courseImages[imageIndex],
-          createdAt: "2023-05-15T10:30:00Z",
-          createdBy: {
-            firstName: "Expert",
-            lastName: "Instructor"
-          }
-        };
-        
-        setCourse(mockCourse);
+        const courseData = await courseService.getCourseById(courseId);
+        setCourse(courseData);
         setLoading(false);
-      } catch {
-        setError("Failed to load course details");
+      } catch (err) {
+        console.error("Failed to load course details:", err);
+        setError("Failed to load course details: " + (err as Error).message);
         setLoading(false);
       }
     };
@@ -158,9 +95,14 @@ export default function CourseDetailPage() {
           )}
           
           <div className="p-6 md:p-8">
-            <h1 className="text-3xl md:text-4xl font-bold text-red-700 mb-4">
-              {course.title}
-            </h1>
+            <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
+              <h1 className="text-3xl md:text-4xl font-bold text-red-700">
+                {course.title}
+              </h1>
+              <div className="bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-200 px-3 py-1 rounded-full text-sm font-medium">
+                Course ID: {course.id}
+              </div>
+            </div>
             
             <div className="bg-red-50 dark:bg-red-900/20 border-l-4 border-red-700 p-4 mb-6 rounded-r-lg">
               <p className="text-red-700 dark:text-red-300 font-medium">
@@ -168,10 +110,40 @@ export default function CourseDetailPage() {
               </p>
             </div>
             
-            <div className="prose prose-slate dark:prose-invert max-w-none mb-8">
-              <h2 className="text-2xl font-semibold text-slate-800 dark:text-white mb-4">Course Description</h2>
-              <div className="whitespace-pre-line text-slate-700 dark:text-slate-300">
-                {course.description}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+              <div className="md:col-span-2">
+                <div className="prose prose-slate dark:prose-invert max-w-none">
+                  <h2 className="text-2xl font-semibold text-slate-800 dark:text-white mb-4">Course Description</h2>
+                  <div className="whitespace-pre-line text-slate-700 dark:text-slate-300">
+                    {course.description}
+                  </div>
+                </div>
+              </div>
+              
+              <div className="bg-slate-50 dark:bg-slate-700/30 p-6 rounded-xl">
+                <h3 className="text-xl font-semibold text-slate-800 dark:text-white mb-4">Course Info</h3>
+                <div className="space-y-3">
+                  <div>
+                    <p className="text-sm text-slate-500 dark:text-slate-400">Created By</p>
+                    <p className="font-medium text-slate-800 dark:text-white">
+                      {course.createdBy.firstName} {course.createdBy.lastName || ''}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-slate-500 dark:text-slate-400">Created At</p>
+                    <p className="font-medium text-slate-800 dark:text-white">
+                      {new Date(course.createdAt).toLocaleDateString()}
+                    </p>
+                  </div>
+                  {course.editedAt && (
+                    <div>
+                      <p className="text-sm text-slate-500 dark:text-slate-400">Last Updated</p>
+                      <p className="font-medium text-slate-800 dark:text-white">
+                        {new Date(course.editedAt).toLocaleDateString()}
+                      </p>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
             

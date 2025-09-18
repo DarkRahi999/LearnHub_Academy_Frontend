@@ -118,7 +118,6 @@ export default function NoticeManagement() {
           </div>
         )}
 
-
         {/* Create/Edit Form */}
         {(showCreateForm || editingNotice) && (
           <Card className="mb-6">
@@ -184,6 +183,12 @@ export default function NoticeManagement() {
                     <Calendar className="w-12 h-12 mx-auto mb-4 opacity-50" />
                     <h3 className="text-lg font-semibold mb-2">No notices found</h3>
                     <p>Create your first notice to get started.</p>
+                    <div className="mt-6">
+                      <Button onClick={() => setShowCreateForm(true)} className="flex items-center gap-2 mx-auto">
+                        <Plus className="w-4 h-4" />
+                        Create New Notice
+                      </Button>
+                    </div>
                   </div>
                 </CardContent>
               </Card>
