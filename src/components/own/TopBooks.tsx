@@ -137,17 +137,17 @@ export default function TopBooks() {
         <div className={`grid gap-6 ${
           isMediumScreen() 
             ? 'grid-cols-3' 
-            : 'grid-cols-1 sm:grid-cols-2'
+            : 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-4'
         }`}>
           {isMediumScreen() ? (
             // On medium screens and above, show only 3 books with animation
-            visibleBooks.map((book) => (
-              <div key={book.id} className="w-full">
+            visibleBooks.map((book, idx) => (
+              <div key={`${book.id}-${idx}`} className="w-full">
                 <BookCard book={book} />
               </div>
             ))
           ) : (
-            // On small screens, show all 4 books in a 2x2 grid
+            // On small screens, show all 4 books
             books.map((book) => (
               <div key={book.id} className="w-full">
                 <BookCard book={book} />

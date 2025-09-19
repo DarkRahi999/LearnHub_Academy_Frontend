@@ -78,7 +78,7 @@ export default function BooksManagementPage() {
       <Header />
       <div className="container mx-auto py-8">
         <div className="flex justify-between items-center mb-8">
-          <div>
+          <div className='mx-4'>
             <h1 className="text-3xl font-bold">Book Management</h1>
             <p className="text-gray-600">Manage all books in the system</p>
           </div>
@@ -138,7 +138,9 @@ export default function BooksManagementPage() {
                             <Image 
                               src={book.imageUrl} 
                               alt={book.title} 
-                              className="h-10 w-10 rounded-md object-cover mr-3"
+                              width={40}
+                              height={40}
+                              className="rounded-md object-cover mr-3"
                             />
                           ) : (
                             <div className="bg-gray-200 border-2 border-dashed rounded-md w-10 h-10 mr-3" />

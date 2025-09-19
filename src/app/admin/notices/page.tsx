@@ -104,7 +104,7 @@ export default function NoticeManagement() {
     >
       <Header />
       <div className="container mx-auto py-6">
-        <div className="flex justify-between items-center mb-6">
+        <div className="flex justify-between items-center mb-6 mx-4">
           <h1 className="text-3xl font-bold">Notice Management</h1>
           <Button onClick={() => setShowCreateForm(true)} className="flex items-center gap-2">
             <Plus className="w-4 h-4" />

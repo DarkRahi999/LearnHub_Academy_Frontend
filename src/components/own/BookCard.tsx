@@ -27,11 +27,16 @@ export default function BookCard({ book }: BookCardProps) {
       )}
       
       <div className="p-6 flex flex-col flex-grow">
-        <h2 className="text-xl font-bold text-slate-800 dark:text-white mb-3 line-clamp-2">
+        <h2 className="text-xl font-bold text-slate-800 dark:text-white mb-2 line-clamp-2">
           {book.title}
         </h2>
         
-        <p className="text-red-700 dark:text-red-400 font-medium mb-4 line-clamp-2">
+        {/* Price display */}
+        <div className="text-2xl font-bold text-red-700 dark:text-red-400 mb-3">
+          {book.price} <span className="text-lg">TK</span>
+        </div>
+        
+        <p className="text-red-700 dark:text-red-400 font-medium mb-3 line-clamp-2">
           {book.highlight}
         </p>
         

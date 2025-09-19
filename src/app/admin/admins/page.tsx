@@ -196,7 +196,7 @@ export default function AdminManagement() {
       <Header />
       <div className="container mx-auto py-6">
         <div className="flex justify-between items-center mb-6">
-          <div>
+          <div className='mx-4'>
             <h1 className="text-3xl font-bold flex items-center gap-2">
               <Shield className="h-8 w-8" />
               Admin Management

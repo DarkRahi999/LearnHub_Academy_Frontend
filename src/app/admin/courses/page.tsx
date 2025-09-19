@@ -133,7 +133,7 @@ export default function CourseManagement() {
     >
       <Header />
       <div className="container mx-auto py-6">
-        <div className="flex justify-between items-center mb-6">
+        <div className="flex justify-between items-center mb-6 mx-4">
           <h1 className="text-3xl font-bold">Course Management</h1>
           <Link href="/admin/courses/create">
             <Button className="flex items-center gap-2">

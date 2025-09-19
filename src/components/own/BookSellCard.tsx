@@ -1,10 +1,11 @@
 import { Heart, ShoppingCart, StarIcon } from "lucide-react";
 import React from "react";
+import Image from "next/image";
 
 type Book = {
   id?: string | number;
   title: string;
-  author: string;
+  author?: string;
   price: number | string;
   rating?: number;
   img?: string;
@@ -37,11 +38,19 @@ export default function BookSellCard({ book, onBuy, onWishlist }: Props) {
       <div className="flex flex-col md:flex-row">
         {/* Image */}
         <div className="md:w-40 w-full flex-shrink-0 bg-gradient-to-b from-indigo-50 to-white dark:from-slate-800 dark:to-slate-900">
-          <img
-            src={img ?? "https://via.placeholder.com/320x420?text=Book+Cover"}
-            alt={`${title} cover`}
-            className="w-full h-56 md:h-full object-cover object-top"
-          />
+          {img ? (
+            <Image
+              src={img}
+              alt={`${title} cover`}
+              width={320}
+              height={420}
+              className="w-full h-56 md:h-full object-cover object-top"
+            />
+          ) : (
+            <div className="w-full h-56 md:h-full bg-gray-200 border-2 border-dashed rounded-xl flex items-center justify-center">
+              <span className="text-gray-500">No Image</span>
+            </div>
+          )}
         </div>
 
         {/* Content */}
@@ -51,9 +60,11 @@ export default function BookSellCard({ book, onBuy, onWishlist }: Props) {
               <h3 className="text-lg md:text-xl font-semibold leading-tight text-slate-900 dark:text-slate-100">
                 {title}
               </h3>
-              <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">
-                by <span className="font-medium">{author}</span>
-              </p>
+              {author && (
+                <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">
+                  by <span className="font-medium">{author}</span>
+                </p>
+              )}
             </div>
 
             <div className="flex flex-col items-end">
@@ -75,7 +86,7 @@ export default function BookSellCard({ book, onBuy, onWishlist }: Props) {
           <div className="flex items-center gap-3">
             <div className="flex items-center gap-1">
               {Array.from({ length: 5 }).map((_, i) => (
-                <StarIcon />
+                <StarIcon key={i} className={i < Math.floor(rating) ? "fill-yellow-400 text-yellow-400" : "text-gray-300"} />
               ))}
               <span className="ml-2 text-sm text-slate-600 dark:text-slate-400">
                 {rating.toFixed(1)}
