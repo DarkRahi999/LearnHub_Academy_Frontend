@@ -10,6 +10,7 @@ import Title from "@/components/own/Title";
 import TopCourses from "@/components/own/TopCourses";
 import TopBooks from "@/components/own/TopBooks";
 import Footer from "@/components/layouts/Footer";
+import BooksSlider from "@/components/own/BooksSlider";
 
 export default function HomePage() {
   const instituteDetails = {
@@ -159,6 +160,8 @@ export default function HomePage() {
         />
       </div>
       <TopBooks />
+      {/* This is the book list */}
+      <BooksSlider />
       <Footer />
     </div>
   );

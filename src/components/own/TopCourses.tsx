@@ -141,8 +141,8 @@ export default function TopCourses() {
         }`}>
           {isMediumScreen() ? (
             // On medium screens and above, show only 3 courses with animation
-            visibleCourses.map((course) => (
-              <div key={course.id} className="w-full">
+            visibleCourses.map((course, idx) => (
+              <div key={idx} className="w-full">
                 <CourseCard course={course} />
               </div>
             ))
