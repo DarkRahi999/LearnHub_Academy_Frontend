@@ -28,7 +28,7 @@ export default function AdminDashboard() {
   }
 
   return (
-    <RoleGuard 
+    <RoleGuard
       allowedRoles={[UserRole.ADMIN, UserRole.SUPER_ADMIN]}
       fallback={
         <div className="flex justify-center items-center h-64">
@@ -38,7 +38,7 @@ export default function AdminDashboard() {
     >
       <Header />
       <div className="container mx-auto py-6">
-        <div className="mb-6">
+        <div className="mb-6 mx-4">
           <h1 className="text-3xl font-bold mb-2">Admin Dashboard</h1>
           {user && (
             <div className="flex items-center gap-2">
@@ -63,6 +63,44 @@ export default function AdminDashboard() {
             </div>
           </RoleGuard>
 
+          <RoleGuard
+            requiredPermissions={[
+              Permission.CREATE_BOOK,
+              Permission.UPDATE_BOOK,
+              Permission.DELETE_BOOK
+            ]}
+          >
+            <div className="border rounded-lg p-6 hover:shadow-md transition-shadow">
+              <div className="flex items-center gap-3 mb-3">
+                <NotebookText className="h-6 w-6 text-green-600" />
+                <h3 className="text-xl font-semibold">Book Management</h3>
+              </div>
+              <p className="text-gray-600 mb-4">Create and manage books</p>
+              <Button asChild>
+                <a href="/admin/books">Manage Books</a>
+              </Button>
+            </div>
+          </RoleGuard>
+
+          <RoleGuard
+            requiredPermissions={[
+              Permission.CREATE_COURSE,
+              Permission.UPDATE_COURSE,
+              Permission.DELETE_COURSE
+            ]}
+          >
+            <div className="border rounded-lg p-6 hover:shadow-md transition-shadow">
+              <div className="flex items-center gap-3 mb-3">
+                <BookOpen className="h-6 w-6 text-indigo-600" />
+                <h3 className="text-xl font-semibold">Course Management</h3>
+              </div>
+              <p className="text-gray-600 mb-4">Create and manage courses</p>
+              <Button asChild>
+                <a href="/admin/courses">Manage Courses</a>
+              </Button>
+            </div>
+          </RoleGuard>
+
           <RoleGuard requiredPermissions={[Permission.MANAGE_USERS]}>
             <div className="border rounded-lg p-6 hover:shadow-md transition-shadow">
               <div className="flex items-center gap-3 mb-3">
@@ -72,19 +110,6 @@ export default function AdminDashboard() {
               <p className="text-gray-600 mb-4">View and manage user accounts</p>
               <Button asChild>
                 <a href="/admin/users">Manage Users</a>
-              </Button>
-            </div>
-          </RoleGuard>
-
-          <RoleGuard requiredPermissions={[Permission.CREATE_POST]}>
-            <div className="border rounded-lg p-6 hover:shadow-md transition-shadow">
-              <div className="flex items-center gap-3 mb-3">
-                <FileText className="h-6 w-6 text-purple-600" />
-                <h3 className="text-xl font-semibold">Post Management</h3>
-              </div>
-              <p className="text-gray-600 mb-4">Create and manage posts</p>
-              <Button asChild>
-                <a href="/admin/posts">Manage Posts</a>
               </Button>
             </div>
           </RoleGuard>
@@ -102,8 +127,7 @@ export default function AdminDashboard() {
             </div>
           </RoleGuard>
 
-          {/* Super Admin Only Section */}
-          <RoleGuard 
+          <RoleGuard
             allowedRoles={[UserRole.SUPER_ADMIN]}
             requiredPermissions={[Permission.SYSTEM_SETTINGS]}
           >
@@ -115,46 +139,6 @@ export default function AdminDashboard() {
               <p className="text-gray-600 mb-4">Configure system-wide settings</p>
               <Button asChild>
                 <a href="/admin/system-settings">System Settings</a>
-              </Button>
-            </div>
-          </RoleGuard>
-
-          {/* Course Management - Available to both Admin and Super Admin */}
-          <RoleGuard 
-            requiredPermissions={[
-              Permission.CREATE_COURSE, 
-              Permission.UPDATE_COURSE, 
-              Permission.DELETE_COURSE
-            ]}
-          >
-            <div className="border rounded-lg p-6 hover:shadow-md transition-shadow">
-              <div className="flex items-center gap-3 mb-3">
-                <BookOpen className="h-6 w-6 text-indigo-600" />
-                <h3 className="text-xl font-semibold">Course Management</h3>
-              </div>
-              <p className="text-gray-600 mb-4">Create and manage courses</p>
-              <Button asChild>
-                <a href="/admin/courses">Manage Courses</a>
-              </Button>
-            </div>
-          </RoleGuard>
-
-          {/* Book Management - Available to both Admin and Super Admin */}
-          <RoleGuard 
-            requiredPermissions={[
-              Permission.CREATE_BOOK, 
-              Permission.UPDATE_BOOK, 
-              Permission.DELETE_BOOK
-            ]}
-          >
-            <div className="border rounded-lg p-6 hover:shadow-md transition-shadow">
-              <div className="flex items-center gap-3 mb-3">
-                <NotebookText className="h-6 w-6 text-green-600" />
-                <h3 className="text-xl font-semibold">Book Management</h3>
-              </div>
-              <p className="text-gray-600 mb-4">Create and manage books</p>
-              <Button asChild>
-                <a href="/admin/books">Manage Books</a>
               </Button>
             </div>
           </RoleGuard>

@@ -6,7 +6,6 @@ import { ThemeProvider } from "@/provider/themeProvider";
 import AuthProvider from "@/components/auth/AuthProvider";
 import { Toaster } from "react-hot-toast";
 import "../style/globals.css";
-import Footer from "@/components/layouts/Footer";
 
 //W---------{ Fonts for website }----------
 const salsa = Salsa({
@@ -108,7 +107,6 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           <Providers>
             <AuthProvider>
               <main>{children}</main>
-              <Footer />
               <Toaster
                 position="top-right"
                 toastOptions={{

@@ -9,7 +9,7 @@ export default function NotFoundPage() {
         <div className="flex flex-col items-center justify-center h-screen text-center bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-900 dark:to-slate-800">
             <h1 className="text-9xl font-extrabold text-slate-700 dark:text-slate-200">404</h1>
             <p className="mt-4 text-xl text-slate-600 dark:text-slate-400">
-                Oops! The page you’re looking for doesn’t exist.
+                Oops! The page you&apos;re looking for doesn&apos;t exist.
             </p>
 
             <Button variant="ghost" className="mt-8 hover:shadow-md  text-slate-700 dark:text-slate-200 hover:text-slate-800 hover:dark:text-slate-100">

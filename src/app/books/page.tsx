@@ -5,6 +5,7 @@ import Header from '@/components/layouts/Header';
 import { Book, bookService } from '@/services/book.service';
 import BookCard from '@/components/own/BookCard';
 import { Button } from '@/components/ui/button';
+import Footer from '@/components/layouts/Footer';
 
 export default function BooksPage() {
   const [books, setBooks] = useState<Book[]>([]);
@@ -116,6 +117,7 @@ export default function BooksPage() {
           </>
         )}
       </div>
+      <Footer />
     </>
   );
 }

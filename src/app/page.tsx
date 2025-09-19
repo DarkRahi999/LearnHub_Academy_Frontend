@@ -9,6 +9,7 @@ import Link from "next/link";
 import Title from "@/components/own/Title";
 import TopCourses from "@/components/own/TopCourses";
 import TopBooks from "@/components/own/TopBooks";
+import Footer from "@/components/layouts/Footer";
 
 export default function HomePage() {
   const instituteDetails = {
@@ -150,7 +151,7 @@ export default function HomePage() {
         />
       </div>
       <TopCourses />
-      
+
       <div className="container mx-auto px-4 pt-6 sm:pt-20">
         <Title
           title="Our Top Books"
@@ -158,6 +159,7 @@ export default function HomePage() {
         />
       </div>
       <TopBooks />
+      <Footer />
     </div>
   );
 }

@@ -5,6 +5,7 @@ import Header from "@/components/layouts/Header";
 import CourseCard from "@/components/own/CourseCard";
 import { Button } from "@/components/ui/button";
 import { courseService, Course } from '@/services/course.service';
+import Footer from '@/components/layouts/Footer';
 
 export default function CoursesPage() {
   const [courses, setCourses] = useState<Course[]>([]);
@@ -116,6 +117,7 @@ export default function CoursesPage() {
           </div>
         )}
       </div>
+      <Footer />
     </div>
   );
 }

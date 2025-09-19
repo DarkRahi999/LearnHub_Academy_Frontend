@@ -1,6 +1,6 @@
 "use client";
 
-import { LogOut, UsersRound, User, LogIn, Menu, X, BellRing, Newspaper, Shield, PhoneForwarded, BookOpen, NotebookText } from 'lucide-react';
+import { LogOut, UsersRound, User, LogIn, Menu, X, BellRing, Shield, PhoneForwarded, BookOpen, NotebookText } from 'lucide-react';
 import { Button } from '../ui/button';
 import { NavButton } from '../own/NavButton';
 import { ModeToggle } from './ModeToggle';
@@ -53,6 +53,7 @@ export default function Header() {
 
                 {/*________________ Desktop Menu _______________*/}
                 <div className="hidden sm:flex items-center gap-2">
+
                     {/* Courses link - visible to everyone */}
                     <Button
                         variant="ghost"
@@ -108,16 +109,16 @@ export default function Header() {
                     ) : (
                         <>
                             {/*______________ For md Screen ______________ */}
-                            <Button
+                            {/* <Button
                                 variant="ghost"
                                 asChild
                                 className="transition-all duration-300 ease-in-out hover:scale-105 hover:bg-primary/10 group relative animate-fade-in-up"
                             >
-                                <Link href="/posts" title="Blog">
+                                <Link href="/feed" title="Blog">
                                     <Newspaper className="w-5 h-5 transition-transform duration-300 group-hover:scale-110" />
-                                    <span className="hidden md:inline">Blog</span>
+                                    <span className="hidden md:inline">Feed</span>
                                 </Link>
-                            </Button>
+                            </Button> */}
                             <Button
                                 variant="ghost"
                                 asChild
@@ -125,7 +126,6 @@ export default function Header() {
                             >
                                 <Link href="/notices" title="Notices">
                                     <BellRing className="w-5 h-5 transition-transform duration-300 group-hover:scale-110" />
-                                    <span className="hidden md:inline">Notice</span>
                                     <NotificationBadge count={unreadCount} />
                                 </Link>
                             </Button>
@@ -313,12 +313,12 @@ export default function Header() {
                                                 <NotificationBadge count={unreadCount} className="absolute top-1 right-1" />
                                             </Link>
                                         </Button>
-                                        <Button variant="ghost" asChild className="w-full justify-start h-12 text-left transition-all duration-300 ease-in-out hover:bg-accent/50 hover:scale-105 hover:translate-x-2">
-                                            <Link href="/posts" onClick={() => setIsMobileMenuOpen(false)}>
+                                          {/*<Button variant="ghost" asChild className="w-full justify-start h-12 text-left transition-all duration-300 ease-in-out hover:bg-accent/50 hover:scale-105 hover:translate-x-2">
+                                            <Link href="/feed" onClick={() => setIsMobileMenuOpen(false)}>
                                                 <Newspaper className="w-5 h-5 mr-3 transition-transform duration-300 group-hover:scale-110" />
-                                                Posts
+                                                Feed
                                             </Link>
-                                        </Button>
+                                        </Button> */}
                                         <RoleGuard allowedRoles={[UserRole.ADMIN, UserRole.SUPER_ADMIN]}>
                                             <Button variant="ghost" asChild className="w-full justify-start h-12 text-left transition-all duration-300 ease-in-out hover:bg-accent/50 hover:scale-105 hover:translate-x-2">
                                                 <Link href="/admin" onClick={() => setIsMobileMenuOpen(false)}>

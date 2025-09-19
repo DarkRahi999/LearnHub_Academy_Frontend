@@ -32,13 +32,6 @@ export const API_URLS = {
     update: (id: number) => `${API_BASE_URL}/notices/${id}`,
     delete: (id: number) => `${API_BASE_URL}/notices/${id}`,
   },
-  posts: {
-    getAll: `${API_BASE_URL}/posts`,
-    getById: (id: number) => `${API_BASE_URL}/posts/${id}`,
-    create: `${API_BASE_URL}/posts`,
-    update: (id: number) => `${API_BASE_URL}/posts/${id}`,
-    delete: (id: number) => `${API_BASE_URL}/posts/${id}`,
-  },
   admins: {
     getAll: `${API_BASE_URL}/auth/admins`,
     promote: `${API_BASE_URL}/auth/admins/promote`,
