@@ -8,6 +8,7 @@ import BannerCarousel from "@/components/own/BannerCarousel";
 import Link from "next/link";
 import Title from "@/components/own/Title";
 import TopCourses from "@/components/own/TopCourses";
+import TopBooks from "@/components/own/TopBooks";
 
 export default function HomePage() {
   const instituteDetails = {
@@ -149,6 +150,14 @@ export default function HomePage() {
         />
       </div>
       <TopCourses />
+      
+      <div className="container mx-auto px-4 pt-6 sm:pt-20">
+        <Title
+          title="Our Top Books"
+          description="Explore our most popular and recently added books"
+        />
+      </div>
+      <TopBooks />
     </div>
   );
 }

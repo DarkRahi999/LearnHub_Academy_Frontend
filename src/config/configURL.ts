@@ -51,4 +51,11 @@ export const API_URLS = {
     update: (id: number) => `${API_BASE_URL}/courses/${id}`,
     delete: (id: number) => `${API_BASE_URL}/courses/${id}`,
   },
+  books: {
+    getAll: `${API_BASE_URL}/books`,
+    getById: (id: number) => `${API_BASE_URL}/books/${id}`,
+    create: `${API_BASE_URL}/books`,
+    update: (id: number) => `${API_BASE_URL}/books/${id}`,
+    delete: (id: number) => `${API_BASE_URL}/books/${id}`,
+  },
 };

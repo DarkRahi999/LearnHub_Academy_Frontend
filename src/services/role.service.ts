@@ -23,6 +23,9 @@ export class RoleService {
       Permission.CREATE_COURSE,
       Permission.UPDATE_COURSE,
       Permission.DELETE_COURSE,
+      Permission.CREATE_BOOK,
+      Permission.UPDATE_BOOK,
+      Permission.DELETE_BOOK,
     ],
     [UserRole.SUPER_ADMIN]: [
       Permission.VIEW_PROFILE,
@@ -42,6 +45,9 @@ export class RoleService {
       Permission.CREATE_COURSE,
       Permission.UPDATE_COURSE,
       Permission.DELETE_COURSE,
+      Permission.CREATE_BOOK,
+      Permission.UPDATE_BOOK,
+      Permission.DELETE_BOOK,
     ],
   };
 

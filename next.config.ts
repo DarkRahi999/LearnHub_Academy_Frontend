@@ -12,6 +12,10 @@ const nextConfig: NextConfig = {
         protocol: 'https',
         hostname: 'assets.retinabd.org',
       },
+      {
+        protocol: 'https',
+        hostname: 'shop.retinabd.org',
+      },
     ],
     // Allow local images to be optimized
     domains: ['localhost', '127.0.0.1'],

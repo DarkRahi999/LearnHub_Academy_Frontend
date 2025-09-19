@@ -1,6 +1,6 @@
 "use client";
 
-import { LogOut, UsersRound, User, LogIn, Menu, X, BellRing, Newspaper, Shield, PhoneForwarded, BookOpen } from 'lucide-react';
+import { LogOut, UsersRound, User, LogIn, Menu, X, BellRing, Newspaper, Shield, PhoneForwarded, BookOpen, NotebookText } from 'lucide-react';
 import { Button } from '../ui/button';
 import { NavButton } from '../own/NavButton';
 import { ModeToggle } from './ModeToggle';
@@ -62,6 +62,18 @@ export default function Header() {
                         <Link href="/course" title="Courses">
                             <BookOpen className="w-5 h-5 transition-transform duration-300 group-hover:scale-110" />
                             <span className="hidden md:inline">Courses</span>
+                        </Link>
+                    </Button>
+                    
+                    {/* Books link - visible to everyone */}
+                    <Button
+                        variant="ghost"
+                        asChild
+                        className="transition-all duration-300 ease-in-out hover:scale-105 hover:bg-primary/10 group relative animate-fade-in-up"
+                    >
+                        <Link href="/books" title="Books">
+                            <NotebookText className="w-5 h-5 transition-transform duration-300 group-hover:scale-110" />
+                            <span className="hidden md:inline">Books</span>
                         </Link>
                     </Button>
                     
@@ -202,6 +214,12 @@ export default function Header() {
                                             <Link href="/course" onClick={() => setIsMobileMenuOpen(false)}>
                                                 <BookOpen className="w-5 h-5 mr-3 transition-transform duration-300 group-hover:scale-110" />
                                                 Courses
+                                            </Link>
+                                        </Button>
+                                        <Button variant="ghost" asChild className="w-full justify-start h-12 text-left transition-all duration-300 ease-in-out hover:bg-accent/50 hover:scale-105 hover:translate-x-2">
+                                            <Link href="/books" onClick={() => setIsMobileMenuOpen(false)}>
+                                                <NotebookText className="w-5 h-5 mr-3 transition-transform duration-300 group-hover:scale-110" />
+                                                Books
                                             </Link>
                                         </Button>
                                         {/* WhatsApp option in mobile menu for non-logged-in users */}

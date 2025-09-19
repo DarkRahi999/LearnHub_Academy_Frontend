@@ -7,7 +7,7 @@ import RoleBadge from '@/components/auth/RoleBadge';
 import { UserRole, Permission, UserProfile } from '@/interface/user';
 import { Button } from '@/components/ui/button';
 import { getCurrentUser } from '@/services/auth.service';
-import { Shield, Users, FileText, Settings, BookOpen } from 'lucide-react';
+import { Shield, Users, FileText, Settings, BookOpen, NotebookText } from 'lucide-react';
 
 export default function AdminDashboard() {
   const [user, setUser] = useState<UserProfile | null>(null);
@@ -135,6 +135,26 @@ export default function AdminDashboard() {
               <p className="text-gray-600 mb-4">Create and manage courses</p>
               <Button asChild>
                 <a href="/admin/courses">Manage Courses</a>
+              </Button>
+            </div>
+          </RoleGuard>
+
+          {/* Book Management - Available to both Admin and Super Admin */}
+          <RoleGuard 
+            requiredPermissions={[
+              Permission.CREATE_BOOK, 
+              Permission.UPDATE_BOOK, 
+              Permission.DELETE_BOOK
+            ]}
+          >
+            <div className="border rounded-lg p-6 hover:shadow-md transition-shadow">
+              <div className="flex items-center gap-3 mb-3">
+                <NotebookText className="h-6 w-6 text-green-600" />
+                <h3 className="text-xl font-semibold">Book Management</h3>
+              </div>
+              <p className="text-gray-600 mb-4">Create and manage books</p>
+              <Button asChild>
+                <a href="/admin/books">Manage Books</a>
               </Button>
             </div>
           </RoleGuard>
