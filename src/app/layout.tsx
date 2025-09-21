@@ -35,23 +35,23 @@ export const metadata: Metadata = {
   authors: [{ name: "learnHub-academy" }],
   applicationName: "LearnHub Academy",
   category: "education",
-  metadataBase: new URL("https://yourdomain.com"),
+  metadataBase: new URL("https://learn-hub-academy-frontend.vercel.app"),
   alternates: {
-    canonical: "https://yourdomain.com",
+    canonical: "https://learn-hub-academy-frontend.vercel.app",
     languages: {
-      "en-US": "https://yourdomain.com/en",
-      "bn-BD": "https://yourdomain.com/bn",
+      "en-US": "https://learn-hub-academy-frontend.vercel.app/en",
+      "bn-BD": "https://learn-hub-academy-frontend.vercel.app/bn",
     },
   },
   openGraph: {
     title: "LearnHub Academy | Best Coaching & Learning Platform",
     description:
       "Discover LearnHub Academy – a demo coaching center website for modern learning and presentations.",
-    url: "https://yourdomain.com",
+    url: "https://learn-hub-academy-frontend.vercel.app",
     siteName: "LearnHub Academy",
     images: [
       {
-        url: "https://yourdomain.com/og-image.jpg",
+        url: "https://learn-hub-academy-frontend.vercel.app/og-image.jpg",
         width: 1200,
         height: 630,
         alt: "LearnHub Academy Preview",

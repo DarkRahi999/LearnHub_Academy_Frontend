@@ -7,6 +7,7 @@ export interface Book {
   highlight: string;
   imageUrl?: string;
   price: number;
+  discountPrice?: number;
   isActive: boolean;
   createdAt: string;
   editedAt?: string;
@@ -23,6 +24,7 @@ export interface CreateBookDto {
   highlight: string;
   imageUrl?: string;
   price: number;
+  discountPrice?: number;
 }
 
 export interface UpdateBookDto {
@@ -31,6 +33,7 @@ export interface UpdateBookDto {
   highlight?: string;
   imageUrl?: string;
   price?: number;
+  discountPrice?: number;
   isActive?: boolean;
 }
 

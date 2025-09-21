@@ -51,6 +51,7 @@ const BooksSlider = () => {
     title: book.title,
     author: book.createdBy?.firstName + (book.createdBy?.lastName ? ` ${book.createdBy?.lastName}` : '') || 'Unknown Author',
     price: book.price,
+    discountPrice: book.discountPrice,
     rating: 4.5, // Default rating
     img: book.imageUrl,
     description: book.description,
@@ -77,7 +78,7 @@ const BooksSlider = () => {
             {books.map((book) => (
               <CarouselItem
                 key={book.id}
-                className="md:basis-1/2 flex justify-center"
+                className="md:basis-1/2 lg:basis-1/3 flex justify-center"
               >
                 <BookSellCard
                   book={mapBookToSellCard(book)}

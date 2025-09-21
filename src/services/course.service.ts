@@ -6,6 +6,8 @@ export interface Course {
   description: string;
   highlight: string;
   imageUrl?: string;
+  price?: number;
+  discountPrice?: number;
   isActive: boolean;
   createdAt: string;
   editedAt?: string;
@@ -21,6 +23,8 @@ export interface CreateCourseDto {
   description: string;
   highlight: string;
   imageUrl?: string;
+  price?: number;
+  discountPrice?: number;
 }
 
 export interface UpdateCourseDto {
@@ -28,6 +32,8 @@ export interface UpdateCourseDto {
   description?: string;
   highlight?: string;
   imageUrl?: string;
+  price?: number;
+  discountPrice?: number;
   isActive?: boolean;
 }
 

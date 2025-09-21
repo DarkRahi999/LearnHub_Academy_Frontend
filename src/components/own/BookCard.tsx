@@ -32,8 +32,24 @@ export default function BookCard({ book }: BookCardProps) {
         </h2>
         
         {/* Price display */}
-        <div className="text-2xl font-bold text-red-700 dark:text-red-400 mb-3">
-          {book.price} <span className="text-lg">TK</span>
+        <div className="mb-3">
+          {book.discountPrice !== undefined && book.discountPrice !== null && book.discountPrice < book.price ? (
+            <div className="flex items-center gap-2">
+              <span className="text-2xl font-bold text-red-700 dark:text-red-400">
+                {book.discountPrice} <span className="text-lg">TK</span>
+              </span>
+              <span className="text-lg text-gray-500 line-through">
+                {book.price} TK
+              </span>
+              <span className="bg-red-100 text-red-800 text-xs font-semibold px-2 py-1 rounded">
+                {Math.round(((book.price - book.discountPrice) / book.price) * 100)}% OFF
+              </span>
+            </div>
+          ) : (
+            <div className="text-2xl font-bold text-red-700 dark:text-red-400">
+              {book.price} <span className="text-lg">TK</span>
+            </div>
+          )}
         </div>
         
         <p className="text-red-700 dark:text-red-400 font-medium mb-3 line-clamp-2">
