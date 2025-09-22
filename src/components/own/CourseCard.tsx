@@ -10,14 +10,14 @@ interface CourseCardProps {
 
 export default function CourseCard({ course }: CourseCardProps) {
   return (
-    <div className="bg-white dark:bg-slate-800 rounded-2xl overflow-hidden shadow-lg border border-white/50 dark:border-slate-700/50 hover:shadow-2xl transition-all duration-300 transform hover:scale-105 h-full flex flex-col">
+    <div className="bg-white dark:bg-slate-800 rounded-2xl overflow-hidden border border-white/50 dark:border-slate-700/50 hover:shadow-2xl transition-all duration-300 transform max-lg:hover:scale-105 h-[97%] flex flex-col my-3">
       {course.imageUrl ? (
-        <div className="relative h-48 w-full">
+        <div className="relative md:h-[250px] w-full">
           <Image
             src={course.imageUrl}
             alt={course.title}
             fill
-            className="object-cover"
+            className="object-cover !relative"
           />
         </div>
       ) : (

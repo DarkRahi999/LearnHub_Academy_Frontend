@@ -78,7 +78,7 @@ export default function CoursesPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-red-50 via-white to-rose-50 dark:from-slate-900 dark:via-slate-900 dark:to-slate-900">
       <Header />
-      <div className="container mx-auto px-4 xs:px-6 sm:px-10 lg:px-20 py-8">
+      <div className="container mx-auto px-4 py-6 sm:pt-20">
         <h1 className="text-3xl font-bold text-red-700 mb-8">Our Courses</h1>
         
         {/* Search Bar */}
