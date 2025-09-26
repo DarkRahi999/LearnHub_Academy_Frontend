@@ -6,7 +6,7 @@ import RoleGuard from '@/components/auth/RoleGuard';
 import { UserRole, Permission } from '@/interface/user';
 import { Button } from '@/components/ui/button';
 import { useRouter, useParams } from 'next/navigation';
-import { courseService, Course } from '@/services/course.service';
+import { courseService, Course, UpdateCourseDto } from '@/services/course.service';
 import { useToast } from '@/hooks/use-toast';
 
 export default function EditCourse() {
@@ -21,6 +21,8 @@ export default function EditCourse() {
     description: '',
     highlight: '',
     imageUrl: '',
+    price: '',
+    discountPrice: '',
   });
 
   // Fetch course data when component mounts
@@ -35,6 +37,8 @@ export default function EditCourse() {
             description: course.description,
             highlight: course.highlight,
             imageUrl: course.imageUrl || '',
+            price: course.price?.toString() || '',
+            discountPrice: course.discountPrice?.toString() || '',
           });
         }
       } catch {
@@ -60,14 +64,36 @@ export default function EditCourse() {
     }));
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
 
     try {
       if (id) {
         const courseId = parseInt(id as string);
-        await courseService.updateCourse(courseId, formData);
+        
+        // Prepare data for submission
+        const submitData: Partial<UpdateCourseDto> = {
+          title: formData.title,
+          description: formData.description,
+          highlight: formData.highlight,
+          imageUrl: formData.imageUrl || undefined,
+        };
+
+        // Only include price fields if they have values
+        if (formData.price) {
+          submitData.price = parseFloat(formData.price);
+        } else {
+          submitData.price = undefined; // Use undefined instead of null
+        }
+        
+        if (formData.discountPrice) {
+          submitData.discountPrice = parseFloat(formData.discountPrice);
+        } else {
+          submitData.discountPrice = undefined; // Use undefined instead of null
+        }
+
+        await courseService.updateCourse(courseId, submitData);
         toast({
           title: "Success",
           description: "Course updated successfully",
@@ -166,6 +192,40 @@ export default function EditCourse() {
                 placeholder="Enter course highlight"
               />
               <p className="mt-1 text-sm text-gray-500">5-300 characters</p>
+            </div>
+
+            <div>
+              <label htmlFor="price" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                Price (Optional)
+              </label>
+              <input
+                type="number"
+                id="price"
+                name="price"
+                value={formData.price}
+                onChange={handleChange}
+                min="0"
+                step="0.01"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-slate-700 dark:border-gray-600 dark:text-white"
+                placeholder="Enter course price (optional)"
+              />
+            </div>
+
+            <div>
+              <label htmlFor="discountPrice" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                Discount Price (Optional)
+              </label>
+              <input
+                type="number"
+                id="discountPrice"
+                name="discountPrice"
+                value={formData.discountPrice}
+                onChange={handleChange}
+                min="0"
+                step="0.01"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-slate-700 dark:border-gray-600 dark:text-white"
+                placeholder="Enter discount price (optional)"
+              />
             </div>
 
             <div>

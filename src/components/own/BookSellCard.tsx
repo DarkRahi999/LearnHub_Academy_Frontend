@@ -8,6 +8,7 @@ type Book = {
   title: string;
   author?: string;
   price: number | string;
+  discountPrice?: number | string;
   rating?: number;
   img?: string;
   description?: string;
@@ -25,6 +26,7 @@ export default function BookSellCard({ book, onBuy, onWishlist }: Props) {
     title,
     author,
     price,
+    discountPrice,
     rating = 0,
     img,
     description,
@@ -69,9 +71,28 @@ export default function BookSellCard({ book, onBuy, onWishlist }: Props) {
             </div>
 
             <div className="flex flex-col items-end">
-              <span className="text-lg font-bold text-emerald-600 dark:text-emerald-400">
-                ৳{price}
-              </span>
+              {/* Price display */}
+              <div className="text-right">
+                {discountPrice !== undefined && discountPrice !== null && Number(discountPrice) < Number(price) ? (
+                  <div className="flex flex-col items-end">
+                    <span className="text-lg font-bold text-red-600 dark:text-red-400">
+                      {discountPrice} TK
+                    </span>
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm text-gray-500 line-through">
+                        {price} TK
+                      </span>
+                      <span className="bg-red-100 text-red-800 text-xs font-semibold px-1 py-0.5 rounded">
+                        {Math.round(((Number(price) - Number(discountPrice)) / Number(price)) * 100)}% OFF
+                      </span>
+                    </div>
+                  </div>
+                ) : (
+                  <span className="text-lg font-bold text-red-600 dark:text-red-400">
+                    {price} TK
+                  </span>
+                )}
+              </div>
               <button
                 onClick={handleWishlist}
                 aria-label="Add to wishlist"

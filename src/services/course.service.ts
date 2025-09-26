@@ -1,3 +1,4 @@
+import axios from 'axios';
 import { API_BASE_URL } from '@/config/configURL';
 
 export interface Course {
@@ -6,6 +7,8 @@ export interface Course {
   description: string;
   highlight: string;
   imageUrl?: string;
+  price?: number;
+  discountPrice?: number;
   isActive: boolean;
   createdAt: string;
   editedAt?: string;
@@ -21,6 +24,8 @@ export interface CreateCourseDto {
   description: string;
   highlight: string;
   imageUrl?: string;
+  price?: number;
+  discountPrice?: number;
 }
 
 export interface UpdateCourseDto {
@@ -28,6 +33,8 @@ export interface UpdateCourseDto {
   description?: string;
   highlight?: string;
   imageUrl?: string;
+  price?: number;
+  discountPrice?: number;
   isActive?: boolean;
 }
 
@@ -49,60 +56,27 @@ export interface CourseResponse {
   totalPages: number;
 }
 
-class CourseService {
-  private getAuthHeaders() {
-    const token = localStorage.getItem('access_token');
-    return {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`,
-    };
+// Create axios instance with proper configuration
+const courseApi = axios.create({
+  baseURL: API_BASE_URL,
+  withCredentials: true,
+});
+
+// Add request interceptor to include auth token
+courseApi.interceptors.request.use((config) => {
+  const token = localStorage.getItem('access_token');
+  if (token) {
+    config.headers = config.headers || {};
+    config.headers.Authorization = `Bearer ${token}`;
   }
+  return config;
+});
 
+class CourseService {
   async getAllCourses(params: CourseSearchParams): Promise<CourseResponse> {
-    const searchParams = new URLSearchParams();
-    
-    if (params.search) searchParams.append('search', params.search);
-    searchParams.append('page', params.page.toString());
-    searchParams.append('limit', params.limit.toString());
-    
-    // Add new filter parameters
-    if (params.sortBy) searchParams.append('sortBy', params.sortBy);
-    if (params.sortOrder) searchParams.append('sortOrder', params.sortOrder);
-    if (params.createdBy) searchParams.append('createdBy', params.createdBy.toString());
-    if (params.dateFrom) searchParams.append('dateFrom', params.dateFrom);
-    if (params.dateTo) searchParams.append('dateTo', params.dateTo);
-
-    // For GET requests, we don't need to send authentication headers
-    const url = `${API_BASE_URL}/courses?${searchParams.toString()}`;
-    console.log('Fetching courses from:', url);
-    
     try {
-      const response = await fetch(url);
-      console.log('Response status:', response.status);
-      console.log('Response headers:', [...response.headers.entries()]);
-      
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error('Error response text:', errorText);
-        try {
-          const errorData = JSON.parse(errorText);
-          console.error('Error response JSON:', errorData);
-          throw new Error(errorData.message || `Failed to fetch courses: ${response.status} ${response.statusText}`);
-        } catch {
-          throw new Error(`Failed to fetch courses: ${response.status} ${response.statusText} - ${errorText}`);
-        }
-      }
-      
-      const contentType = response.headers.get('content-type');
-      if (!contentType || !contentType.includes('application/json')) {
-        const text = await response.text();
-        console.error('Non-JSON response:', text);
-        throw new Error('Server returned non-JSON response');
-      }
-      
-      const data = await response.json();
-      console.log('Courses data:', data);
-      return data;
+      const response = await courseApi.get<CourseResponse>('/api/courses', { params });
+      return response.data;
     } catch (error) {
       console.error('Error fetching courses:', error);
       throw new Error('Failed to fetch courses: ' + (error as Error).message);
@@ -110,57 +84,41 @@ class CourseService {
   }
 
   async getCourseById(id: number): Promise<Course> {
-    const response = await fetch(`${API_BASE_URL}/courses/${id}`, {
-      headers: this.getAuthHeaders(),
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
-      throw new Error(errorData.message || 'Failed to fetch course');
+    try {
+      const response = await courseApi.get<Course>(`/api/courses/${id}`);
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching course:', error);
+      throw new Error('Failed to fetch course: ' + (error as Error).message);
     }
-
-    return response.json();
   }
 
   async createCourse(courseData: CreateCourseDto): Promise<Course> {
-    const response = await fetch(`${API_BASE_URL}/courses`, {
-      method: 'POST',
-      headers: this.getAuthHeaders(),
-      body: JSON.stringify(courseData),
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
-      throw new Error(errorData.message || 'Failed to create course');
+    try {
+      const response = await courseApi.post<Course>('/api/courses', courseData);
+      return response.data;
+    } catch (error) {
+      console.error('Error creating course:', error);
+      throw new Error('Failed to create course: ' + (error as Error).message);
     }
-
-    return response.json();
   }
 
   async updateCourse(id: number, courseData: UpdateCourseDto): Promise<Course> {
-    const response = await fetch(`${API_BASE_URL}/courses/${id}`, {
-      method: 'PUT',
-      headers: this.getAuthHeaders(),
-      body: JSON.stringify(courseData),
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
-      throw new Error(errorData.message || 'Failed to update course');
+    try {
+      const response = await courseApi.put<Course>(`/api/courses/${id}`, courseData);
+      return response.data;
+    } catch (error) {
+      console.error('Error updating course:', error);
+      throw new Error('Failed to update course: ' + (error as Error).message);
     }
-
-    return response.json();
   }
 
   async deleteCourse(id: number): Promise<void> {
-    const response = await fetch(`${API_BASE_URL}/courses/${id}`, {
-      method: 'DELETE',
-      headers: this.getAuthHeaders(),
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
-      throw new Error(errorData.message || 'Failed to delete course');
+    try {
+      await courseApi.delete(`/api/courses/${id}`);
+    } catch (error) {
+      console.error('Error deleting course:', error);
+      throw new Error('Failed to delete course: ' + (error as Error).message);
     }
   }
 }

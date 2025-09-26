@@ -27,11 +27,36 @@ export default function CourseCard({ course }: CourseCardProps) {
       )}
       
       <div className="p-6 flex flex-col flex-grow">
-        <h2 className="text-xl font-bold text-slate-800 dark:text-white mb-3 line-clamp-2">
+        <h2 className="text-xl font-bold text-slate-800 dark:text-white mb-2 line-clamp-2">
           {course.title}
         </h2>
         
-        <p className="text-red-700 dark:text-red-400 font-medium mb-4 line-clamp-2">
+        {/* Price display */}
+        <div className="mb-3">
+          {course.discountPrice !== undefined && course.discountPrice !== null && course.price && course.discountPrice < course.price ? (
+            <div className="flex items-center gap-2">
+              <span className="text-2xl font-bold text-red-700 dark:text-red-400">
+                {course.discountPrice} <span className="text-lg">TK</span>
+              </span>
+              <span className="text-lg text-gray-500 line-through">
+                {course.price} TK
+              </span>
+              <span className="bg-red-100 text-red-800 text-xs font-semibold px-2 py-1 rounded">
+                {Math.round(((course.price - course.discountPrice) / course.price) * 100)}% OFF
+              </span>
+            </div>
+          ) : course.price ? (
+            <div className="text-2xl font-bold text-red-700 dark:text-red-400">
+              {course.price} <span className="text-lg">TK</span>
+            </div>
+          ) : (
+            <div className="text-lg font-medium text-green-600 dark:text-green-400">
+              Free
+            </div>
+          )}
+        </div>
+        
+        <p className="text-red-700 dark:text-red-400 font-medium mb-3 line-clamp-2">
           {course.highlight}
         </p>
         

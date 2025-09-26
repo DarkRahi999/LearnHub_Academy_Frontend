@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { ChevronDown } from "lucide-react";
+import Image from "next/image";
 
 interface Story {
   id: number;
@@ -112,11 +113,15 @@ export default function SuccessStories() {
               key={story.id}
               className="bg-white dark:bg-slate-900 rounded-xl shadow-lg overflow-hidden border border-gray-200 dark:border-slate-800 transition-transform transform hover:-translate-y-1 hover:shadow-xl"
             >
-              <img
-                src={story.image}
-                alt={story.author}
-                className="w-full h-48 object-cover"
-              />
+              <div className="relative w-full h-48">
+                <Image
+                  src={story.image}
+                  alt={story.author}
+                  fill
+                  className="object-cover"
+                  unoptimized
+                />
+              </div>
               <div className="p-4">
                 <p className="text-sm font-semibold text-gray-900 dark:text-white mb-2">
                   <span className="text-gray-600 dark:text-gray-400 font-normal italic">

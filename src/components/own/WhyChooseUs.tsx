@@ -7,7 +7,6 @@ import {
   BookOpen,
   Heart,
   FileInput,
-  PlusSquare,
 } from "lucide-react";
 import WhyChooseCard from "./WhyChooseCard";
 

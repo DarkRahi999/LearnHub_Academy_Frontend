@@ -18,6 +18,7 @@ export default function EditBookPage() {
   const [highlight, setHighlight] = useState('');
   const [imageUrl, setImageUrl] = useState('');
   const [price, setPrice] = useState('');
+  const [discountPrice, setDiscountPrice] = useState('');
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -45,6 +46,7 @@ export default function EditBookPage() {
       setHighlight(book.highlight);
       setImageUrl(book.imageUrl || '');
       setPrice(book.price.toString());
+      setDiscountPrice(book.discountPrice?.toString() || '');
       
       setError(null);
     } catch (err) {
@@ -84,7 +86,8 @@ export default function EditBookPage() {
         description: description.trim(),
         highlight: highlight.trim(),
         imageUrl: imageUrl.trim() || undefined,
-        price: parseFloat(price)
+        price: parseFloat(price),
+        discountPrice: discountPrice ? parseFloat(discountPrice) : undefined
       });
 
       toast({
@@ -210,6 +213,19 @@ export default function EditBookPage() {
                   min="0"
                   step="0.01"
                   required
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="discountPrice">Discount Price (Optional)</Label>
+                <Input
+                  id="discountPrice"
+                  type="number"
+                  value={discountPrice}
+                  onChange={(e) => setDiscountPrice(e.target.value)}
+                  placeholder="Enter discount price (optional)"
+                  min="0"
+                  step="0.01"
                 />
               </div>
 

@@ -1,4 +1,5 @@
-export const API_BASE_URL = process.env.Backend_API_URL || "http://localhost:8001/api";
+// Use NEXT_PUBLIC_ prefix for environment variables accessible in browser
+export const API_BASE_URL = process.env.NEXT_PUBLIC_Backend_API_URL || process.env.Backend_API_URL || 'http://localhost:8001';
 
 export const API_URLS = {
   signup: {

@@ -1,3 +1,4 @@
+import axios from 'axios';
 import { API_BASE_URL } from '@/config/configURL';
 
 export interface Book {
@@ -7,6 +8,7 @@ export interface Book {
   highlight: string;
   imageUrl?: string;
   price: number;
+  discountPrice?: number;
   isActive: boolean;
   createdAt: string;
   editedAt?: string;
@@ -23,6 +25,7 @@ export interface CreateBookDto {
   highlight: string;
   imageUrl?: string;
   price: number;
+  discountPrice?: number;
 }
 
 export interface UpdateBookDto {
@@ -31,6 +34,7 @@ export interface UpdateBookDto {
   highlight?: string;
   imageUrl?: string;
   price?: number;
+  discountPrice?: number;
   isActive?: boolean;
 }
 
@@ -52,60 +56,27 @@ export interface BookResponse {
   totalPages: number;
 }
 
-class BookService {
-  private getAuthHeaders() {
-    const token = localStorage.getItem('access_token');
-    return {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`,
-    };
+// Create axios instance with proper configuration
+const bookApi = axios.create({
+  baseURL: API_BASE_URL,
+  withCredentials: true,
+});
+
+// Add request interceptor to include auth token
+bookApi.interceptors.request.use((config) => {
+  const token = localStorage.getItem('access_token');
+  if (token) {
+    config.headers = config.headers || {};
+    config.headers.Authorization = `Bearer ${token}`;
   }
+  return config;
+});
 
+class BookService {
   async getAllBooks(params: BookSearchParams): Promise<BookResponse> {
-    const searchParams = new URLSearchParams();
-    
-    if (params.search) searchParams.append('search', params.search);
-    searchParams.append('page', params.page.toString());
-    searchParams.append('limit', params.limit.toString());
-    
-    // Add new filter parameters
-    if (params.sortBy) searchParams.append('sortBy', params.sortBy);
-    if (params.sortOrder) searchParams.append('sortOrder', params.sortOrder);
-    if (params.createdBy) searchParams.append('createdBy', params.createdBy.toString());
-    if (params.dateFrom) searchParams.append('dateFrom', params.dateFrom);
-    if (params.dateTo) searchParams.append('dateTo', params.dateTo);
-
-    // For GET requests, we don't need to send authentication headers
-    const url = `${API_BASE_URL}/books?${searchParams.toString()}`;
-    console.log('Fetching books from:', url);
-    
     try {
-      const response = await fetch(url);
-      console.log('Response status:', response.status);
-      console.log('Response headers:', [...response.headers.entries()]);
-      
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error('Error response text:', errorText);
-        try {
-          const errorData = JSON.parse(errorText);
-          console.error('Error response JSON:', errorData);
-          throw new Error(errorData.message || `Failed to fetch books: ${response.status} ${response.statusText}`);
-        } catch {
-          throw new Error(`Failed to fetch books: ${response.status} ${response.statusText} - ${errorText}`);
-        }
-      }
-      
-      const contentType = response.headers.get('content-type');
-      if (!contentType || !contentType.includes('application/json')) {
-        const text = await response.text();
-        console.error('Non-JSON response:', text);
-        throw new Error('Server returned non-JSON response');
-      }
-      
-      const data = await response.json();
-      console.log('Books data:', data);
-      return data;
+      const response = await bookApi.get<BookResponse>('/api/books', { params });
+      return response.data;
     } catch (error) {
       console.error('Error fetching books:', error);
       throw new Error('Failed to fetch books: ' + (error as Error).message);
@@ -113,57 +84,41 @@ class BookService {
   }
 
   async getBookById(id: number): Promise<Book> {
-    const response = await fetch(`${API_BASE_URL}/books/${id}`, {
-      headers: this.getAuthHeaders(),
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
-      throw new Error(errorData.message || 'Failed to fetch book');
+    try {
+      const response = await bookApi.get<Book>(`/api/books/${id}`);
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching book:', error);
+      throw new Error('Failed to fetch book: ' + (error as Error).message);
     }
-
-    return response.json();
   }
 
   async createBook(bookData: CreateBookDto): Promise<Book> {
-    const response = await fetch(`${API_BASE_URL}/books`, {
-      method: 'POST',
-      headers: this.getAuthHeaders(),
-      body: JSON.stringify(bookData),
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
-      throw new Error(errorData.message || 'Failed to create book');
+    try {
+      const response = await bookApi.post<Book>('/api/books', bookData);
+      return response.data;
+    } catch (error) {
+      console.error('Error creating book:', error);
+      throw new Error('Failed to create book: ' + (error as Error).message);
     }
-
-    return response.json();
   }
 
   async updateBook(id: number, bookData: UpdateBookDto): Promise<Book> {
-    const response = await fetch(`${API_BASE_URL}/books/${id}`, {
-      method: 'PUT',
-      headers: this.getAuthHeaders(),
-      body: JSON.stringify(bookData),
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
-      throw new Error(errorData.message || 'Failed to update book');
+    try {
+      const response = await bookApi.put<Book>(`/api/books/${id}`, bookData);
+      return response.data;
+    } catch (error) {
+      console.error('Error updating book:', error);
+      throw new Error('Failed to update book: ' + (error as Error).message);
     }
-
-    return response.json();
   }
 
   async deleteBook(id: number): Promise<void> {
-    const response = await fetch(`${API_BASE_URL}/books/${id}`, {
-      method: 'DELETE',
-      headers: this.getAuthHeaders(),
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
-      throw new Error(errorData.message || 'Failed to delete book');
+    try {
+      await bookApi.delete(`/api/books/${id}`);
+    } catch (error) {
+      console.error('Error deleting book:', error);
+      throw new Error('Failed to delete book: ' + (error as Error).message);
     }
   }
 }
