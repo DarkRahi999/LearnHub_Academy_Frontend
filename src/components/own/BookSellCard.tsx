@@ -1,6 +1,7 @@
 import { Heart, ShoppingCart, StarIcon } from "lucide-react";
 import React from "react";
 import Image from "next/image";
+import { Button } from "../ui/button";
 
 type Book = {
   id?: string | number;
@@ -36,10 +37,10 @@ export default function BookSellCard({ book, onBuy, onWishlist }: Props) {
   const handleWishlist = () => onWishlist?.(book);
 
   return (
-    <article className="max-w-2xl w-full bg-white dark:bg-slate-900 rounded-2xl shadow-lg overflow-hidden ring-1 ring-slate-200 dark:ring-slate-800 transition-transform transform hover:-translate-y-1">
-      <div className="flex flex-col md:flex-row">
+    <article className="max-w-2xl w-full bg-white dark:bg-slate-900 rounded-2xl overflow-hidden ring-1 ring-slate-200 dark:ring-slate-800 transition-transform transform hover:-translate-y-1 dark:border h-auto">
+      <div className="flex flex-row items-center h-full">
         {/* Image */}
-        <div className="md:w-40 w-full flex-shrink-0 bg-gradient-to-b from-indigo-50 to-white dark:from-slate-800 dark:to-slate-900">
+        <div className="md:w-40 flex-shrink-0 bg-gradient-to-b from-indigo-50 to-white dark:from-slate-800 dark:to-slate-900">
           {img ? (
             <Image
               src={img}
@@ -56,7 +57,7 @@ export default function BookSellCard({ book, onBuy, onWishlist }: Props) {
         </div>
 
         {/* Content */}
-        <div className="p-5 md:p-6 flex-1 flex flex-col gap-3">
+        <div className="p-5 md:p-6 flex-1 flex flex-col gap-1 sm:gap-3">
           <header className="flex items-start justify-between">
             <div>
               <h3 className="text-lg md:text-xl font-semibold leading-tight text-slate-900 dark:text-slate-100">
@@ -95,19 +96,23 @@ export default function BookSellCard({ book, onBuy, onWishlist }: Props) {
               <button
                 onClick={handleWishlist}
                 aria-label="Add to wishlist"
-                className="mt-3 rounded-full p-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 transition"
+                className="rounded-full sm:p-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 transition"
               >
                 {/* Heart icon */}
-                <Heart />
+                <Heart width={15} />
               </button>
             </div>
           </header>
 
           {/* Rating & tags */}
-          <div className="flex items-center gap-3">
-            <div className="flex items-center gap-1">
+          <div className="sm:flex items-center gap-1 sm:gap-3">
+            <div className="flex items-center sm:gap-1">
               {Array.from({ length: 5 }).map((_, i) => (
-                <StarIcon key={i} className={i < Math.floor(rating) ? "fill-yellow-400 text-yellow-400" : "text-gray-300"} />
+                <StarIcon
+                  key={i}
+                  width={15}
+                  className={`${i < Math.floor(rating) ? "fill-yellow-400 text-yellow-400" : "text-gray-300"}`}
+                />
               ))}
               <span className="ml-2 text-sm text-slate-600 dark:text-slate-400">
                 {rating.toFixed(1)}
@@ -127,27 +132,26 @@ export default function BookSellCard({ book, onBuy, onWishlist }: Props) {
           </div>
 
           {/* Description */}
-          <p className="text-sm text-slate-700 dark:text-slate-300 line-clamp-3">
+          <p className="text-sm text-slate-700 dark:text-slate-300 line-clamp-3 leading-3.5">
             {description ?? "No description available."}
           </p>
 
-          <footer className="mt-auto flex items-center justify-between gap-3">
-            <div className="flex items-center gap-3">
-              <button
+          <footer className="mt-auto sm:flex items-center justify-between gap-3">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-1">
+              <Button
                 onClick={handleBuy}
-                className="inline-flex items-center gap-2 px-4 py-2 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-medium shadow-md transition"
+                className="bg-red-700 hover:bg-[#9a0000] text-white rounded-lg"
               >
-                {/* Shopping cart icon */}
                 <ShoppingCart />
                 Buy now
-              </button>
+              </Button>
 
-              <button
+              <Button
                 onClick={handleWishlist}
-                className="px-3 py-2 rounded-2xl border border-slate-200 dark:border-slate-800 text-sm text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 transition"
+                className="border-2 border-red-700 text-red-700 hover:bg-red-700 hover:text-white rounded-lg"
               >
                 Preview
-              </button>
+              </Button>
             </div>
 
             <div className="text-xs text-slate-500 dark:text-slate-400">

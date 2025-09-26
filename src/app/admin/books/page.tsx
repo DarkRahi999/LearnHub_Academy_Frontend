@@ -135,7 +135,7 @@ export default function BooksManagementPage() {
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex items-center">
                           {book.imageUrl ? (
-                            <Image 
+                            <Image
                               src={book.imageUrl} 
                               alt={book.title} 
                               width={40}

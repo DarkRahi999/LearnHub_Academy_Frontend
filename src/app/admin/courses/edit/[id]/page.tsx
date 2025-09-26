@@ -6,7 +6,7 @@ import RoleGuard from '@/components/auth/RoleGuard';
 import { UserRole, Permission } from '@/interface/user';
 import { Button } from '@/components/ui/button';
 import { useRouter, useParams } from 'next/navigation';
-import { courseService, Course } from '@/services/course.service';
+import { courseService, Course, UpdateCourseDto } from '@/services/course.service';
 import { useToast } from '@/hooks/use-toast';
 
 export default function EditCourse() {
@@ -64,7 +64,7 @@ export default function EditCourse() {
     }));
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
 
@@ -73,7 +73,7 @@ export default function EditCourse() {
         const courseId = parseInt(id as string);
         
         // Prepare data for submission
-        const submitData: any = {
+        const submitData: Partial<UpdateCourseDto> = {
           title: formData.title,
           description: formData.description,
           highlight: formData.highlight,
@@ -84,13 +84,13 @@ export default function EditCourse() {
         if (formData.price) {
           submitData.price = parseFloat(formData.price);
         } else {
-          submitData.price = null; // Explicitly set to null if empty
+          submitData.price = undefined; // Use undefined instead of null
         }
         
         if (formData.discountPrice) {
           submitData.discountPrice = parseFloat(formData.discountPrice);
         } else {
-          submitData.discountPrice = null; // Explicitly set to null if empty
+          submitData.discountPrice = undefined; // Use undefined instead of null
         }
 
         await courseService.updateCourse(courseId, submitData);

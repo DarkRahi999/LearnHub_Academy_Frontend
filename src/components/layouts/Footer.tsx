@@ -6,7 +6,7 @@ import { Phone, Mail, MapPin } from 'lucide-react';
 const Footer = () => {
   return (
     <footer className="bg-gray-900 dark:bg-gray-800 text-white pt-12">
-      <div className="container mx-auto px-4 xs:px-6 sm:px-8 lg:px-14">
+      <div className="container mx-auto">
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 md:gap-8">
           {/* Logo and Description */}
           <div className="lg:col-span-2">
@@ -142,7 +142,7 @@ const Footer = () => {
             </Link>
           </div>
         </div>
-        <div className="border-t border-gray-700 mt-8 pt-8 text-center text-gray-400">
+        <div className="border-t border-gray-700 mt-8  pt-4 text-center text-gray-400">
           <p>&copy; {new Date().getFullYear()} ADMISSION CHALLENGE. All rights reserved.</p>
         </div>
       </div>

@@ -2,6 +2,8 @@ import {
   Carousel,
   CarouselContent,
   CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
 } from "@/components/ui/carousel";
 import Autoplay from "embla-carousel-autoplay";
 import BookSellCard from "./BookSellCard";
@@ -60,8 +62,7 @@ const BooksSlider = () => {
 
   return (
     <div className="py-8">
-      <div className="max-w-6xl mx-auto px-4">
-        <h2 className="text-2xl font-bold text-slate-800 dark:text-white mb-6">Featured Books</h2>
+      <div className="container mx-auto px-5">
         <Carousel
           opts={{
             align: "start",
@@ -69,7 +70,7 @@ const BooksSlider = () => {
           }}
           plugins={[
             Autoplay({
-              delay: 3000,
+              delay: 300000000000000,
             }),
           ]}
           className="w-full"
@@ -88,6 +89,8 @@ const BooksSlider = () => {
               </CarouselItem>
             ))}
           </CarouselContent>
+          <CarouselPrevious />
+          <CarouselNext />
         </Carousel>
       </div>
     </div>

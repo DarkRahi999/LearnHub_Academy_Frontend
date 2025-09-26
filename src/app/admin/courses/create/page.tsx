@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { useRouter } from 'next/navigation';
 import { courseService } from '@/services/course.service';
 import { useToast } from '@/hooks/use-toast';
+import { CreateCourseDto } from '@/services/course.service';
 
 export default function CreateCourse() {
   const router = useRouter();
@@ -30,26 +31,20 @@ export default function CreateCourse() {
     }));
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
 
     try {
       // Prepare data for submission
-      const submitData: any = {
+      const submitData: CreateCourseDto = {
         title: formData.title,
         description: formData.description,
         highlight: formData.highlight,
         imageUrl: formData.imageUrl || undefined,
+        price: formData.price ? parseFloat(formData.price) : undefined,
+        discountPrice: formData.discountPrice ? parseFloat(formData.discountPrice) : undefined,
       };
-
-      // Only include price fields if they have values
-      if (formData.price) {
-        submitData.price = parseFloat(formData.price);
-      }
-      if (formData.discountPrice) {
-        submitData.discountPrice = parseFloat(formData.discountPrice);
-      }
 
       await courseService.createCourse(submitData);
       toast({

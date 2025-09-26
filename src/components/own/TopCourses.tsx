@@ -1,17 +1,18 @@
 "use client";
 
-import React, { useState, useEffect, useCallback } from 'react';
-import CourseCard from './CourseCard';
-import { courseService, Course } from '@/services/course.service';
-import { Button } from '@/components/ui/button';
-import Link from 'next/link';
-import { BookOpen } from 'lucide-react';
+import React, { useState, useEffect } from "react";
+import CourseCard from "./CourseCard";
+import { courseService, Course } from "@/services/course.service";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
+import { BookOpen } from "lucide-react";
+import { Carousel, CarouselContent, CarouselItem } from "../ui/carousel";
+import Autoplay from "embla-carousel-autoplay";
 
 export default function TopCourses() {
   const [courses, setCourses] = useState<Course[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [currentIndex, setCurrentIndex] = useState(0);
 
   // Fetch courses from the backend
   useEffect(() => {
@@ -21,8 +22,8 @@ export default function TopCourses() {
         const response = await courseService.getAllCourses({
           page: 1,
           limit: 4,
-          sortBy: 'createdAt',
-          sortOrder: 'DESC'
+          sortBy: "createdAt",
+          sortOrder: "DESC",
         });
         setCourses(response.courses);
         setLoading(false);
@@ -36,47 +37,12 @@ export default function TopCourses() {
     fetchCourses();
   }, []);
 
-  // Check if we're on a medium screen or larger
-  const isMediumScreen = useCallback(() => {
-    if (typeof window !== 'undefined') {
-      return window.innerWidth >= 768; // md breakpoint
-    }
-    return false;
-  }, []);
-
-  // Auto rotate courses every 10 seconds (only on md screens and above)
-  useEffect(() => {
-    if (courses.length === 0) return;
-    
-    // Don't auto-rotate on small screens
-    if (!isMediumScreen()) return;
-    
-    const interval = setInterval(() => {
-      setCurrentIndex((prevIndex) => (prevIndex + 1) % courses.length);
-    }, 10000); // 10 seconds
-
-    return () => clearInterval(interval);
-  }, [courses.length, isMediumScreen]);
-
-  // Handle window resize to enable/disable auto-rotation
-  useEffect(() => {
-    const handleResize = () => {
-      // Reset index when screen size changes
-      setCurrentIndex(0);
-    };
-
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
-
-  const goToIndex = (index: number) => {
-    setCurrentIndex(index);
-  };
-
   if (loading) {
     return (
       <div className="flex justify-center items-center h-64">
-        <p className="text-lg text-slate-700 dark:text-slate-300">Loading courses...</p>
+        <p className="text-lg text-slate-700 dark:text-slate-300">
+          Loading courses...
+        </p>
       </div>
     );
   }
@@ -99,9 +65,12 @@ export default function TopCourses() {
                 <BookOpen className="h-12 w-12 text-red-600 dark:text-red-400" />
               </div>
             </div>
-            <h3 className="text-2xl font-bold text-slate-800 dark:text-white mb-3">No Courses Available</h3>
+            <h3 className="text-2xl font-bold text-slate-800 dark:text-white mb-3">
+              No Courses Available
+            </h3>
             <p className="text-slate-600 dark:text-slate-400 mb-6 max-w-md mx-auto">
-              We don&#39;t have any courses available at the moment. Check back soon for exciting new courses!
+              We don&#39;t have any courses available at the moment. Check back
+              soon for exciting new courses!
             </p>
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <Link href="/course">
@@ -110,7 +79,10 @@ export default function TopCourses() {
                 </Button>
               </Link>
               <Link href="/contact">
-                <Button variant="outline" className="border-2 border-red-700 text-red-700 hover:bg-red-700 hover:text-white px-6 py-3 rounded-lg font-medium">
+                <Button
+                  variant="outline"
+                  className="border-2 border-red-700 text-red-700 hover:bg-red-700 hover:text-white px-6 py-3 rounded-lg font-medium"
+                >
                   Contact Us
                 </Button>
               </Link>
@@ -121,58 +93,33 @@ export default function TopCourses() {
     );
   }
 
-  // Get visible courses for medium screens and above
-  const visibleCourses = isMediumScreen() 
-    ? [
-        courses[currentIndex],
-        courses[(currentIndex + 1) % courses.length],
-        courses[(currentIndex + 2) % courses.length]
-      ]
-    : courses;
-
   return (
     <div className="py-8">
-      <div className="max-w-6xl mx-auto px-4 relative">
-        {/* Course display area - responsive grid */}
-        <div className={`grid gap-6 ${
-          isMediumScreen() 
-            ? 'grid-cols-3' 
-            : 'grid-cols-1 sm:grid-cols-2'
-        }`}>
-          {isMediumScreen() ? (
-            // On medium screens and above, show only 3 courses with animation
-            visibleCourses.map((course, idx) => (
-              <div key={idx} className="w-full">
+      <div className="container mx-auto px-5">
+        <Carousel
+          opts={{
+            align: "start",
+            loop: true,
+          }}
+          plugins={[
+            Autoplay({
+              delay: 2000,
+              stopOnInteraction: false,
+            }),
+          ]}
+          className="w-full"
+        >
+          <CarouselContent>
+            {courses?.slice(0,4).map((course) => (
+              <CarouselItem
+                key={course.id}
+                className="lg:basis-1/3 md:basis-1/2 basis-full"
+              >
                 <CourseCard course={course} />
-              </div>
-            ))
-          ) : (
-            // On small screens, show all 4 courses in a 2x2 grid
-            courses.map((course) => (
-              <div key={course.id} className="w-full">
-                <CourseCard course={course} />
-              </div>
-            ))
-          )}
-        </div>
-        
-        {/* Navigation dots - only show on md screens and above */}
-        {isMediumScreen() && (
-          <div className="flex justify-center mt-8 space-x-2">
-            {courses.map((_, index) => (
-              <button
-                key={index}
-                onClick={() => goToIndex(index)}
-                className={`w-3 h-3 rounded-full transition-colors ${
-                  index === currentIndex 
-                    ? 'bg-red-700' 
-                    : 'bg-gray-300 dark:bg-slate-600'
-                }`}
-                aria-label={`Go to course set starting with ${courses[index].title}`}
-              />
+              </CarouselItem>
             ))}
-          </div>
-        )}
+          </CarouselContent>
+        </Carousel>
       </div>
     </div>
   );
