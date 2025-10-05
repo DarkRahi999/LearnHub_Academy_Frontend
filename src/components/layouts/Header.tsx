@@ -15,7 +15,6 @@ import {
 } from "lucide-react";
 import { Button } from "../ui/button";
 import { NavButton } from "../own/NavButton";
-import { ModeToggle } from "./ModeToggle";
 import RoleGuard from "../auth/RoleGuard";
 import RoleBadge from "../auth/RoleBadge";
 import { UserRole } from "@/interface/user";
@@ -26,6 +25,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useNotificationBadge } from "@/hooks/useNotificationBadge";
 import { NotificationBadge } from "@/components/ui/notification-badge";
 import { useRouter } from "next/navigation";
+import { ThemeToggle } from "../ui/theme-toggle";
 
 export default function Header() {
   const { user, isLoading: loading, logout } = useAuth();
@@ -126,7 +126,7 @@ export default function Header() {
               >
                 <PhoneForwarded className="w-5 h-5 text-foreground dark:text-white transition-transform duration-300 group-hover:scale-110" />
               </a>
-              <ModeToggle />
+              <ThemeToggle />
             </>
           ) : (
             <>
@@ -168,7 +168,7 @@ export default function Header() {
                     <PhoneForwarded className="w-5 h-5 text-foreground dark:text-white transition-transform duration-300 group-hover:scale-110" />
                   </a>
                 )}
-              <ModeToggle />
+              <ThemeToggle />
               <button
                 onClick={() => setIsDesktopProfileOpen((prev) => !prev)}
                 className="group flex items-center gap-1 xs:gap-2 focus:outline-none focus:ring-2 focus:ring-primary/50 rounded-full px-2 py-1 transition-all duration-300 ease-in-out hover:bg-primary/10 hover:scale-110"
@@ -195,7 +195,7 @@ export default function Header() {
 
         {/*________________ Mobile Menu Button ________________*/}
         <div className="flex sm:hidden items-center gap-2">
-          <ModeToggle />
+          <ThemeToggle />
           <Button
             variant="ghost"
             size="sm"
@@ -213,19 +213,12 @@ export default function Header() {
         </div>
       </div>
 
-      {/*________________ Mobile Menu Dropdown ________________*/}
-      {/*________________ Backdrop ________________*/}
+      {/*________________ Mobile Menu Backdrop ________________*/}
       <div
         className={`inset-0 sm:hidden transition-all duration-300 ${isMobileMenuOpen ? "bg-black/50 backdrop-blur-sm z-40 fixed" : ""}`}
         onClick={() => setIsMobileMenuOpen(false)}
         style={{ top: "3rem" }}
-      >
-        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-          <span className="text-white text-4xl font-bold opacity-30">
-            WhatsApp
-          </span>
-        </div>
-      </div>
+      ></div>
 
       {/*________________ Menu Panel ________________*/}
       <div
@@ -491,11 +484,13 @@ export default function Header() {
       <>
         {/* Backdrop isDesktopProfileOpen - desktop only */}
         <div
-          className={`top-12 left-0 right-0 bottom-0 z-40 hidden sm:block transition-all duration-300 ${isDesktopProfileOpen?"bg-black/30 backdrop-blur-md fixed":""}`}
+          className={`top-12 left-0 right-0 bottom-0 z-40 hidden sm:block transition-all duration-300 ${isDesktopProfileOpen ? "bg-black/30 backdrop-blur-md fixed" : ""}`}
           onClick={() => setIsDesktopProfileOpen(false)}
         />
         {/* Right Panel */}
-        <div className={`fixed top-12 right-0 h-screen bg-background/95 border-l border-border shadow-2xl z-50 hidden sm:block dark:bg-slate-900/95 dark:border-slate-800 transition-all duration-300 ${isDesktopProfileOpen?"w-1/4":"w-0"}`}>
+        <div
+          className={`fixed top-12 right-0 h-screen bg-background/95 border-l border-border shadow-2xl z-50 hidden sm:block dark:bg-slate-900/95 dark:border-slate-800 transition-all duration-300 ${isDesktopProfileOpen ? "w-1/4" : "w-0"}`}
+        >
           <div className="px-4 py-4">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-3">
