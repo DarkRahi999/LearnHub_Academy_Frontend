@@ -26,6 +26,7 @@ import { useNotificationBadge } from "@/hooks/useNotificationBadge";
 import { NotificationBadge } from "@/components/ui/notification-badge";
 import { useRouter } from "next/navigation";
 import { ThemeToggle } from "../ui/theme-toggle";
+import instituteDetails from "@/app/db/institute";
 
 export default function Header() {
   const { user, isLoading: loading, logout } = useAuth();
@@ -57,9 +58,9 @@ export default function Header() {
             className="flex justify-center items-center gap-2 ml-0 group transition-all duration-300 ease-in-out hover:scale-105"
             title="Home"
           >
-            <h1 className="text-lg xs:text-xl font-bold m-0 mt-1 transition-colors duration-300 group-hover:text-primary text-foreground dark:text-white">
-              <span className="xs:hidden">ADMiSSION CHALLENGE</span>
-              <span className="hidden xs:inline">ADMiSSION CHALLENGE</span>
+            <h1 className="text-lg sm:text-xl font-bold m-0 mt-1 transition-colors duration-300 group-hover:text-primary text-foreground dark:text-white">
+              <span className="sm:hidden">{instituteDetails.name}</span>
+              <span className="hidden sm:inline">{instituteDetails.name}</span>
             </h1>
           </Link>
         </div>
@@ -171,7 +172,7 @@ export default function Header() {
               <ThemeToggle />
               <button
                 onClick={() => setIsDesktopProfileOpen((prev) => !prev)}
-                className="group flex items-center gap-1 xs:gap-2 focus:outline-none focus:ring-2 focus:ring-primary/50 rounded-full px-2 py-1 transition-all duration-300 ease-in-out hover:bg-primary/10 hover:scale-110"
+                className="group flex items-center gap-1 sm:gap-2 focus:outline-none focus:ring-2 focus:ring-primary/50 rounded-full px-2 py-1 transition-all duration-300 ease-in-out hover:bg-primary/10 hover:scale-110"
                 title="Account"
               >
                 <Image
@@ -179,7 +180,7 @@ export default function Header() {
                   alt={`${user.firstName} ${user.lastName || ""}`}
                   width={32}
                   height={32}
-                  className="w-6 h-6 xs:w-8 xs:h-8 rounded-full object-cover transition-transform duration-300 group-hover:scale-110"
+                  className="w-6 h-6 sm:w-8 sm:h-8 rounded-full object-cover transition-transform duration-300 group-hover:scale-110"
                   onError={(e) => {
                     const img = e.currentTarget as HTMLImageElement;
                     if (!img.src.includes("/default-user.svg")) {

@@ -110,7 +110,7 @@ export default function TopCourses() {
           className="w-full"
         >
           <CarouselContent>
-            {courses?.slice(0,4).map((course) => (
+            {courses?.slice(0, 4).map((course) => (
               <CarouselItem
                 key={course.id}
                 className="lg:basis-1/3 md:basis-1/2 basis-full"
