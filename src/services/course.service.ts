@@ -6,6 +6,7 @@ export interface Course {
   title: string;
   description: string;
   highlight: string;
+  pointedText: string[];
   imageUrl?: string;
   price?: number;
   discountPrice?: number;
@@ -23,6 +24,7 @@ export interface CreateCourseDto {
   title: string;
   description: string;
   highlight: string;
+  pointedText: string[];
   imageUrl?: string;
   price?: number;
   discountPrice?: number;
@@ -32,6 +34,7 @@ export interface UpdateCourseDto {
   title?: string;
   description?: string;
   highlight?: string;
+  pointedText?: string[];
   imageUrl?: string;
   price?: number;
   discountPrice?: number;

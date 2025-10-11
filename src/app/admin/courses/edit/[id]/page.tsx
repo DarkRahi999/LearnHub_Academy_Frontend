@@ -8,6 +8,8 @@ import { Button } from '@/components/ui/button';
 import { useRouter, useParams } from 'next/navigation';
 import { courseService, Course, UpdateCourseDto } from '@/services/course.service';
 import { useToast } from '@/hooks/use-toast';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
 
 export default function EditCourse() {
   const router = useRouter();
@@ -24,6 +26,7 @@ export default function EditCourse() {
     price: '',
     discountPrice: '',
   });
+  const [pointedTexts, setPointedTexts] = useState(['', '', '']); // Minimum 3 items
 
   // Fetch course data when component mounts
   useEffect(() => {
@@ -40,6 +43,11 @@ export default function EditCourse() {
             price: course.price?.toString() || '',
             discountPrice: course.discountPrice?.toString() || '',
           });
+          
+          // Set pointedTexts if they exist in the course data
+          if (course.pointedText && Array.isArray(course.pointedText)) {
+            setPointedTexts(course.pointedText);
+          }
         }
       } catch {
         toast({
@@ -64,9 +72,40 @@ export default function EditCourse() {
     }));
   };
 
+  const handlePointedTextChange = (index: number, value: string) => {
+    const newPointedTexts = [...pointedTexts];
+    newPointedTexts[index] = value;
+    setPointedTexts(newPointedTexts);
+  };
+
+  const addPointedText = () => {
+    if (pointedTexts.length < 5) {
+      setPointedTexts([...pointedTexts, '']);
+    }
+  };
+
+  const removePointedText = (index: number) => {
+    if (pointedTexts.length > 3) {
+      const newPointedTexts = pointedTexts.filter((_, i) => i !== index);
+      setPointedTexts(newPointedTexts);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
+
+    // Validate that we have at least 3 non-empty pointedTexts
+    const nonEmptyPointedTexts = pointedTexts.filter(text => text.trim() !== '');
+    if (nonEmptyPointedTexts.length < 3) {
+      toast({
+        title: "Error",
+        description: "Please provide at least 3 pointed text items",
+        variant: "destructive",
+      });
+      setLoading(false);
+      return;
+    }
 
     try {
       if (id) {
@@ -77,6 +116,7 @@ export default function EditCourse() {
           title: formData.title,
           description: formData.description,
           highlight: formData.highlight,
+          pointedText: nonEmptyPointedTexts,
           imageUrl: formData.imageUrl || undefined,
         };
 
@@ -142,7 +182,7 @@ export default function EditCourse() {
               <label htmlFor="title" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 Course Title
               </label>
-              <input
+              <Input
                 type="text"
                 id="title"
                 name="title"
@@ -151,7 +191,6 @@ export default function EditCourse() {
                 required
                 minLength={5}
                 maxLength={200}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-slate-700 dark:border-gray-600 dark:text-white"
                 placeholder="Enter course title"
               />
               <p className="mt-1 text-sm text-gray-500">5-200 characters</p>
@@ -161,7 +200,7 @@ export default function EditCourse() {
               <label htmlFor="description" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 Description
               </label>
-              <textarea
+              <Textarea
                 id="description"
                 name="description"
                 value={formData.description}
@@ -169,7 +208,6 @@ export default function EditCourse() {
                 required
                 minLength={10}
                 rows={4}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-slate-700 dark:border-gray-600 dark:text-white"
                 placeholder="Enter course description"
               />
               <p className="mt-1 text-sm text-gray-500">Minimum 10 characters</p>
@@ -179,7 +217,7 @@ export default function EditCourse() {
               <label htmlFor="highlight" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 Highlight
               </label>
-              <textarea
+              <Textarea
                 id="highlight"
                 name="highlight"
                 value={formData.highlight}
@@ -188,17 +226,64 @@ export default function EditCourse() {
                 minLength={5}
                 maxLength={300}
                 rows={2}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-slate-700 dark:border-gray-600 dark:text-white"
                 placeholder="Enter course highlight"
               />
               <p className="mt-1 text-sm text-gray-500">5-300 characters</p>
+            </div>
+
+            {/* Pointed Text Section */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                Pointed Text Items
+              </label>
+              <p className="text-sm text-gray-500 mb-3">Add 3-5 key points about the course (minimum 3 required)</p>
+              
+              <div className="space-y-3">
+                {pointedTexts.map((text, index) => (
+                  <div key={index} className="flex items-center space-x-2">
+                    <Input
+                      type="text"
+                      value={text}
+                      onChange={(e) => handlePointedTextChange(index, e.target.value)}
+                      placeholder={`Pointed text item ${index + 1}`}
+                      className="flex-1"
+                    />
+                    {pointedTexts.length > 3 && (
+                      <Button
+                        type="button"
+                        variant="destructive"
+                        size="sm"
+                        onClick={() => removePointedText(index)}
+                      >
+                        Remove
+                      </Button>
+                    )}
+                  </div>
+                ))}
+              </div>
+              
+              {pointedTexts.length < 5 && (
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={addPointedText}
+                  className="mt-3"
+                >
+                  Add Pointed Text Item
+                </Button>
+              )}
+              
+              <p className="mt-2 text-sm text-gray-500">
+                {pointedTexts.length}/5 items ({5 - pointedTexts.length} more can be added)
+              </p>
             </div>
 
             <div>
               <label htmlFor="price" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 Price (Optional)
               </label>
-              <input
+              <Input
                 type="number"
                 id="price"
                 name="price"
@@ -206,7 +291,6 @@ export default function EditCourse() {
                 onChange={handleChange}
                 min="0"
                 step="0.01"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-slate-700 dark:border-gray-600 dark:text-white"
                 placeholder="Enter course price (optional)"
               />
             </div>
@@ -215,7 +299,7 @@ export default function EditCourse() {
               <label htmlFor="discountPrice" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 Discount Price (Optional)
               </label>
-              <input
+              <Input
                 type="number"
                 id="discountPrice"
                 name="discountPrice"
@@ -223,7 +307,6 @@ export default function EditCourse() {
                 onChange={handleChange}
                 min="0"
                 step="0.01"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-slate-700 dark:border-gray-600 dark:text-white"
                 placeholder="Enter discount price (optional)"
               />
             </div>
@@ -232,13 +315,12 @@ export default function EditCourse() {
               <label htmlFor="imageUrl" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 Image URL (Optional)
               </label>
-              <input
+              <Input
                 type="url"
                 id="imageUrl"
                 name="imageUrl"
                 value={formData.imageUrl}
                 onChange={handleChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-slate-700 dark:border-gray-600 dark:text-white"
                 placeholder="Enter image URL"
               />
             </div>

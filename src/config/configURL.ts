@@ -32,6 +32,7 @@ export const API_URLS = {
     create: `${API_BASE_URL}/api/notices`,
     update: (id: number) => `${API_BASE_URL}/api/notices/${id}`,
     delete: (id: number) => `${API_BASE_URL}/api/notices/${id}`,
+    getUnreadCount: `${API_BASE_URL}/api/notices/unread/count`,
   },
   admins: {
     getAll: `${API_BASE_URL}/api/auth/admins`,

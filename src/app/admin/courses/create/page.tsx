@@ -9,6 +9,8 @@ import { useRouter } from 'next/navigation';
 import { courseService } from '@/services/course.service';
 import { useToast } from '@/hooks/use-toast';
 import { CreateCourseDto } from '@/services/course.service';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
 
 export default function CreateCourse() {
   const router = useRouter();
@@ -22,6 +24,7 @@ export default function CreateCourse() {
     price: '',
     discountPrice: '',
   });
+  const [pointedTexts, setPointedTexts] = useState(['', '', '']); // Minimum 3 items
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -31,9 +34,40 @@ export default function CreateCourse() {
     }));
   };
 
+  const handlePointedTextChange = (index: number, value: string) => {
+    const newPointedTexts = [...pointedTexts];
+    newPointedTexts[index] = value;
+    setPointedTexts(newPointedTexts);
+  };
+
+  const addPointedText = () => {
+    if (pointedTexts.length < 5) {
+      setPointedTexts([...pointedTexts, '']);
+    }
+  };
+
+  const removePointedText = (index: number) => {
+    if (pointedTexts.length > 3) {
+      const newPointedTexts = pointedTexts.filter((_, i) => i !== index);
+      setPointedTexts(newPointedTexts);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
+
+    // Validate that we have at least 3 non-empty pointedTexts
+    const nonEmptyPointedTexts = pointedTexts.filter(text => text.trim() !== '');
+    if (nonEmptyPointedTexts.length < 3) {
+      toast({
+        title: "Error",
+        description: "Please provide at least 3 pointed text items",
+        variant: "destructive",
+      });
+      setLoading(false);
+      return;
+    }
 
     try {
       // Prepare data for submission
@@ -41,10 +75,14 @@ export default function CreateCourse() {
         title: formData.title,
         description: formData.description,
         highlight: formData.highlight,
+        pointedText: nonEmptyPointedTexts,
         imageUrl: formData.imageUrl || undefined,
         price: formData.price ? parseFloat(formData.price) : undefined,
         discountPrice: formData.discountPrice ? parseFloat(formData.discountPrice) : undefined,
       };
+
+      // Log the data being sent for debugging
+      console.log('Sending course data:', submitData);
 
       await courseService.createCourse(submitData);
       toast({
@@ -52,10 +90,11 @@ export default function CreateCourse() {
         description: "Course created successfully",
       });
       router.push('/admin/courses');
-    } catch {
+    } catch (error) {
+      console.error('Error creating course:', error);
       toast({
         title: "Error",
-        description: "Failed to create course",
+        description: "Failed to create course: " + (error as Error).message,
         variant: "destructive",
       });
     } finally {
@@ -86,7 +125,7 @@ export default function CreateCourse() {
               <label htmlFor="title" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 Course Title
               </label>
-              <input
+              <Input
                 type="text"
                 id="title"
                 name="title"
@@ -95,7 +134,6 @@ export default function CreateCourse() {
                 required
                 minLength={5}
                 maxLength={200}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-slate-700 dark:border-gray-600 dark:text-white"
                 placeholder="Enter course title"
               />
               <p className="mt-1 text-sm text-gray-500">5-200 characters</p>
@@ -105,7 +143,7 @@ export default function CreateCourse() {
               <label htmlFor="description" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 Description
               </label>
-              <textarea
+              <Textarea
                 id="description"
                 name="description"
                 value={formData.description}
@@ -113,7 +151,6 @@ export default function CreateCourse() {
                 required
                 minLength={10}
                 rows={4}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-slate-700 dark:border-gray-600 dark:text-white"
                 placeholder="Enter course description"
               />
               <p className="mt-1 text-sm text-gray-500">Minimum 10 characters</p>
@@ -123,7 +160,7 @@ export default function CreateCourse() {
               <label htmlFor="highlight" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 Highlight
               </label>
-              <textarea
+              <Textarea
                 id="highlight"
                 name="highlight"
                 value={formData.highlight}
@@ -132,17 +169,64 @@ export default function CreateCourse() {
                 minLength={5}
                 maxLength={300}
                 rows={2}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-slate-700 dark:border-gray-600 dark:text-white"
                 placeholder="Enter course highlight"
               />
               <p className="mt-1 text-sm text-gray-500">5-300 characters</p>
+            </div>
+
+            {/* Pointed Text Section */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                Pointed Text Items
+              </label>
+              <p className="text-sm text-gray-500 mb-3">Add 3-5 key points about the course (minimum 3 required)</p>
+              
+              <div className="space-y-3">
+                {pointedTexts.map((text, index) => (
+                  <div key={index} className="flex items-center space-x-2">
+                    <Input
+                      type="text"
+                      value={text}
+                      onChange={(e) => handlePointedTextChange(index, e.target.value)}
+                      placeholder={`Pointed text item ${index + 1}`}
+                      className="flex-1"
+                    />
+                    {pointedTexts.length > 3 && (
+                      <Button
+                        type="button"
+                        variant="destructive"
+                        size="sm"
+                        onClick={() => removePointedText(index)}
+                      >
+                        Remove
+                      </Button>
+                    )}
+                  </div>
+                ))}
+              </div>
+              
+              {pointedTexts.length < 5 && (
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={addPointedText}
+                  className="mt-3"
+                >
+                  Add Pointed Text Item
+                </Button>
+              )}
+              
+              <p className="mt-2 text-sm text-gray-500">
+                {pointedTexts.length}/5 items ({5 - pointedTexts.length} more can be added)
+              </p>
             </div>
 
             <div>
               <label htmlFor="price" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 Price (Optional)
               </label>
-              <input
+              <Input
                 type="number"
                 id="price"
                 name="price"
@@ -150,7 +234,6 @@ export default function CreateCourse() {
                 onChange={handleChange}
                 min="0"
                 step="0.01"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-slate-700 dark:border-gray-600 dark:text-white"
                 placeholder="Enter course price (optional)"
               />
             </div>
@@ -159,7 +242,7 @@ export default function CreateCourse() {
               <label htmlFor="discountPrice" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 Discount Price (Optional)
               </label>
-              <input
+              <Input
                 type="number"
                 id="discountPrice"
                 name="discountPrice"
@@ -167,7 +250,6 @@ export default function CreateCourse() {
                 onChange={handleChange}
                 min="0"
                 step="0.01"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-slate-700 dark:border-gray-600 dark:text-white"
                 placeholder="Enter discount price (optional)"
               />
             </div>
@@ -176,13 +258,12 @@ export default function CreateCourse() {
               <label htmlFor="imageUrl" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 Image URL (Optional)
               </label>
-              <input
+              <Input
                 type="url"
                 id="imageUrl"
                 name="imageUrl"
                 value={formData.imageUrl}
                 onChange={handleChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-slate-700 dark:border-gray-600 dark:text-white"
                 placeholder="Enter image URL"
               />
             </div>

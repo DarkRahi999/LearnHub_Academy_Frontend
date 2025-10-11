@@ -37,7 +37,7 @@ class NoticeService {
   }
 
   async getAllNotices(searchTerm?: string): Promise<{ notices: Notice[]; total: number; searchTerm?: string }> {
-    const url = new URL(`${API_BASE_URL}/notices`);
+    const url = new URL(`${API_BASE_URL}/api/notices`);
     if (searchTerm && searchTerm.trim()) {
       url.searchParams.append('search', searchTerm.trim());
     }
@@ -55,7 +55,7 @@ class NoticeService {
   }
 
   async getNoticeById(id: number): Promise<Notice> {
-    const response = await fetch(`${API_BASE_URL}/notices/${id}`, {
+    const response = await fetch(`${API_BASE_URL}/api/notices/${id}`, {
       headers: this.getAuthHeaders(),
     });
 
@@ -68,7 +68,7 @@ class NoticeService {
   }
 
   async createNotice(noticeData: CreateNoticeDto): Promise<Notice> {
-    const response = await fetch(`${API_BASE_URL}/notices`, {
+    const response = await fetch(`${API_BASE_URL}/api/notices`, {
       method: 'POST',
       headers: this.getAuthHeaders(),
       body: JSON.stringify(noticeData),
@@ -83,7 +83,7 @@ class NoticeService {
   }
 
   async updateNotice(id: number, noticeData: UpdateNoticeDto): Promise<Notice> {
-    const response = await fetch(`${API_BASE_URL}/notices/${id}`, {
+    const response = await fetch(`${API_BASE_URL}/api/notices/${id}`, {
       method: 'PUT',
       headers: this.getAuthHeaders(),
       body: JSON.stringify(noticeData),
@@ -98,7 +98,7 @@ class NoticeService {
   }
 
   async deleteNotice(id: number): Promise<{ message: string }> {
-    const response = await fetch(`${API_BASE_URL}/notices/${id}`, {
+    const response = await fetch(`${API_BASE_URL}/api/notices/${id}`, {
       method: 'DELETE',
       headers: this.getAuthHeaders(),
     });
@@ -113,7 +113,7 @@ class NoticeService {
 
   // Notification methods
   async markNoticeAsRead(id: number): Promise<{ message: string }> {
-    const response = await fetch(`${API_BASE_URL}/notices/${id}/read`, {
+    const response = await fetch(`${API_BASE_URL}/api/notices/${id}/read`, {
       method: 'POST',
       headers: this.getAuthHeaders(),
     });
@@ -127,7 +127,7 @@ class NoticeService {
   }
 
   async getUnreadNoticesCount(): Promise<{ unreadCount: number }> {
-    const response = await fetch(`${API_BASE_URL}/notices/unread/count`, {
+    const response = await fetch(`${API_BASE_URL}/api/notices/unread/count`, {
       headers: this.getAuthHeaders(),
     });
 

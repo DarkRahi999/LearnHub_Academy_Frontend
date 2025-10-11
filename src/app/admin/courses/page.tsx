@@ -1,16 +1,25 @@
-'use client';
+"use client";
 
-import { useState, useEffect, useCallback } from 'react';
-import Header from '@/components/layouts/Header';
-import RoleGuard from '@/components/auth/RoleGuard';
-import { UserRole, Permission } from '@/interface/user';
-import { Button } from '@/components/ui/button';
-import Link from 'next/link';
-import { courseService, Course } from '@/services/course.service';
-import { useToast } from '@/hooks/use-toast';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Calendar, User, Edit, Trash2, Plus, BookOpen } from 'lucide-react';
+import { useState, useEffect, useCallback } from "react";
+import Header from "@/components/layouts/Header";
+import RoleGuard from "@/components/auth/RoleGuard";
+import { UserRole, Permission } from "@/interface/user";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
+import { courseService, Course } from "@/services/course.service";
+import { useToast } from "@/hooks/use-toast";
+import {
+  Card,
+  CardContent,
+} from "@/components/ui/card";
+import {
+  Edit,
+  Trash2,
+  Plus,
+  BookOpen,
+  Eye,
+} from "lucide-react";
+import Image from "next/image";
 
 export default function CourseManagement() {
   const { toast } = useToast();
@@ -19,27 +28,27 @@ export default function CourseManagement() {
   const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [sortBy, setSortBy] = useState('createdAt');
-  const [sortOrder, setSortOrder] = useState<'ASC' | 'DESC'>('DESC');
-  const [createdBy, setCreatedBy] = useState('');
-  const [dateFrom, setDateFrom] = useState('');
-  const [dateTo, setDateTo] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
+  const [sortBy, setSortBy] = useState("createdAt");
+  const [sortOrder, setSortOrder] = useState<"ASC" | "DESC">("DESC");
+  const [createdBy, setCreatedBy] = useState("");
+  const [dateFrom, setDateFrom] = useState("");
+  const [dateTo, setDateTo] = useState("");
 
   const fetchCourses = useCallback(async () => {
     try {
       setLoading(true);
-      console.log('Fetching courses with params:', { 
-        page: currentPage, 
-        limit: 10, 
+      console.log("Fetching courses with params:", {
+        page: currentPage,
+        limit: 10,
         search: searchTerm,
         sortBy,
         sortOrder,
         createdBy: createdBy ? parseInt(createdBy) : undefined,
         dateFrom,
-        dateTo
+        dateTo,
       });
-      
+
       const response = await courseService.getAllCourses({
         page: currentPage,
         limit: 10,
@@ -48,15 +57,16 @@ export default function CourseManagement() {
         sortOrder,
         createdBy: createdBy ? parseInt(createdBy) : undefined,
         dateFrom,
-        dateTo
+        dateTo,
       });
-      
+
       setCourses(response.courses);
       setTotalPages(response.totalPages);
       setError(null);
     } catch (error) {
-      console.error('Failed to fetch courses:', error);
-      const errorMessage = error instanceof Error ? error.message : 'Failed to fetch courses';
+      console.error("Failed to fetch courses:", error);
+      const errorMessage =
+        error instanceof Error ? error.message : "Failed to fetch courses";
       setError(errorMessage);
       toast({
         title: "Error",
@@ -66,7 +76,16 @@ export default function CourseManagement() {
     } finally {
       setLoading(false);
     }
-  }, [currentPage, searchTerm, sortBy, sortOrder, createdBy, dateFrom, dateTo, toast]);
+  }, [
+    currentPage,
+    searchTerm,
+    sortBy,
+    sortOrder,
+    createdBy,
+    dateFrom,
+    dateTo,
+    toast,
+  ]);
 
   useEffect(() => {
     fetchCourses();
@@ -79,7 +98,7 @@ export default function CourseManagement() {
   };
 
   const handleDeleteCourse = async (id: number) => {
-    if (window.confirm('Are you sure you want to delete this course?')) {
+    if (window.confirm("Are you sure you want to delete this course?")) {
       try {
         await courseService.deleteCourse(id);
         toast({
@@ -104,12 +123,12 @@ export default function CourseManagement() {
   };
 
   const handleResetFilters = () => {
-    setSearchTerm('');
-    setSortBy('createdAt');
-    setSortOrder('DESC');
-    setCreatedBy('');
-    setDateFrom('');
-    setDateTo('');
+    setSearchTerm("");
+    setSortBy("createdAt");
+    setSortOrder("DESC");
+    setCreatedBy("");
+    setDateFrom("");
+    setDateTo("");
     setCurrentPage(1);
   };
 
@@ -122,9 +141,13 @@ export default function CourseManagement() {
   }
 
   return (
-    <RoleGuard 
+    <RoleGuard
       allowedRoles={[UserRole.ADMIN, UserRole.SUPER_ADMIN]}
-      requiredPermissions={[Permission.CREATE_COURSE, Permission.UPDATE_COURSE, Permission.DELETE_COURSE]}
+      requiredPermissions={[
+        Permission.CREATE_COURSE,
+        Permission.UPDATE_COURSE,
+        Permission.DELETE_COURSE,
+      ]}
       fallback={
         <div className="flex justify-center items-center h-64">
           <div className="text-lg text-red-500">Access Denied</div>
@@ -132,13 +155,16 @@ export default function CourseManagement() {
       }
     >
       <Header />
-      <div className="container mx-auto py-6">
-        <div className="flex justify-between items-center mb-6 mx-4">
-          <h1 className="text-3xl font-bold">Course Management</h1>
+      <div className="container mx-auto p-5">
+        <div className="flex justify-between items-center mb-8">
+          <div>
+            <h1 className="text-3xl font-bold">Course Management</h1>
+            <p className="text-gray-600">Manage all Courses in the system</p>
+          </div>
           <Link href="/admin/courses/create">
-            <Button className="flex items-center gap-2">
-              <Plus className="w-4 h-4" />
-              Create New Course
+            <Button>
+              <Plus className="w-4 h-4 mr-2" />
+              Add New Course
             </Button>
           </Link>
         </div>
@@ -148,7 +174,10 @@ export default function CourseManagement() {
           <form onSubmit={handleSearch} className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               <div>
-                <label htmlFor="search" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                <label
+                  htmlFor="search"
+                  className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+                >
                   Search
                 </label>
                 <input
@@ -160,9 +189,12 @@ export default function CourseManagement() {
                   className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-slate-700 dark:border-gray-600 dark:text-white"
                 />
               </div>
-              
+
               <div>
-                <label htmlFor="sortBy" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                <label
+                  htmlFor="sortBy"
+                  className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+                >
                   Sort By
                 </label>
                 <select
@@ -176,24 +208,32 @@ export default function CourseManagement() {
                   <option value="highlight">Highlight</option>
                 </select>
               </div>
-              
+
               <div>
-                <label htmlFor="sortOrder" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                <label
+                  htmlFor="sortOrder"
+                  className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+                >
                   Sort Order
                 </label>
                 <select
                   id="sortOrder"
                   value={sortOrder}
-                  onChange={(e) => setSortOrder(e.target.value as 'ASC' | 'DESC')}
+                  onChange={(e) =>
+                    setSortOrder(e.target.value as "ASC" | "DESC")
+                  }
                   className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-slate-700 dark:border-gray-600 dark:text-white"
                 >
                   <option value="DESC">Descending</option>
                   <option value="ASC">Ascending</option>
                 </select>
               </div>
-              
+
               <div>
-                <label htmlFor="createdBy" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                <label
+                  htmlFor="createdBy"
+                  className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+                >
                   Created By (User ID)
                 </label>
                 <input
@@ -206,10 +246,13 @@ export default function CourseManagement() {
                 />
               </div>
             </div>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label htmlFor="dateFrom" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                <label
+                  htmlFor="dateFrom"
+                  className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+                >
                   Date From
                 </label>
                 <input
@@ -220,9 +263,12 @@ export default function CourseManagement() {
                   className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-slate-700 dark:border-gray-600 dark:text-white"
                 />
               </div>
-              
+
               <div>
-                <label htmlFor="dateTo" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                <label
+                  htmlFor="dateTo"
+                  className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+                >
                   Date To
                 </label>
                 <input
@@ -234,7 +280,7 @@ export default function CourseManagement() {
                 />
               </div>
             </div>
-            
+
             <div className="flex justify-end space-x-3">
               <Button
                 type="button"
@@ -279,70 +325,122 @@ export default function CourseManagement() {
             </CardContent>
           </Card>
         ) : (
-          <div className="space-y-4">
-            {courses.map((course) => (
-              <Card key={course.id} className="hover:shadow-lg transition-shadow">
-                <CardHeader>
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1">
-                      <CardTitle className="text-xl mb-2">{course.title}</CardTitle>
-                      <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                        <div className="flex items-center gap-1">
-                          <User className="w-4 h-4" />
-                          <span>
-                            {course.createdBy?.firstName} {course.createdBy?.lastName || ''}
-                          </span>
-                        </div>
-                        <div className="flex items-center gap-1">
-                          <Calendar className="w-4 h-4" />
-                          <span>
-                            {new Date(course.createdAt).toLocaleDateString()}
-                            {course.editedAt && (
-                              <span className="ml-1 text-xs text-muted-foreground">
-                                (edited {new Date(course.editedAt).toLocaleDateString()})
-                              </span>
-                            )}
-                          </span>
+          <div className="overflow-x-auto">
+            <table className="min-w-full divide-y divide-gray-200 dark:divide-slate-700">
+              <thead className="bg-gray-50 dark:bg-slate-700">
+                <tr>
+                  <th
+                    scope="col"
+                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-slate-300 uppercase tracking-wider"
+                  >
+                    No
+                  </th>
+                  <th
+                    scope="col"
+                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-slate-300 uppercase tracking-wider"
+                  >
+                    Courses
+                  </th>
+                  <th
+                    scope="col"
+                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-slate-300 uppercase tracking-wider"
+                  >
+                    Price
+                  </th>
+                  <th
+                    scope="col"
+                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-slate-300 uppercase tracking-wider"
+                  >
+                    Status
+                  </th>
+                  <th
+                    scope="col"
+                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-slate-300 uppercase tracking-wider"
+                  >
+                    Created
+                  </th>
+                  <th
+                    scope="col"
+                    className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-slate-300 uppercase tracking-wider"
+                  >
+                    Actions
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="bg-white dark:bg-slate-800 divide-y divide-gray-200 dark:divide-slate-700">
+                {courses.map((course) => (
+                  <tr
+                    key={course.id}
+                    className="hover:bg-gray-50 dark:hover:bg-slate-700"
+                  >
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
+                      {course.id}.
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="flex items-center">
+                        {course.imageUrl ? (
+                          <Image
+                            src={course.imageUrl}
+                            alt={course.title}
+                            width={40}
+                            height={40}
+                            className="rounded-md object-cover mr-3"
+                          />
+                        ) : (
+                          <div className="bg-gray-200 border-2 border-dashed rounded-md w-10 h-10 mr-3" />
+                        )}
+                        <div>
+                          <div className="text-sm font-medium text-gray-900 dark:text-white">
+                            {course.title}
+                          </div>
+                          <div className="text-sm text-gray-500 dark:text-slate-400 line-clamp-1">
+                            {course.highlight}
+                          </div>
                         </div>
                       </div>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Badge variant={course.isActive ? "default" : "secondary"}>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
+                      ${course.price?.toFixed(2)}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span
+                        className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                          course.isActive
+                            ? "bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-100"
+                            : "bg-red-100 text-red-800 dark:bg-red-800 dark:text-red-100"
+                        }`}
+                      >
                         {course.isActive ? "Active" : "Inactive"}
-                      </Badge>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => handleEditCourse(course.id)}
-                        className="flex items-center gap-1"
-                      >
-                        <Edit className="w-4 h-4" />
-                        Edit
-                      </Button>
-                      <Button
-                        variant="destructive"
-                        size="sm"
-                        onClick={() => handleDeleteCourse(course.id)}
-                        className="flex items-center gap-1"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                        Delete
-                      </Button>
-                    </div>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <CardDescription className="text-base leading-relaxed line-clamp-3">
-                    {course.description}
-                  </CardDescription>
-                  {course.highlight && (
-                    <div className="mt-3 p-3 bg-yellow-50 border border-yellow-200 rounded-md">
-                      <p className="text-yellow-800 font-medium">{course.highlight}</p>
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-            ))}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-slate-400">
+                      {new Date(course.createdAt).toLocaleDateString()}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                      <div className="flex justify-end space-x-2">
+                        <Link href={`/course/${course.id}`}>
+                          <Button variant="outline" size="sm">
+                            <Eye className="w-4 h-4" />
+                          </Button>
+                        </Link>
+                        <Link href={`/admin/courses/edit?id=${course.id}`}>
+                          <Button variant="outline" size="sm">
+                            <Edit className="w-4 h-4" />
+                          </Button>
+                        </Link>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleDeleteCourse(course.id)}
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         )}
 
@@ -357,7 +455,9 @@ export default function CourseManagement() {
                 Previous
               </Button>
               <Button
-                onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
+                onClick={() =>
+                  setCurrentPage(Math.min(totalPages, currentPage + 1))
+                }
                 disabled={currentPage === totalPages}
               >
                 Next
@@ -366,11 +466,15 @@ export default function CourseManagement() {
             <div className="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
               <div>
                 <p className="text-sm text-gray-700 dark:text-gray-300">
-                  Page <span className="font-medium">{currentPage}</span> of <span className="font-medium">{totalPages}</span>
+                  Page <span className="font-medium">{currentPage}</span> of{" "}
+                  <span className="font-medium">{totalPages}</span>
                 </p>
               </div>
               <div>
-                <nav className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
+                <nav
+                  className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px"
+                  aria-label="Pagination"
+                >
                   <Button
                     onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
                     disabled={currentPage === 1}
@@ -384,15 +488,17 @@ export default function CourseManagement() {
                       onClick={() => setCurrentPage(i + 1)}
                       className={`relative inline-flex items-center px-4 py-2 border text-sm font-medium ${
                         currentPage === i + 1
-                          ? 'z-10 bg-blue-50 border-blue-500 text-blue-600'
-                          : 'bg-white border-gray-300 text-gray-500 hover:bg-gray-50'
+                          ? "z-10 bg-blue-50 border-blue-500 text-blue-600"
+                          : "bg-white border-gray-300 text-gray-500 hover:bg-gray-50"
                       }`}
                     >
                       {i + 1}
                     </Button>
                   ))}
                   <Button
-                    onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
+                    onClick={() =>
+                      setCurrentPage(Math.min(totalPages, currentPage + 1))
+                    }
                     disabled={currentPage === totalPages}
                     className="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
                   >
