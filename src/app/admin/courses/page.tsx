@@ -91,12 +91,6 @@ export default function CourseManagement() {
     fetchCourses();
   }, [fetchCourses]);
 
-  const handleEditCourse = (id: number) => {
-    // Navigate to the edit page
-    // Using window.location.href for full page refresh to ensure data is loaded properly
-    window.location.href = `/admin/courses/edit/${id}`;
-  };
-
   const handleDeleteCourse = async (id: number) => {
     if (window.confirm("Are you sure you want to delete this course?")) {
       try {
@@ -423,7 +417,7 @@ export default function CourseManagement() {
                             <Eye className="w-4 h-4" />
                           </Button>
                         </Link>
-                        <Link href={`/admin/courses/edit?id=${course.id}`}>
+                        <Link href={`/admin/courses/edit/${course.id}`}>
                           <Button variant="outline" size="sm">
                             <Edit className="w-4 h-4" />
                           </Button>

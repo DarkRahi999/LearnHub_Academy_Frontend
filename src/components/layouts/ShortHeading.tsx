@@ -19,7 +19,7 @@ const ShortHeading = () => {
     }, 8000);
 
     return () => clearInterval(headingInterval);
-  }, [instituteDetails.shortHeadings.length]);
+  }, []); // Removed unnecessary dependency
 
   return (
     <div className="container mx-auto px-5">

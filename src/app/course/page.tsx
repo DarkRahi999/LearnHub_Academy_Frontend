@@ -1,19 +1,20 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import Header from "@/components/layouts/Header";
 import CourseCard from "@/components/own/CourseCard";
 import { Button } from "@/components/ui/button";
 import { courseService, Course } from "@/services/course.service";
 import Footer from "@/components/layouts/Footer";
 import { Card, CardContent } from "@/components/ui/card";
-import { BookOpen } from "lucide-react";
+import { BookOpen, Search, X } from "lucide-react";
 
 export default function CoursesPage() {
   const [courses, setCourses] = useState<Course[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
+  const searchInputRef = useRef<HTMLInputElement>(null);
 
   const fetchCourses = useCallback(async (search = "") => {
     try {
@@ -47,6 +48,17 @@ export default function CoursesPage() {
   const handleReset = () => {
     setSearchTerm("");
     fetchCourses();
+    // Focus back on the input field after clearing
+    if (searchInputRef.current) {
+      searchInputRef.current.focus();
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      fetchCourses(searchTerm);
+    }
   };
 
   if (loading && courses.length === 0) {
@@ -87,28 +99,37 @@ export default function CoursesPage() {
 
         {/* Search Bar */}
         <div className="mb-8">
-          <form onSubmit={handleSearch} className="flex gap-2">
-            <input
-              type="text"
-              placeholder="Search courses..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 dark:bg-slate-800 dark:border-slate-700 dark:text-white"
-            />
-            <Button
-              type="button"
-              variant="outline"
-              onClick={handleReset}
-              className="border-red-700 text-red-700 hover:bg-red-700 hover:text-white"
-            >
-              Reset
-            </Button>
-            <Button
-              type="submit"
-              className="bg-red-700 hover:bg-red-800 text-white"
-            >
-              Search
-            </Button>
+          <form onSubmit={handleSearch} className="relative">
+            <div className="relative flex items-center gap-2">
+              <div className="relative flex-1">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                <input
+                  ref={searchInputRef}
+                  type="text"
+                  placeholder="Search courses..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  onKeyDown={handleKeyDown}
+                  className="w-full pl-10 pr-10 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 dark:bg-slate-800 dark:border-slate-700 dark:text-white"
+                />
+                {searchTerm && (
+                  <button
+                    type="button"
+                    onClick={handleReset}
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                )}
+              </div>
+              <Button 
+                type="submit" 
+                size="icon"
+                className="bg-red-700 hover:bg-red-800 text-white md:hidden"
+              >
+                <Search className="w-4 h-4" />
+              </Button>
+            </div>
           </form>
         </div>
 
