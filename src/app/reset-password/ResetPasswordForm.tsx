@@ -1,193 +1,153 @@
 "use client";
-
-import { useState, useEffect } from "react";
-import { useForm, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
+import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { z } from "zod";
 import { resetPassword } from "@/services/auth.service";
-import toast from "react-hot-toast";
-import { ArrowLeft, CheckCircle } from "lucide-react";
-import Link from "next/link";
-import { useSearchParams } from "next/navigation";
+import { useToast } from "@/hooks/use-toast";
+import { useRouter } from "next/navigation";
 
-const ResetPasswordSchema = z.object({
-    email: z.string().email({ message: "Invalid email address" }),
-  otp: z.string().min(6, { message: "OTP must be 6 digits" }),
-    newPassword: z.string().min(6, { message: "Password must be at least 6 characters" }),
-    confirmPassword: z.string().min(6, { message: "Password must be at least 6 characters" }),
+const ResetPasswordFormSchema = z.object({
+  email: z.string().email("Invalid email address"),
+  otp: z.string().min(6, "OTP must be 6 characters"),
+  newPassword: z.string().min(6, "Password must be at least 6 characters"),
+  confirmPassword: z.string(),
 }).refine((data) => data.newPassword === data.confirmPassword, {
-    message: "Passwords don't match",
-    path: ["confirmPassword"],
+  message: "Passwords don't match",
+  path: ["confirmPassword"],
 });
 
-type ResetPasswordFormData = z.infer<typeof ResetPasswordSchema>;
-
 export default function ResetPasswordForm() {
-    const [isLoading, setIsLoading] = useState(false);
-    const [isSuccess, setIsSuccess] = useState(false);
-    const searchParams = useSearchParams();
-  const email = searchParams.get("email") || "";
-
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-    setValue,
-  } = useForm<ResetPasswordFormData>({
-    resolver: zodResolver(ResetPasswordSchema),
-        defaultValues: {
-      email: email,
-        },
+  const { toast } = useToast();
+  const router = useRouter();
+  const form = useForm<z.infer<typeof ResetPasswordFormSchema>>({
+    resolver: zodResolver(ResetPasswordFormSchema),
+    defaultValues: {
+      email: "",
+      otp: "",
+      newPassword: "",
+      confirmPassword: "",
+    },
   });
 
-    useEffect(() => {
-    if (email) {
-      setValue("email", email);
-        }
-  }, [email, setValue]);
-
-  const onSubmit: SubmitHandler<ResetPasswordFormData> = async (data) => {
-        try {
-            setIsLoading(true);
-      await resetPassword({
-        email: data.email,
-        otp: data.otp,
-        newPassword: data.newPassword,
-        confirmPassword: data.confirmPassword,
+  async function onSubmit(values: z.infer<typeof ResetPasswordFormSchema>) {
+    try {
+      await resetPassword(values);
+      toast({
+        title: "Success",
+        description: "Password reset successfully!",
+        variant: "default",
       });
-            setIsSuccess(true);
-      toast.success("Password reset successfully!");
-    } catch (error: unknown) {
-      console.error("Reset password error:", error);
-      const errorMessage = (error as { response?: { data?: { message?: string } } })?.response?.data?.message || "Failed to reset password. Please try again.";
-            toast.error(errorMessage);
-        } finally {
-            setIsLoading(false);
-        }
-  };
-
-    if (isSuccess) {
-        return (
-      <div className="max-w-md mx-auto">
-        <Card>
-          <CardHeader className="text-center">
-            <div className="mx-auto w-12 h-12 bg-green-100 dark:bg-green-900 rounded-full flex items-center justify-center mb-4">
-              <CheckCircle className="w-6 h-6 text-green-600 dark:text-green-400" />
-                        </div>
-            <CardTitle className="text-xl">Password Reset Successful</CardTitle>
-            <CardDescription>
-              Your password has been successfully reset.
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <p className="text-sm text-muted-foreground text-center">
-              You can now log in with your new password.
-            </p>
-            <Button asChild className="w-full">
-              <Link href="/login">
-                        Go to Login
-              </Link>
-                    </Button>
-          </CardContent>
-        </Card>
-                </div>
-    );
+      
+      // Redirect to login page
+      setTimeout(() => {
+        router.push("/login");
+      }, 2000);
+    } catch (error) {
+      console.error("Failed to reset password:", error);
+      toast({
+        title: "Error",
+        description: "Failed to reset password. Please try again.",
+        variant: "destructive",
+      });
     }
+  }
 
-    return (
-    <div className="max-w-md mx-auto">
-      <Card>
-        <CardHeader className="text-center">
-          <CardTitle className="text-xl">Reset Your Password</CardTitle>
-          <CardDescription>
-            Enter your email, OTP code, and new password to reset your account.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-            <div className="space-y-2">
-              <label htmlFor="email" className="text-sm font-medium">
-                Email Address
-              </label>
-                                    <Input 
-                id="email"
-                                        type="email" 
-                placeholder="Enter your email"
-                {...register("email")}
-                className={errors.email ? "border-red-500" : ""}
-              />
-              {errors.email && (
-                <p className="text-sm text-red-500">{errors.email.message}</p>
-              )}
-            </div>
-
-            <div className="space-y-2">
-              <label htmlFor="otp" className="text-sm font-medium">
-                OTP Code
-              </label>
-                                    <Input 
-                id="otp"
-                type="text"
-                placeholder="Enter 6-digit OTP"
-                                        maxLength={6}
-                {...register("otp")}
-                className={errors.otp ? "border-red-500" : ""}
-              />
-              {errors.otp && (
-                <p className="text-sm text-red-500">{errors.otp.message}</p>
-              )}
-            </div>
-
-            <div className="space-y-2">
-              <label htmlFor="newPassword" className="text-sm font-medium">
-                New Password
-              </label>
-                                    <Input 
-                id="newPassword"
-                                        type="password" 
-                                        placeholder="Enter new password" 
-                {...register("newPassword")}
-                className={errors.newPassword ? "border-red-500" : ""}
-              />
-              {errors.newPassword && (
-                <p className="text-sm text-red-500">{errors.newPassword.message}</p>
-              )}
-            </div>
-
-            <div className="space-y-2">
-              <label htmlFor="confirmPassword" className="text-sm font-medium">
-                Confirm Password
-              </label>
-                                    <Input 
-                id="confirmPassword"
-                                        type="password" 
-                                        placeholder="Confirm new password" 
-                {...register("confirmPassword")}
-                className={errors.confirmPassword ? "border-red-500" : ""}
-              />
-              {errors.confirmPassword && (
-                <p className="text-sm text-red-500">{errors.confirmPassword.message}</p>
-              )}
-            </div>
-
-            <Button type="submit" className="w-full" disabled={isLoading}>
-              {isLoading ? "Resetting..." : "Reset Password"}
-                        </Button>
-
-            <div className="text-center">
-              <Button asChild variant="ghost" className="text-sm">
-                <Link href="/login">
-                  <ArrowLeft className="w-4 h-4 mr-2" />
-                  Back to Login
-                </Link>
-                        </Button>
-                    </div>
-                </form>
-        </CardContent>
-      </Card>
-        </div>
+  return (
+    <div className="p-2 xs:p-4">
+      <div className="text-center mb-4">
+        <h2 className="text-xl font-bold">Reset Password</h2>
+        <p className="text-sm text-gray-600 mt-2">
+          Enter your email, OTP, and new password below.
+        </p>
+      </div>
+      
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4 border rounded-md p-4">
+          <FormField
+            control={form.control}
+            name="email"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="text-sm font-semibold">Email</FormLabel>
+                <FormControl>
+                  <Input 
+                    placeholder="Enter your email address" 
+                    {...field} 
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          
+          <FormField
+            control={form.control}
+            name="otp"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="text-sm font-semibold">OTP</FormLabel>
+                <FormControl>
+                  <Input 
+                    placeholder="Enter the 6-digit OTP" 
+                    {...field} 
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          
+          <FormField
+            control={form.control}
+            name="newPassword"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="text-sm font-semibold">New Password</FormLabel>
+                <FormControl>
+                  <Input 
+                    type="password"
+                    placeholder="Enter your new password" 
+                    {...field} 
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          
+          <FormField
+            control={form.control}
+            name="confirmPassword"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="text-sm font-semibold">Confirm Password</FormLabel>
+                <FormControl>
+                  <Input 
+                    type="password"
+                    placeholder="Confirm your new password" 
+                    {...field} 
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          
+          <Button type="submit" className="w-full">
+            Reset Password
+          </Button>
+        </form>
+      </Form>
+    </div>
   );
 }

@@ -1,15 +1,19 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import Header from '@/components/layouts/Header';
-import RoleGuard from '@/components/auth/RoleGuard';
-import { UserRole, Permission } from '@/interface/user';
-import { Button } from '@/components/ui/button';
-import { useRouter, useParams } from 'next/navigation';
-import { courseService, Course, UpdateCourseDto } from '@/services/course.service';
-import { useToast } from '@/hooks/use-toast';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
+import { useState, useEffect } from "react";
+import Header from "@/components/layouts/Header";
+import RoleGuard from "@/components/auth/RoleGuard";
+import { UserRole, Permission } from "@/interface/user";
+import { Button } from "@/components/ui/button";
+import { useRouter, useParams } from "next/navigation";
+import {
+  courseService,
+  Course,
+  UpdateCourseDto,
+} from "@/services/course.service";
+import { useToast } from "@/hooks/use-toast";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 
 export default function EditCourse() {
   const router = useRouter();
@@ -19,14 +23,14 @@ export default function EditCourse() {
   const [loading, setLoading] = useState(false);
   const [fetching, setFetching] = useState(true);
   const [formData, setFormData] = useState({
-    title: '',
-    description: '',
-    highlight: '',
-    imageUrl: '',
-    price: '',
-    discountPrice: '',
+    title: "",
+    description: "",
+    highlight: "",
+    imageUrl: "",
+    price: "",
+    discountPrice: "",
   });
-  const [pointedTexts, setPointedTexts] = useState(['', '', '']); // Minimum 3 items
+  const [pointedTexts, setPointedTexts] = useState(["", "", ""]); // Minimum 3 items
 
   // Fetch course data when component mounts
   useEffect(() => {
@@ -39,11 +43,11 @@ export default function EditCourse() {
             title: course.title,
             description: course.description,
             highlight: course.highlight,
-            imageUrl: course.imageUrl || '',
-            price: course.price?.toString() || '',
-            discountPrice: course.discountPrice?.toString() || '',
+            imageUrl: course.imageUrl || "",
+            price: course.price?.toString() || "",
+            discountPrice: course.discountPrice?.toString() || "",
           });
-          
+
           // Set pointedTexts if they exist in the course data
           if (course.pointedText && Array.isArray(course.pointedText)) {
             setPointedTexts(course.pointedText);
@@ -55,7 +59,7 @@ export default function EditCourse() {
           description: "Failed to fetch course data",
           variant: "destructive",
         });
-        router.push('/admin/courses');
+        router.push("/admin/courses");
       } finally {
         setFetching(false);
       }
@@ -64,11 +68,13 @@ export default function EditCourse() {
     fetchCourse();
   }, [id, router, toast]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
   };
 
@@ -80,7 +86,7 @@ export default function EditCourse() {
 
   const addPointedText = () => {
     if (pointedTexts.length < 5) {
-      setPointedTexts([...pointedTexts, '']);
+      setPointedTexts([...pointedTexts, ""]);
     }
   };
 
@@ -96,7 +102,9 @@ export default function EditCourse() {
     setLoading(true);
 
     // Validate that we have at least 3 non-empty pointedTexts
-    const nonEmptyPointedTexts = pointedTexts.filter(text => text.trim() !== '');
+    const nonEmptyPointedTexts = pointedTexts.filter(
+      (text) => text.trim() !== ""
+    );
     if (nonEmptyPointedTexts.length < 3) {
       toast({
         title: "Error",
@@ -110,7 +118,7 @@ export default function EditCourse() {
     try {
       if (id) {
         const courseId = parseInt(id as string);
-        
+
         // Prepare data for submission
         const submitData: Partial<UpdateCourseDto> = {
           title: formData.title,
@@ -126,7 +134,7 @@ export default function EditCourse() {
         } else {
           submitData.price = undefined; // Use undefined instead of null
         }
-        
+
         if (formData.discountPrice) {
           submitData.discountPrice = parseFloat(formData.discountPrice);
         } else {
@@ -138,7 +146,7 @@ export default function EditCourse() {
           title: "Success",
           description: "Course updated successfully",
         });
-        router.push('/admin/courses');
+        router.push("/admin/courses");
       }
     } catch {
       toast({
@@ -169,180 +177,207 @@ export default function EditCourse() {
         </div>
       }
     >
-      <Header />
-      <div className="container mx-auto py-6">
-        <div className="mb-6">
-          <h1 className="text-3xl font-bold mb-2">Edit Course</h1>
-          <p className="text-gray-600">Update the course details</p>
-        </div>
+      <div className="min-h-screen bg-gradient-to-br from-red-50 via-white to-rose-50 dark:from-slate-900 dark:via-slate-900 dark:to-slate-900">
+        <Header />
+        <div className="container mx-auto py-6">
+          <div className="mb-6">
+            <h1 className="text-3xl font-bold mb-2">Edit Course</h1>
+            <p className="text-gray-600">Update the course details</p>
+          </div>
 
-        <div className="bg-white dark:bg-slate-800 rounded-lg shadow p-6">
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div>
-              <label htmlFor="title" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Course Title
-              </label>
-              <Input
-                type="text"
-                id="title"
-                name="title"
-                value={formData.title}
-                onChange={handleChange}
-                required
-                minLength={5}
-                maxLength={200}
-                placeholder="Enter course title"
-              />
-              <p className="mt-1 text-sm text-gray-500">5-200 characters</p>
-            </div>
-
-            <div>
-              <label htmlFor="description" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Description
-              </label>
-              <Textarea
-                id="description"
-                name="description"
-                value={formData.description}
-                onChange={handleChange}
-                required
-                minLength={10}
-                rows={4}
-                placeholder="Enter course description"
-              />
-              <p className="mt-1 text-sm text-gray-500">Minimum 10 characters</p>
-            </div>
-
-            <div>
-              <label htmlFor="highlight" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Highlight
-              </label>
-              <Textarea
-                id="highlight"
-                name="highlight"
-                value={formData.highlight}
-                onChange={handleChange}
-                required
-                minLength={5}
-                maxLength={300}
-                rows={2}
-                placeholder="Enter course highlight"
-              />
-              <p className="mt-1 text-sm text-gray-500">5-300 characters</p>
-            </div>
-
-            {/* Pointed Text Section */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Pointed Text Items
-              </label>
-              <p className="text-sm text-gray-500 mb-3">Add 3-5 key points about the course (minimum 3 required)</p>
-              
-              <div className="space-y-3">
-                {pointedTexts.map((text, index) => (
-                  <div key={index} className="flex items-center space-x-2">
-                    <Input
-                      type="text"
-                      value={text}
-                      onChange={(e) => handlePointedTextChange(index, e.target.value)}
-                      placeholder={`Pointed text item ${index + 1}`}
-                      className="flex-1"
-                    />
-                    {pointedTexts.length > 3 && (
-                      <Button
-                        type="button"
-                        variant="destructive"
-                        size="sm"
-                        onClick={() => removePointedText(index)}
-                      >
-                        Remove
-                      </Button>
-                    )}
-                  </div>
-                ))}
+          <div className="bg-white dark:bg-slate-800 rounded-lg shadow p-6">
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <div>
+                <label
+                  htmlFor="title"
+                  className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+                >
+                  Course Title
+                </label>
+                <Input
+                  type="text"
+                  id="title"
+                  name="title"
+                  value={formData.title}
+                  onChange={handleChange}
+                  required
+                  minLength={5}
+                  maxLength={200}
+                  placeholder="Enter course title"
+                />
+                <p className="mt-1 text-sm text-gray-500">5-200 characters</p>
               </div>
-              
-              {pointedTexts.length < 5 && (
+
+              <div>
+                <label
+                  htmlFor="description"
+                  className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+                >
+                  Description
+                </label>
+                <Textarea
+                  id="description"
+                  name="description"
+                  value={formData.description}
+                  onChange={handleChange}
+                  required
+                  minLength={10}
+                  rows={4}
+                  placeholder="Enter course description"
+                />
+                <p className="mt-1 text-sm text-gray-500">
+                  Minimum 10 characters
+                </p>
+              </div>
+
+              <div>
+                <label
+                  htmlFor="highlight"
+                  className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+                >
+                  Highlight
+                </label>
+                <Textarea
+                  id="highlight"
+                  name="highlight"
+                  value={formData.highlight}
+                  onChange={handleChange}
+                  required
+                  minLength={5}
+                  maxLength={300}
+                  rows={2}
+                  placeholder="Enter course highlight"
+                />
+                <p className="mt-1 text-sm text-gray-500">5-300 characters</p>
+              </div>
+
+              {/* Pointed Text Section */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  Pointed Text Items
+                </label>
+                <p className="text-sm text-gray-500 mb-3">
+                  Add 3-5 key points about the course (minimum 3 required)
+                </p>
+
+                <div className="space-y-3">
+                  {pointedTexts.map((text, index) => (
+                    <div key={index} className="flex items-center space-x-2">
+                      <Input
+                        type="text"
+                        value={text}
+                        onChange={(e) =>
+                          handlePointedTextChange(index, e.target.value)
+                        }
+                        placeholder={`Pointed text item ${index + 1}`}
+                        className="flex-1"
+                      />
+                      {pointedTexts.length > 3 && (
+                        <Button
+                          type="button"
+                          variant="destructive"
+                          size="sm"
+                          onClick={() => removePointedText(index)}
+                        >
+                          Remove
+                        </Button>
+                      )}
+                    </div>
+                  ))}
+                </div>
+
+                {pointedTexts.length < 5 && (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={addPointedText}
+                    className="mt-3"
+                  >
+                    Add Pointed Text Item
+                  </Button>
+                )}
+
+                <p className="mt-2 text-sm text-gray-500">
+                  {pointedTexts.length}/5 items ({5 - pointedTexts.length} more
+                  can be added)
+                </p>
+              </div>
+
+              <div>
+                <label
+                  htmlFor="price"
+                  className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+                >
+                  Price (Optional)
+                </label>
+                <Input
+                  type="number"
+                  id="price"
+                  name="price"
+                  value={formData.price}
+                  onChange={handleChange}
+                  min="0"
+                  step="0.01"
+                  placeholder="Enter course price (optional)"
+                />
+              </div>
+
+              <div>
+                <label
+                  htmlFor="discountPrice"
+                  className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+                >
+                  Discount Price (Optional)
+                </label>
+                <Input
+                  type="number"
+                  id="discountPrice"
+                  name="discountPrice"
+                  value={formData.discountPrice}
+                  onChange={handleChange}
+                  min="0"
+                  step="0.01"
+                  placeholder="Enter discount price (optional)"
+                />
+              </div>
+
+              <div>
+                <label
+                  htmlFor="imageUrl"
+                  className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+                >
+                  Image URL (Optional)
+                </label>
+                <Input
+                  type="url"
+                  id="imageUrl"
+                  name="imageUrl"
+                  value={formData.imageUrl}
+                  onChange={handleChange}
+                  placeholder="Enter image URL"
+                />
+              </div>
+
+              <div className="flex justify-end space-x-3">
                 <Button
                   type="button"
+                  onClick={() => router.push("/admin/courses")}
                   variant="outline"
-                  size="sm"
-                  onClick={addPointedText}
-                  className="mt-3"
+                  disabled={loading}
                 >
-                  Add Pointed Text Item
+                  Cancel
                 </Button>
-              )}
-              
-              <p className="mt-2 text-sm text-gray-500">
-                {pointedTexts.length}/5 items ({5 - pointedTexts.length} more can be added)
-              </p>
-            </div>
-
-            <div>
-              <label htmlFor="price" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Price (Optional)
-              </label>
-              <Input
-                type="number"
-                id="price"
-                name="price"
-                value={formData.price}
-                onChange={handleChange}
-                min="0"
-                step="0.01"
-                placeholder="Enter course price (optional)"
-              />
-            </div>
-
-            <div>
-              <label htmlFor="discountPrice" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Discount Price (Optional)
-              </label>
-              <Input
-                type="number"
-                id="discountPrice"
-                name="discountPrice"
-                value={formData.discountPrice}
-                onChange={handleChange}
-                min="0"
-                step="0.01"
-                placeholder="Enter discount price (optional)"
-              />
-            </div>
-
-            <div>
-              <label htmlFor="imageUrl" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Image URL (Optional)
-              </label>
-              <Input
-                type="url"
-                id="imageUrl"
-                name="imageUrl"
-                value={formData.imageUrl}
-                onChange={handleChange}
-                placeholder="Enter image URL"
-              />
-            </div>
-
-            <div className="flex justify-end space-x-3">
-              <Button
-                type="button"
-                onClick={() => router.push('/admin/courses')}
-                variant="outline"
-                disabled={loading}
-              >
-                Cancel
-              </Button>
-              <Button
-                type="submit"
-                disabled={loading}
-                className="bg-blue-600 hover:bg-blue-700"
-              >
-                {loading ? 'Updating...' : 'Update Course'}
-              </Button>
-            </div>
-          </form>
+                <Button
+                  type="submit"
+                  disabled={loading}
+                  className="bg-blue-600 hover:bg-blue-700"
+                >
+                  {loading ? "Updating..." : "Update Course"}
+                </Button>
+              </div>
+            </form>
+          </div>
         </div>
       </div>
     </RoleGuard>

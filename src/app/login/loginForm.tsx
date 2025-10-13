@@ -16,7 +16,7 @@ import { z } from "zod"
 import { useDispatch } from "react-redux";
 import { loginSuccess } from "@/context/reduxSlice/userSlice";
 import { loginUser } from "@/services/auth.service";
-import toast from "react-hot-toast"
+import { useToast } from "@/hooks/use-toast";
 
 type LoginValues = {
     email: string
@@ -30,6 +30,7 @@ const LoginSchema = z.object({
 
 const LoginForm = () => {
     const dispatch = useDispatch();
+    const { toast } = useToast();
     const form = useForm<LoginValues>({
         resolver: zodResolver(LoginSchema) as unknown as Resolver<LoginValues>,
         defaultValues: {
@@ -48,7 +49,11 @@ const LoginForm = () => {
             dispatch(loginSuccess({ user: res.user, token: res.access_token }));
             
             
-            toast.success("Login successful! Welcome back!");
+            toast({
+                title: "Success",
+                description: "Login successful! Welcome back!",
+                variant: "default",
+            });
             
             // Redirect to home page
             window.location.href = '/';
@@ -56,7 +61,11 @@ const LoginForm = () => {
             const error = err as { response?: { data?: { message?: string } }; message?: string };
             console.error(error?.response?.data || error?.message || err);
             const errorMessage = error?.response?.data?.message || 'Login failed. Please check your credentials.';
-            toast.error(errorMessage);
+            toast({
+                title: "Error",
+                description: errorMessage,
+                variant: "destructive",
+            });
         }
     }
 
@@ -115,5 +124,3 @@ const LoginForm = () => {
 }
 
 export default LoginForm
-
-

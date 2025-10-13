@@ -1,7 +1,7 @@
 "use client"
+import { useState } from "react"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
-import { useState } from "react"
 import {
     Form,
     FormControl,
@@ -10,13 +10,19 @@ import {
     FormLabel,
     FormMessage,
 } from "@/components/ui/form"
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Input } from "@/components/ui/input"
+import { Button } from "@/components/ui/button"
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select"
 import { UserSignup } from "@/interface/user"
 import { createUser } from "@/services/signup.service";
 import { z } from "zod"
-import toast from "react-hot-toast"
+import { useToast } from "@/hooks/use-toast"
 
 export const SignupFormSchema = z.object({
     firstName: z.string().min(2, { message: "Name must be at least 2 characters" }),
@@ -33,6 +39,7 @@ export const SignupFormSchema = z.object({
 });
 
 const SignupForm = () => {
+    const { toast } = useToast();
     const [step, setStep] = useState<1 | 2 | 3>(1)
     const form = useForm<z.infer<typeof SignupFormSchema>>({
         resolver: zodResolver(SignupFormSchema),
@@ -64,7 +71,11 @@ const SignupForm = () => {
             localStorage.setItem('user_data', JSON.stringify(newUser.user));
             
             
-            toast.success("Account created successfully! Welcome to LearnHub Academy!");
+            toast({
+                title: "Success",
+                description: "Account created successfully! Welcome to LearnHub Academy!",
+                variant: "default",
+            });
             
  //W---------{ Redirect to home page }----------
             window.location.href = '/';
@@ -72,7 +83,11 @@ const SignupForm = () => {
         } catch (error) {
             console.error("Signup failed:", error);
             const errorMessage = error instanceof Error ? error.message : 'Signup failed. Please try again.';
-            toast.error(errorMessage);
+            toast({
+                title: "Error",
+                description: errorMessage,
+                variant: "destructive",
+            });
         }
     }
 
@@ -213,7 +228,7 @@ const SignupForm = () => {
                                         <Select onValueChange={field.onChange} defaultValue={field.value}>
                                             <FormControl className="w-full">
                                                 <SelectTrigger>
-                                                    <SelectValue placeholder="Select Your Gender" />
+                                                    <SelectValue placeholder="Select Gender" />
                                                 </SelectTrigger>
                                             </FormControl>
                                             <SelectContent>
@@ -233,41 +248,42 @@ const SignupForm = () => {
                                     <FormItem>
                                         <FormLabel className="text-sm font-semibold">Date of Birth:</FormLabel>
                                         <FormControl>
-                                            <Input type="date" placeholder="Select your DOB" {...field} />
+                                            <Input type="date" {...field} value={field.value || ""} />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
                                 )}
                             />
-                            <FormField
-                                control={form.control}
-                                name="avatarUrl"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel className="text-sm font-semibold">Avatar URL (Optional):</FormLabel>
-                                        <FormControl>
-                                            <Input placeholder="https://example.com/avatar.jpg (optional)" {...field} />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
+                            <div className="xs:col-span-2">
+                                <FormField
+                                    control={form.control}
+                                    name="avatarUrl"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel className="text-sm font-semibold">Avatar URL:</FormLabel>
+                                            <FormControl>
+                                                <Input placeholder="Enter Avatar URL..." {...field} />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                            </div>
                         </div>
                         )}
-                        <div className="flex justify-between gap-2 py-4">
-                            <div>
-                                {step > 1 && (
-                                    <Button type="button" variant="ghost" onClick={goBack}>Back</Button>
-                                )}
-                            </div>
-                            <div className="flex gap-2">
-                                <Button type="reset" onClick={() => { form.reset(); setStep(1); }} >Reset</Button>
-                                {step < 3 ? (
-                                    <Button type="button" onClick={goNext}>Next</Button>
-                                ) : (
-                                    <Button type="submit">Submit</Button>
-                                )}
-                            </div>
+                        <div className="flex justify-between mt-4">
+                            <Button type="button" onClick={goBack} disabled={step === 1} variant="outline">
+                                Back
+                            </Button>
+                            {step < 3 ? (
+                                <Button type="button" onClick={goNext}>
+                                    Next
+                                </Button>
+                            ) : (
+                                <Button type="submit">
+                                    Sign Up
+                                </Button>
+                            )}
                         </div>
                     </div>
                 </form>
