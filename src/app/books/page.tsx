@@ -88,7 +88,6 @@ export default function BooksPage() {
       <Header />
       <div className="container mx-auto p-5">
         <h1 className="text-3xl font-bold text-red-700 mb-4">Our Books</h1>
-
         {/* Search Bar */}
         <div className="mb-8">
           <form onSubmit={handleSearch} className="relative">
@@ -114,8 +113,8 @@ export default function BooksPage() {
                   </button>
                 )}
               </div>
-              <Button 
-                type="submit" 
+              <Button
+                type="submit"
                 size="icon"
                 className="bg-red-700 hover:bg-red-800 text-white md:hidden"
               >

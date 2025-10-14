@@ -54,7 +54,7 @@ export default function CourseCard({ course }: CourseCardProps) {
         </div>
 
         {/* -=> Course Card pointedText */}
-        <ul className="space-y-1 text-lg text-gray-700 mb-4">
+        <ul className="space-y-1 text-lg text-slate-800 dark:text-slate-300 mb-4">
           {pointsToShow.map((point, index) => (
             <li key={index} className="flex items-center gap-2">
               <span>•</span>

@@ -4,7 +4,7 @@ import Header from "@/components/layouts/Header";
 import RoleGuard from "@/components/auth/RoleGuard";
 import { UserRole, Permission } from "@/interface/user";
 import { useRouter } from "next/navigation";
-import { CourseCreateForm } from "@/components/form/CourseCreateForm";
+import { CourseCreateForm } from "@/components/feature/CourseCreateForm";
 
 export default function CreateCourse() {
   const router = useRouter();
