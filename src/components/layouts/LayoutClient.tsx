@@ -8,6 +8,7 @@ import { ReactNode } from "react";
 import AuthProvider from "@/components/auth/AuthProvider";
 import Providers from "@/provider/storeProvider";
 import { ThemeProvider } from "@/provider/themeProvider";
+import DraggableWhatsAppButton from "@/components/layouts/DraggableWhatsAppButton";
 
 export default function LayoutClient({ children }: { children: ReactNode }) {
   const pathname = usePathname();
@@ -27,6 +28,7 @@ export default function LayoutClient({ children }: { children: ReactNode }) {
             <main>{children}</main>
             <Toaster />
             {!isAdminRoute && <Footer />}
+            {!isAdminRoute && <DraggableWhatsAppButton />}
           </div>
         </AuthProvider>
       </Providers>
