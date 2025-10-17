@@ -1,11 +1,9 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import Header from "@/components/layouts/Header";
 import { Book, bookService } from "@/services/book.service";
 import BookCard from "@/components/own/BookCard";
 import { Button } from "@/components/ui/button";
-import Footer from "@/components/layouts/Footer";
 import { Card, CardContent } from "@/components/ui/card";
 import { NotebookText, Search, X } from "lucide-react";
 
@@ -73,7 +71,6 @@ export default function BooksPage() {
   if (loading && books.length === 0) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-red-50 via-white to-rose-50 dark:from-slate-900 dark:via-slate-900 dark:to-slate-900">
-        <Header />
         <div className="container mx-auto py-8">
           <div className="flex justify-center items-center h-64">
             <p className="text-lg">Loading books...</p>
@@ -85,7 +82,6 @@ export default function BooksPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-red-50 via-white to-rose-50 dark:from-slate-900 dark:via-slate-900 dark:to-slate-900">
-      <Header />
       <div className="container mx-auto p-5">
         <h1 className="text-3xl font-bold text-red-700 mb-4">Our Books</h1>
         {/* Search Bar */}
@@ -182,7 +178,6 @@ export default function BooksPage() {
           </>
         )}
       </div>
-      <Footer />
     </div>
   );
 }

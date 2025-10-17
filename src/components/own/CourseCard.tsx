@@ -13,23 +13,17 @@ export default function CourseCard({ course }: CourseCardProps) {
   const pointsToShow = course.pointedText.slice(0, 3);
 
   return (
-    <div className="bg-white dark:bg-slate-800 scale-up rounded-2xl overflow-hidden border border-white/50 dark:border-slate-700/50 hover:shadow-2xl transition-all duration-300 transform max-lg:hover:scale-105 h-[97%] flex flex-col my-3">
+    <div className="bg-white dark:bg-slate-800 rounded-xl overflow-hidden border border-gray-200 dark:border-slate-700/50 hover:shadow-xl transition-all duration-300 transform">
 
       {/* -=> Course  Card Image */}
-      {course.imageUrl ? (
         <div className="relative md:h-[250px] w-full">
           <Image
-            src={course.imageUrl}
+            src={course.imageUrl || "/images/placeholder.jpg"}
             alt={course.title}
-            fill
             className="object-cover !relative"
+            fill
           />
         </div>
-      ) : (
-        <div className="bg-gray-200 border-2 border-dashed rounded-t-2xl w-full h-48 flex items-center justify-center">
-          <span className="text-gray-500">No Image</span>
-        </div>
-      )}
 
       {/* -=> Course  Card Title */}
       <div className="p-6 flex flex-col flex-grow">

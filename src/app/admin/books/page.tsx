@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Header from "@/components/layouts/Header";
 import RoleGuard from "@/components/auth/RoleGuard";
 import { UserRole, Permission } from "@/interface/user";
 import { Button } from "@/components/ui/button";
@@ -57,7 +56,6 @@ export default function BooksManagementPage() {
   if (loading) {
     return (
       <RoleGuard allowedRoles={[UserRole.ADMIN, UserRole.SUPER_ADMIN]}>
-        <Header />
         <div className="container mx-auto py-8">
           <div className="flex justify-center items-center h-64">
             <p className="text-lg">Loading books...</p>
@@ -76,7 +74,6 @@ export default function BooksManagementPage() {
         Permission.DELETE_BOOK,
       ]}
     >
-      <Header />
       <div className="container mx-auto p-5">
         <div className="flex justify-between items-center mb-8">
           <div>

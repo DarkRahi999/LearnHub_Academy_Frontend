@@ -8,7 +8,7 @@ const ShortHeading = () => {
   const [showHeadings, setShowHeadings] = useState(true);
   const [currentHeadingIndex, setCurrentHeadingIndex] = useState(0);
 
-  // -=> Auto rotate short headings every 8 seconds (slower)
+  //W---------={ Auto rotate short headings every 8 seconds (slower) }=----------
   useEffect(() => {
     const headingInterval = setInterval(() => {
       setCurrentHeadingIndex((prevIndex) =>
@@ -19,10 +19,10 @@ const ShortHeading = () => {
     }, 8000);
 
     return () => clearInterval(headingInterval);
-  }, []); // Removed unnecessary dependency
+  }, []);
 
   return (
-    <div className="container mx-auto px-5">
+    <>
       {showHeadings && (
         <div className="bg-red-600 text-white rounded-lg dark:bg-red-900 dark:border dark:border-red-800 mt-4 animate-pulse">
           <div className="px-4 py-2 flex items-center justify-between">
@@ -43,7 +43,7 @@ const ShortHeading = () => {
           </div>
         </div>
       )}
-    </div>
+    </>
   );
 };
 

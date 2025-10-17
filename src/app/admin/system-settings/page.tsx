@@ -3,7 +3,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { UserRole } from '@/interface/user';
-import Header from '@/components/layouts/Header';
 import { 
   SystemSetting, 
   SettingCategory, 
@@ -284,7 +283,6 @@ export default function SystemSettingsPage() {
 
   return (
     <>
-      <Header />
       <div className="container mx-auto py-8">
       <div className="flex justify-between items-center mb-6">
         <div className='mx-4'>

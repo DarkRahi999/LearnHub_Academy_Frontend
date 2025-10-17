@@ -1,13 +1,12 @@
-import React from 'react';
-
-interface TitleProps {
+interface IProps {
   title: string;
   description: string;
+  className?: string;
 }
 
-export default function Title({ title, description }: TitleProps) {
+export default function Title({ title, description, className }: IProps) {
   return (
-    <div className="text-center">
+    <div className={`text-center ${className}`}>
       <h2 className="text-3xl md:text-4xl font-bold text-red-700 mb-2">
         {title}
       </h2>

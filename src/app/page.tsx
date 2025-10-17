@@ -1,22 +1,22 @@
-import Header from "@/components/layouts/Header";
 import { Button } from "@/components/ui/button";
 import BannerCarousel from "@/components/own/BannerCarousel";
-import Link from "next/link";
-import Title from "@/components/own/Title";
 import TopCourses from "@/components/own/TopCourses";
-import Footer from "@/components/layouts/Footer";
 import BooksSlider from "@/components/own/BooksSlider";
 import WhyChooseUs from "@/components/own/WhyChooseUs";
 import SuccessStories from "@/components/own/SuccessStories";
 import instituteDetails from "./db/institute";
 import ShortHeading from "@/components/layouts/ShortHeading";
+import Link from "next/link";
+import Title from "@/components/own/Title";
 
 export default function HomePage() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-red-50 via-white to-rose-50 dark:from-slate-900 dark:via-slate-900 dark:to-slate-900">
-      <Header />
+    <>
+      {/* -=> Short Heading */}
       <ShortHeading />
-      <div className="container mx-auto px-5 mt-6">
+
+      {/* -=> banner Section */}
+      <div className="mt-6 mb-16">
         <div className="flex flex-col md:flex-row gap-6 lg:gap-8 items-start">
           {/* -=> Right Column - Banner Details */}
           <div className="w-full md:w-1/2 lg:w-2/5 flex flex-col pt-4 xl:pt-10">
@@ -28,7 +28,6 @@ export default function HomePage() {
               {instituteDetails.description}
             </p>
 
-            {/* Reduced margin */}
             <div className="mb-6">
               <h2 className="text-xl sm:text-2xl font-semibold text-slate-800 dark:text-slate-200 mb-3">
                 Why Choose Us?
@@ -48,7 +47,6 @@ export default function HomePage() {
               </div>
             </div>
 
-            {/* Reduced gap */}
             <div className="flex flex-wrap gap-4">
               <Link href="/course">
                 <Button className="bg-red-700 hover:bg-[#9a0000] text-white px-6 py-3 rounded-xl text-base font-semibold shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
@@ -63,6 +61,7 @@ export default function HomePage() {
               </Button>
             </div>
           </div>
+
           {/* Left Column - Banner Carousel */}
           <div className="relative w-full md:w-1/2 lg:w-3/5 aspect-video md:min-h-[460px] lg:aspect-video rounded-2xl overflow-hidden shadow-2xl">
             <BannerCarousel images={instituteDetails.bannerImages} />
@@ -70,37 +69,35 @@ export default function HomePage() {
         </div>
       </div>
 
-      {/* Courses Component */}
-      <div className="px-4 pt-6 sm:pt-20">
+      {/* -=> Courses Component */}
+      <div>
         <Title
           title="Our Top Courses"
           description="Explore our most popular and recently added courses"
         />
+        <TopCourses />
       </div>
-      <TopCourses />
 
-      {/* This is the book list */}
-      <div className="container mx-auto px-4 pt-6 sm:pt-20">
+      {/* -=> This is the book list */}
+      <div>
         <Title
           title="Our Top Books"
           description="Explore our most popular and recently added books"
         />
+        <BooksSlider />
       </div>
-      <BooksSlider />
 
-      {/* This is the book list */}
-      <div className="container mx-auto px-4 pt-6 sm:pt-20">
+      {/* -=> This is the book list */}
+      <div>
         <Title title="Why Choose Us?" description="" />
+        <WhyChooseUs />
       </div>
-      <WhyChooseUs />
 
-      {/* Success Stories component here */}
-      <div className="container mx-auto px-4 pt-6 sm:pt-20">
+      {/* -=> Success Stories component here */}
+      <div>
         <Title title="Success Students" description="" />
+        <SuccessStories />
       </div>
-      <SuccessStories />
-
-      <Footer />
-    </div>
+    </>
   );
 }

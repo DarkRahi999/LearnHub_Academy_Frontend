@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import Header from '@/components/layouts/Header';
 import RoleGuard from '@/components/auth/RoleGuard';
 import { Permission, UserProfile, UserRole } from '@/interface/user';
 import { Button } from '@/components/ui/button';
@@ -193,7 +192,6 @@ export default function AdminManagement() {
         </div>
       }
     >
-      <Header />
       <div className="container mx-auto py-6">
         <div className="flex justify-between items-center mb-6">
           <div className='mx-4'>

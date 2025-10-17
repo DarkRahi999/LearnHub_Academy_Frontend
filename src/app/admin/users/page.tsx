@@ -38,7 +38,6 @@ import {
 import { useToast } from '@/hooks/use-toast';
 import CreateUserForm from '@/components/own/CreateUserForm';
 import EditUserForm from '@/components/own/EditUserForm';
-import Header from '@/components/layouts/Header';
 import { 
   updateUserRole, 
   updateUserStatus, 
@@ -158,7 +157,6 @@ export default function UserManagement() {
 
   return (
     <>
-      <Header />
       <div className="container mx-auto py-6">
         <div className="flex justify-between items-center mb-6">
           <div className='mx-4'>

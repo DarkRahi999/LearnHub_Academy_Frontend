@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Header from "@/components/layouts/Header";
 import RoleGuard from "@/components/auth/RoleGuard";
 import RoleBadge from "@/components/auth/RoleBadge";
 import { UserRole, Permission, UserProfile } from "@/interface/user";
@@ -44,7 +43,6 @@ export default function AdminDashboard() {
       }
     >
       <div className="min-h-screen bg-gradient-to-br from-red-50 via-white to-rose-50 dark:from-slate-900 dark:via-slate-900 dark:to-slate-900">
-        <Header />
         <div className="container mx-auto py-6">
           <div className="mb-6 mx-4">
             <h1 className="text-3xl font-bold mb-2">Admin Dashboard</h1>

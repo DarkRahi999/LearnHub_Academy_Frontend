@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import Header from "@/components/layouts/Header";
 import RoleGuard from "@/components/auth/RoleGuard";
 import { UserRole, Permission } from "@/interface/user";
 import { Button } from "@/components/ui/button";
@@ -140,7 +139,6 @@ export default function CourseManagement() {
       }
     >
       <div className="min-h-screen bg-gradient-to-br from-red-50 via-white to-rose-50 dark:from-slate-900 dark:via-slate-900 dark:to-slate-900">
-        <Header />
         <div className="container mx-auto p-5">
           <div className="flex justify-between items-center mb-8">
             <div>

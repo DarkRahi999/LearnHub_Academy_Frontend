@@ -8,13 +8,15 @@ import Link from "next/link";
 import { BookOpen } from "lucide-react";
 import { Carousel, CarouselContent, CarouselItem } from "../ui/carousel";
 import Autoplay from "embla-carousel-autoplay";
+import Loading from "../layouts/Loading";
+import Error from "../layouts/Error";
 
 export default function TopCourses() {
   const [courses, setCourses] = useState<Course[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Fetch courses from the backend
+  //W---------={ Fetch courses from the backend }=----------
   useEffect(() => {
     const fetchCourses = async () => {
       try {
@@ -38,25 +40,16 @@ export default function TopCourses() {
   }, []);
 
   if (loading) {
-    return (
-      <div className="flex justify-center items-center h-64">
-        <p className="text-lg text-slate-700 dark:text-slate-300">
-          Loading courses...
-        </p>
-      </div>
-    );
+    return <Loading title="Top Courses" />;
   }
 
   if (error) {
-    return (
-      <div className="flex justify-center items-center h-64">
-        <p className="text-lg text-red-600 dark:text-red-400">Error: {error}</p>
-      </div>
-    );
+    return <Error error={error} />;
   }
 
   if (courses.length === 0) {
     return (
+      <>
       <div className="py-8">
         <div className="max-w-4xl mx-auto px-4">
           <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-lg border border-white/50 dark:border-slate-700/50 p-8 text-center">
@@ -90,12 +83,13 @@ export default function TopCourses() {
           </div>
         </div>
       </div>
+      </>
     );
   }
 
   return (
-    <div className="py-8">
-      <div className="container mx-auto px-5">
+    <>
+      <div className="py-8">
         <Carousel
           opts={{
             align: "start",
@@ -121,6 +115,6 @@ export default function TopCourses() {
           </CarouselContent>
         </Carousel>
       </div>
-    </div>
+    </>
   );
 }
