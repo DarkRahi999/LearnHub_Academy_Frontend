@@ -1,6 +1,5 @@
 "use client";
 
-import Header from "@/components/layouts/Header";
 import RoleGuard from "@/components/auth/RoleGuard";
 import { UserRole, Permission } from "@/interface/user";
 import { useRouter } from "next/navigation";
@@ -23,20 +22,15 @@ export default function CreateCourse() {
         </div>
       }
     >
-      <div className="min-h-screen bg-gradient-to-br from-red-50 via-white to-rose-50 dark:from-slate-900 dark:via-slate-900 dark:to-slate-900">
-        <Header />
-        <div className="container mx-auto py-6">
-          <div className="mb-6">
-            <h1 className="text-3xl font-bold mb-2">Create New Course</h1>
-            <p className="text-gray-600">
-              Fill in the details to create a new course
-            </p>
-          </div>
+      <div className="mb-6">
+        <h1 className="text-3xl font-bold mb-2">Create New Course</h1>
+        <p className="text-gray-600">
+          Fill in the details to create a new course
+        </p>
+      </div>
 
-          <div className="bg-white dark:bg-slate-800 rounded-lg shadow p-6">
-            <CourseCreateForm onSuccess={handleSuccess} />
-          </div>
-        </div>
+      <div className="bg-white dark:bg-slate-800 rounded-lg shadow p-6">
+        <CourseCreateForm onSuccess={handleSuccess} />
       </div>
     </RoleGuard>
   );

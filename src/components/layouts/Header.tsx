@@ -9,7 +9,6 @@ import {
   X,
   BellRing,
   Shield,
-  PhoneForwarded,
   BookOpen,
   NotebookText,
 } from "lucide-react";
@@ -117,31 +116,11 @@ export default function Header() {
                   Login
                 </Link>
               </Button>
-              {/* WhatsApp icon for non-logged-in users - Desktop */}
-              <a
-                href="https://wa.me/01729249260"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="p-2 rounded-full transition-all duration-300 ease-in-out hover:scale-105 hover:bg-accent flex items-center justify-center"
-                title="Contact via WhatsApp"
-              >
-                <PhoneForwarded className="w-5 h-5 text-foreground dark:text-white transition-transform duration-300 group-hover:scale-110" />
-              </a>
               <ThemeToggle />
             </>
           ) : (
             <>
               {/*______________ For md Screen ______________ */}
-              {/* <Button
-                                variant="ghost"
-                                asChild
-                                className="transition-all duration-300 ease-in-out hover:scale-105 hover:bg-primary/10 group relative animate-fade-in-up"
-                            >
-                                <Link href="/feed" title="Blog">
-                                    <Newspaper className="w-5 h-5 transition-transform duration-300 group-hover:scale-110" />
-                                    <span className="hidden md:inline">Feed</span>
-                                </Link>
-                            </Button> */}
               <Button
                 variant="ghost"
                 asChild
@@ -156,19 +135,6 @@ export default function Header() {
               <RoleGuard allowedRoles={[UserRole.ADMIN, UserRole.SUPER_ADMIN]}>
                 <NavButton href="/admin" label="Admin" icon={Shield} />
               </RoleGuard>
-              {/* WhatsApp icon for regular users (not Admin or Super Admin) - Desktop */}
-              {user.role !== UserRole.ADMIN &&
-                user.role !== UserRole.SUPER_ADMIN && (
-                  <a
-                    href="https://wa.me/01729249260"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="p-2 rounded-full transition-all duration-300 ease-in-out hover:scale-105 hover:bg-accent flex items-center justify-center"
-                    title="Contact via WhatsApp"
-                  >
-                    <PhoneForwarded className="w-5 h-5 text-foreground dark:text-white transition-transform duration-300 group-hover:scale-110" />
-                  </a>
-                )}
               <ThemeToggle />
               <button
                 onClick={() => setIsDesktopProfileOpen((prev) => !prev)}
@@ -260,17 +226,6 @@ export default function Header() {
                     Books
                   </Link>
                 </Button>
-                {/* WhatsApp option in mobile menu for non-logged-in users */}
-                <a
-                  href="https://wa.me/01729249260"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center w-full h-12 px-4 py-2 text-sm rounded-md transition-all duration-300 ease-in-out hover:bg-accent/50 hover:scale-105 hover:translate-x-2"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  <PhoneForwarded className="w-5 h-5 mr-3 text-foreground dark:text-white transition-transform duration-300 group-hover:scale-110" />
-                  WhatsApp
-                </a>
                 <h3 className="text-sm font-semibold text-muted-foreground mb-3">
                   Account
                 </h3>
@@ -415,12 +370,6 @@ export default function Header() {
                     />
                   </Link>
                 </Button>
-                {/*<Button variant="ghost" asChild className="w-full justify-start h-12 text-left transition-all duration-300 ease-in-out hover:bg-accent/50 hover:scale-105 hover:translate-x-2">
-                                            <Link href="/feed" onClick={() => setIsMobileMenuOpen(false)}>
-                                                <Newspaper className="w-5 h-5 mr-3 transition-transform duration-300 group-hover:scale-110" />
-                                                Feed
-                                            </Link>
-                                        </Button> */}
                 <RoleGuard
                   allowedRoles={[UserRole.ADMIN, UserRole.SUPER_ADMIN]}
                 >
@@ -438,20 +387,6 @@ export default function Header() {
                     </Link>
                   </Button>
                 </RoleGuard>
-                {/* WhatsApp option in mobile menu for regular users (not Admin or Super Admin) */}
-                {user.role !== UserRole.ADMIN &&
-                  user.role !== UserRole.SUPER_ADMIN && (
-                    <a
-                      href="https://wa.me/01729249260"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center w-full h-12 px-4 py-2 text-sm rounded-md transition-all duration-300 ease-in-out hover:bg-accent/50 hover:scale-105 hover:translate-x-2"
-                      onClick={() => setIsMobileMenuOpen(false)}
-                    >
-                      <PhoneForwarded className="w-5 h-5 mr-3 text-foreground dark:text-white transition-transform duration-300 group-hover:scale-110" />
-                      WhatsApp
-                    </a>
-                  )}
 
                 <div className="pt-4 border-t border-border">
                   <Button

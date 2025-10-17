@@ -24,7 +24,7 @@ const ShortHeading = () => {
   return (
     <>
       {showHeadings && (
-        <div className="bg-red-600 text-white rounded-lg dark:bg-red-900 dark:border dark:border-red-800 mt-4 animate-pulse">
+        <div className="bg-red-600 text-white rounded-lg dark:bg-red-900 dark:border dark:border-red-800 animate-pulse">
           <div className="px-4 py-2 flex items-center justify-between">
             <div className="overflow-hidden flex items-center w-full">
               <div className="w-full">
