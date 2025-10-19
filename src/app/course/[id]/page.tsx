@@ -5,7 +5,6 @@ import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
 import { courseService, Course } from "@/services/course.service";
 import { Button } from "@/components/ui/button";
-import Header from "@/components/layouts/Header";
 import Image from "next/image";
 import Loading from "@/components/layouts/Loading";
 
@@ -42,7 +41,6 @@ export default function CourseDetailPage() {
   if (!course) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-red-50 via-white to-rose-50 dark:from-slate-900 dark:via-slate-900 dark:to-slate-900">
-        <Header />
         <div className="container mx-auto px-4 xs:px-6 sm:px-10 lg:px-20 py-8">
           <div className="flex justify-center items-center h-64">
             <p className="text-lg text-slate-700 dark:text-slate-300">

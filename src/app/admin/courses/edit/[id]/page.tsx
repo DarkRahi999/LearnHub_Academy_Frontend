@@ -1,7 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import Header from "@/components/layouts/Header";
+import { useState, useEffect, useRef } from "react";
 import RoleGuard from "@/components/auth/RoleGuard";
 import { UserRole, Permission } from "@/interface/user";
 import { Button } from "@/components/ui/button";
@@ -14,6 +13,7 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { useCloudinaryUpload } from "@/hooks/useCloudinaryUpload";
 
 export default function EditCourse() {
   const router = useRouter();
@@ -31,6 +31,9 @@ export default function EditCourse() {
     discountPrice: "",
   });
   const [pointedTexts, setPointedTexts] = useState(["", "", ""]); // Minimum 3 items
+  const [uploading, setUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const { uploadImage, uploading: cloudinaryUploading, error: uploadError } = useCloudinaryUpload();
 
   // Fetch course data when component mounts
   useEffect(() => {
@@ -94,6 +97,32 @@ export default function EditCourse() {
     if (pointedTexts.length > 3) {
       const newPointedTexts = pointedTexts.filter((_, i) => i !== index);
       setPointedTexts(newPointedTexts);
+    }
+  };
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setUploading(true);
+    try {
+      const result = await uploadImage(file);
+      setFormData(prev => ({
+        ...prev,
+        imageUrl: result.secure_url
+      }));
+      toast({
+        title: "Success",
+        description: "Image uploaded successfully",
+      });
+    } catch {
+      toast({
+        title: "Error",
+        description: "Failed to upload image",
+        variant: "destructive",
+      });
+    } finally {
+      setUploading(false);
     }
   };
 
@@ -178,7 +207,6 @@ export default function EditCourse() {
       }
     >
       <div className="min-h-screen bg-gradient-to-br from-red-50 via-white to-rose-50 dark:from-slate-900 dark:via-slate-900 dark:to-slate-900">
-        <Header />
         <div className="container mx-auto py-6">
           <div className="mb-6">
             <h1 className="text-3xl font-bold mb-2">Edit Course</h1>
@@ -342,21 +370,37 @@ export default function EditCourse() {
                 />
               </div>
 
+              {/* Image Upload Section - Modified to keep only file upload */}
               <div>
-                <label
-                  htmlFor="imageUrl"
-                  className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
-                >
-                  Image URL (Optional)
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  Image Upload
                 </label>
-                <Input
-                  type="url"
-                  id="imageUrl"
-                  name="imageUrl"
-                  value={formData.imageUrl}
-                  onChange={handleChange}
-                  placeholder="Enter image URL"
-                />
+                <div className="flex items-center gap-4">
+                  <Input
+                    type="text"
+                    value={formData.imageUrl || "Image will be uploaded automatically"}
+                    placeholder="Image will be uploaded automatically"
+                    className="flex-1"
+                    readOnly
+                  />
+                  <input
+                    type="file"
+                    ref={fileInputRef}
+                    onChange={handleFileChange}
+                    accept="image/*"
+                    className="hidden"
+                  />
+                  <Button
+                    type="button"
+                    onClick={() => fileInputRef.current?.click()}
+                    disabled={uploading || cloudinaryUploading}
+                  >
+                    {uploading || cloudinaryUploading ? 'Uploading...' : 'Upload Image'}
+                  </Button>
+                </div>
+                {uploadError && (
+                  <p className="text-sm text-red-500 mt-1">{uploadError}</p>
+                )}
               </div>
 
               <div className="flex justify-end space-x-3">
@@ -364,13 +408,13 @@ export default function EditCourse() {
                   type="button"
                   onClick={() => router.push("/admin/courses")}
                   variant="outline"
-                  disabled={loading}
+                  disabled={loading || uploading || cloudinaryUploading}
                 >
                   Cancel
                 </Button>
                 <Button
                   type="submit"
-                  disabled={loading}
+                  disabled={loading || uploading || cloudinaryUploading}
                   className="bg-blue-600 hover:bg-blue-700"
                 >
                   {loading ? "Updating..." : "Update Course"}

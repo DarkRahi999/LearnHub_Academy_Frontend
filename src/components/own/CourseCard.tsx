@@ -7,23 +7,27 @@ import Image from "next/image";
 
 interface CourseCardProps {
   course: Course;
+  enableScaleImg?: boolean; // New prop to control scaling effect
+  enableScaleCard?: boolean; // New prop to control scaling effect
 }
 
-export default function CourseCard({ course }: CourseCardProps) {
+export default function CourseCard({ course, enableScaleImg = true, enableScaleCard = false }: CourseCardProps) {
   const pointsToShow = course.pointedText.slice(0, 3);
 
   return (
-    <div className="bg-white dark:bg-slate-800 rounded-xl overflow-hidden border border-gray-200 dark:border-slate-700/50 hover:shadow-xl transition-all duration-300 transform">
-
-      {/* -=> Course  Card Image */}
+    <div className={`bg-white dark:bg-slate-800 rounded-xl border border-gray-200 dark:border-slate-700/50 hover:shadow-xl transition-all duration-300 transform relative group ${enableScaleCard ? 'hover:scale-105' : ''}`}>
+      {/* Add a wrapper to handle overflow properly during hover */}
+      <div className="overflow-hidden rounded-xl">
+        {/* -=> Course  Card Image */}
         <div className="relative md:h-[250px] w-full">
           <Image
             src={course.imageUrl || "/images/placeholder.jpg"}
             alt={course.title}
-            className="object-cover !relative"
+            className={`object-cover !relative transition-transform duration-300 ${enableScaleImg ? 'group-hover:scale-105' : ''}`}
             fill
           />
         </div>
+      </div>
 
       {/* -=> Course  Card Title */}
       <div className="p-6 flex flex-col flex-grow">

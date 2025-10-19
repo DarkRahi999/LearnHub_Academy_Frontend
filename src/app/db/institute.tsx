@@ -2,7 +2,12 @@ const instituteDetails = {
   name: "LearnHub Academy",
   description:
     "Premier online education platform providing quality courses and training for students across Bangladesh.",
-  bannerImages: ["/img/banner/banner1.jpg", "/img/banner/banner2.jpg"],
+  bannerImages: [
+    "/img/banner/banner1.jpg",
+    "/img/banner/banner2.jpg",
+    "/img/banner/banner3.jpg",
+    "/img/banner/banner4.jpg",
+  ],
   shortHeadings: [
     "Join 500+ Students Today ...",
     "Expert Instructors Available 24/7 ...",

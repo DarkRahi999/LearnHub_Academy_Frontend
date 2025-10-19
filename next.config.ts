@@ -12,13 +12,10 @@ const nextConfig: NextConfig = {
         protocol: 'https',
         hostname: 'placehold.co',
       },
+      // Allow Cloudinary images
       {
         protocol: 'https',
-        hostname: 'assets.retinabd.org',
-      },
-      {
-        protocol: 'https',
-        hostname: 'shop.retinabd.org',
+        hostname: 'res.cloudinary.com',
       },
       // Allow local images to be optimized
       {

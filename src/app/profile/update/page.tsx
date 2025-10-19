@@ -1,6 +1,5 @@
 "use client"
 
-import Header from "@/components/layouts/Header";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useEffect, useState } from "react";
@@ -166,279 +165,268 @@ export default function UpdateProfilePage() {
 
   if (loading) {
     return (
-      <>
-        <Header />
-        <div className="container mx-auto py-6">
-          <Card className="max-w-4xl mx-auto">
-            <CardContent className="p-8 text-center">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
-              <p>Loading profile...</p>
-            </CardContent>
-          </Card>
-        </div>
-      </>
+      <div className="container mx-auto py-6">
+        <Card className="max-w-4xl mx-auto">
+          <CardContent className="p-8 text-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+            <p>Loading profile...</p>
+          </CardContent>
+        </Card>
+      </div>
     );
   }
 
   if (!user) {
     return (
-      <>
-        <Header />
-        <div className="container mx-auto py-6">
-          <Card className="max-w-4xl mx-auto">
-            <CardContent className="p-8 text-center">
-              <div className="text-lg text-red-500">Failed to load profile data</div>
-            </CardContent>
-          </Card>
-        </div>
-      </>
+      <div className="container mx-auto py-6">
+        <Card className="max-w-4xl mx-auto">
+          <CardContent className="p-8 text-center">
+            <div className="text-lg text-red-500">Failed to load profile data</div>
+          </CardContent>
+        </Card>
+      </div>
     );
   }
 
   return (
-    <>
-      <Header />
-      <div className="container mx-auto py-6">
-        <div className="flex justify-between items-center mb-6">
-          <div>
-            <h1 className="text-3xl font-bold flex items-center gap-2">
-              <User className="h-8 w-8" />
-              Update Profile
-            </h1>
-            <p className="text-gray-600 mt-1">
-              Update your personal information and preferences
-            </p>
-          </div>
+    <div className="container mx-auto py-6">
+      <div className="flex justify-between items-center mb-6">
+        <div>
+          <h1 className="text-3xl font-bold flex items-center gap-2">
+            <User className="h-8 w-8" />
+            Update Profile
+          </h1>
+          <p className="text-gray-600 mt-1">
+            Update your personal information and preferences
+          </p>
         </div>
+      </div>
 
-        <Card className="max-w-4xl mx-auto">
-          <CardHeader>
-            <div className="flex items-center gap-4">
-              <Image
-                src={avatarSrc(user.avatarUrl)}
-                alt="Profile Avatar"
-                width={80}
-                height={80}
-                className="w-20 h-20 rounded-full object-cover border"
-                onError={(e) => {
-                  const img = e.currentTarget as HTMLImageElement;
-                  if (!img.src.includes('/default-user.svg')) {
-                    img.src = '/default-user.svg';
-                  }
-                }}
-                unoptimized
-              />
-              <div>
-                <CardTitle className="text-xl">
-                  {user.firstName} {user.lastName || ""}
-                </CardTitle>
-                <CardDescription className="flex items-center gap-1">
-                  <Mail className="h-4 w-4" />
-                  {user.email}
-                </CardDescription>
+      <Card className="max-w-4xl mx-auto">
+        <CardHeader>
+          <div className="flex items-center gap-4">
+            <Image
+              src={avatarSrc(user.avatarUrl)}
+              alt="Profile Avatar"
+              width={80}
+              height={80}
+              className="w-20 h-20 rounded-full object-cover border"
+              onError={(e) => {
+                const img = e.currentTarget as HTMLImageElement;
+                if (!img.src.includes('/default-user.svg')) {
+                  img.src = '/default-user.svg';
+                }
+              }}
+              unoptimized
+            />
+            <div>
+              <CardTitle className="text-xl">
+                {user.firstName} {user.lastName || ""}
+              </CardTitle>
+              <CardDescription className="flex items-center gap-1">
+                <Mail className="h-4 w-4" />
+                {user.email}
+              </CardDescription>
+            </div>
+          </div>
+        </CardHeader>
+        
+        <CardContent>
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+            {/* Personal Information Section */}
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold border-b pb-2">Personal Information</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* First Name */}
+                <div className="space-y-2">
+                  <Label htmlFor="firstName">First Name *</Label>
+                  <Input
+                    id="firstName"
+                    {...register('firstName', { 
+                      required: 'First name is required',
+                      minLength: { value: 2, message: 'First name must be at least 2 characters' }
+                    })}
+                    placeholder="Enter first name"
+                  />
+                  {errors.firstName && (
+                    <p className="text-sm text-red-500">{errors.firstName.message}</p>
+                  )}
+                </div>
+
+                {/* Last Name */}
+                <div className="space-y-2">
+                  <Label htmlFor="lastName">Last Name</Label>
+                  <Input
+                    id="lastName"
+                    {...register('lastName')}
+                    placeholder="Enter last name"
+                  />
+                </div>
+
+                {/* Email */}
+                <div className="space-y-2">
+                  <Label htmlFor="email" className="flex items-center gap-1">
+                    <Mail className="h-4 w-4" />
+                    Email *
+                  </Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    {...register('email', { 
+                      required: 'Email is required',
+                      pattern: {
+                        value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                        message: 'Invalid email address'
+                      }
+                    })}
+                    placeholder="Enter email address"
+                  />
+                  {errors.email && (
+                    <p className="text-sm text-red-500">{errors.email.message}</p>
+                  )}
+                </div>
+
+                {/* Phone */}
+                <div className="space-y-2">
+                  <Label htmlFor="phone" className="flex items-center gap-1">
+                    <Phone className="h-4 w-4" />
+                    Phone
+                  </Label>
+                  <Input
+                    id="phone"
+                    {...register('phone')}
+                    placeholder="Enter phone number"
+                  />
+                </div>
+
+                {/* Gender */}
+                <div className="space-y-2">
+                  <Label>Gender *</Label>
+                  <Select 
+                    value={watchedGender} 
+                    onValueChange={(value) => setValue('gender', value as "male" | "female" | "other")}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select gender" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="male">Male</SelectItem>
+                      <SelectItem value="female">Female</SelectItem>
+                      <SelectItem value="other">Other</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* Date of Birth */}
+                <div className="space-y-2">
+                  <Label htmlFor="dob" className="flex items-center gap-1">
+                    <Calendar className="h-4 w-4" />
+                    Date of Birth
+                  </Label>
+                  <Input
+                    id="dob"
+                    type="date"
+                    {...register('dob')}
+                  />
+                </div>
               </div>
             </div>
-          </CardHeader>
-          
-          <CardContent>
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-              {/* Personal Information Section */}
-              <div className="space-y-4">
-                <h3 className="text-lg font-semibold border-b pb-2">Personal Information</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {/* First Name */}
-                  <div className="space-y-2">
-                    <Label htmlFor="firstName">First Name *</Label>
-                    <Input
-                      id="firstName"
-                      {...register('firstName', { 
-                        required: 'First name is required',
-                        minLength: { value: 2, message: 'First name must be at least 2 characters' }
-                      })}
-                      placeholder="Enter first name"
-                    />
-                    {errors.firstName && (
-                      <p className="text-sm text-red-500">{errors.firstName.message}</p>
-                    )}
-                  </div>
 
-                  {/* Last Name */}
-                  <div className="space-y-2">
-                    <Label htmlFor="lastName">Last Name</Label>
-                    <Input
-                      id="lastName"
-                      {...register('lastName')}
-                      placeholder="Enter last name"
-                    />
-                  </div>
+            {/* Additional Information Section */}
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold border-b pb-2">Additional Information</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* Nationality */}
+                <div className="space-y-2">
+                  <Label htmlFor="nationality" className="flex items-center gap-1">
+                    <Globe className="h-4 w-4" />
+                    Nationality
+                  </Label>
+                  <Input
+                    id="nationality"
+                    {...register('nationality')}
+                    placeholder="Enter nationality"
+                  />
+                </div>
 
-                  {/* Email */}
-                  <div className="space-y-2">
-                    <Label htmlFor="email" className="flex items-center gap-1">
-                      <Mail className="h-4 w-4" />
-                      Email *
-                    </Label>
-                    <Input
-                      id="email"
-                      type="email"
-                      {...register('email', { 
-                        required: 'Email is required',
-                        pattern: {
-                          value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                          message: 'Invalid email address'
-                        }
-                      })}
-                      placeholder="Enter email address"
-                    />
-                    {errors.email && (
-                      <p className="text-sm text-red-500">{errors.email.message}</p>
-                    )}
-                  </div>
+                {/* Religion */}
+                <div className="space-y-2">
+                  <Label htmlFor="religion" className="flex items-center gap-1">
+                    <Heart className="h-4 w-4" />
+                    Religion
+                  </Label>
+                  <Input
+                    id="religion"
+                    {...register('religion')}
+                    placeholder="Enter religion"
+                  />
+                </div>
 
-                  {/* Phone */}
-                  <div className="space-y-2">
-                    <Label htmlFor="phone" className="flex items-center gap-1">
-                      <Phone className="h-4 w-4" />
-                      Phone
-                    </Label>
-                    <Input
-                      id="phone"
-                      {...register('phone')}
-                      placeholder="Enter phone number"
-                    />
-                  </div>
-
-                  {/* Gender */}
-                  <div className="space-y-2">
-                    <Label>Gender *</Label>
-                    <Select 
-                      value={watchedGender} 
-                      onValueChange={(value) => setValue('gender', value as "male" | "female" | "other")}
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select gender" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="male">Male</SelectItem>
-                        <SelectItem value="female">Female</SelectItem>
-                        <SelectItem value="other">Other</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  {/* Date of Birth */}
-                  <div className="space-y-2">
-                    <Label htmlFor="dob" className="flex items-center gap-1">
-                      <Calendar className="h-4 w-4" />
-                      Date of Birth
-                    </Label>
-                    <Input
-                      id="dob"
-                      type="date"
-                      {...register('dob')}
-                    />
-                  </div>
+                {/* Avatar URL */}
+                <div className="space-y-2 md:col-span-2">
+                  <Label htmlFor="avatarUrl">Avatar URL</Label>
+                  <Input
+                    id="avatarUrl"
+                    {...register('avatarUrl')}
+                    placeholder="Enter avatar URL (optional)"
+                  />
+                  <p className="text-xs text-gray-500">
+                    Provide a URL to your profile image. Leave empty to use default avatar.
+                  </p>
                 </div>
               </div>
+            </div>
 
-              {/* Additional Information Section */}
-              <div className="space-y-4">
-                <h3 className="text-lg font-semibold border-b pb-2">Additional Information</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {/* Nationality */}
-                  <div className="space-y-2">
-                    <Label htmlFor="nationality" className="flex items-center gap-1">
-                      <Globe className="h-4 w-4" />
-                      Nationality
-                    </Label>
-                    <Input
-                      id="nationality"
-                      {...register('nationality')}
-                      placeholder="Enter nationality"
-                    />
-                  </div>
-
-                  {/* Religion */}
-                  <div className="space-y-2">
-                    <Label htmlFor="religion" className="flex items-center gap-1">
-                      <Heart className="h-4 w-4" />
-                      Religion
-                    </Label>
-                    <Input
-                      id="religion"
-                      {...register('religion')}
-                      placeholder="Enter religion"
-                    />
-                  </div>
-
-                  {/* Avatar URL */}
-                  <div className="space-y-2 md:col-span-2">
-                    <Label htmlFor="avatarUrl">Avatar URL</Label>
-                    <Input
-                      id="avatarUrl"
-                      {...register('avatarUrl')}
-                      placeholder="Enter avatar URL (optional)"
-                    />
-                    <p className="text-xs text-gray-500">
-                      Provide a URL to your profile image. Leave empty to use default avatar.
-                    </p>
-                  </div>
+            {/* User Info Section - Read Only */}
+            <div className="border-t pt-4">
+              <h4 className="font-medium mb-3">Account Information</h4>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm bg-gray-50 p-4 rounded-lg">
+                <div>
+                  <Label className="text-gray-600">User ID</Label>
+                  <p className="font-mono">{user.id}</p>
+                </div>
+                <div>
+                  <Label className="text-gray-600">Account Status</Label>
+                  <p className={`font-medium ${
+                    (user as UserProfile & { isBlocked?: boolean }).isBlocked 
+                      ? 'text-red-600' 
+                      : 'text-green-600'
+                  }`}>
+                    {(user as UserProfile & { isBlocked?: boolean }).isBlocked ? 'Blocked' : 'Active'}
+                  </p>
+                </div>
+                <div>
+                  <Label className="text-gray-600">Last Login</Label>
+                  <p>{(user as UserProfile & { lastLoginAt?: string }).lastLoginAt 
+                    ? new Date((user as UserProfile & { lastLoginAt: string }).lastLoginAt).toLocaleString() 
+                    : 'Never'}</p>
+                </div>
+                <div>
+                  <Label className="text-gray-600">Member Since</Label>
+                  <p>{(user as UserProfile & { createdAt?: string }).createdAt 
+                    ? new Date((user as UserProfile & { createdAt: string }).createdAt).toLocaleDateString() 
+                    : 'N/A'}</p>
                 </div>
               </div>
+            </div>
 
-              {/* User Info Section - Read Only */}
-              <div className="border-t pt-4">
-                <h4 className="font-medium mb-3">Account Information</h4>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm bg-gray-50 p-4 rounded-lg">
-                  <div>
-                    <Label className="text-gray-600">User ID</Label>
-                    <p className="font-mono">{user.id}</p>
-                  </div>
-                  <div>
-                    <Label className="text-gray-600">Account Status</Label>
-                    <p className={`font-medium ${
-                      (user as UserProfile & { isBlocked?: boolean }).isBlocked 
-                        ? 'text-red-600' 
-                        : 'text-green-600'
-                    }`}>
-                      {(user as UserProfile & { isBlocked?: boolean }).isBlocked ? 'Blocked' : 'Active'}
-                    </p>
-                  </div>
-                  <div>
-                    <Label className="text-gray-600">Last Login</Label>
-                    <p>{(user as UserProfile & { lastLoginAt?: string }).lastLoginAt 
-                      ? new Date((user as UserProfile & { lastLoginAt: string }).lastLoginAt).toLocaleString() 
-                      : 'Never'}</p>
-                  </div>
-                  <div>
-                    <Label className="text-gray-600">Member Since</Label>
-                    <p>{(user as UserProfile & { createdAt?: string }).createdAt 
-                      ? new Date((user as UserProfile & { createdAt: string }).createdAt).toLocaleDateString() 
-                      : 'N/A'}</p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Action Buttons */}
-              <div className="flex justify-end space-x-2 pt-4 border-t">
-                <Button 
-                  type="button" 
-                  variant="outline" 
-                  onClick={handleCancel}
-                  disabled={saving}
-                >
-                  Cancel
-                </Button>
-                <Button type="submit" disabled={saving}>
-                  {saving ? 'Updating...' : 'Update Profile'}
-                </Button>
-              </div>
-            </form>
-          </CardContent>
-        </Card>
-      </div>
-    </>
+            {/* Action Buttons */}
+            <div className="flex justify-end space-x-2 pt-4 border-t">
+              <Button 
+                type="button" 
+                variant="outline" 
+                onClick={handleCancel}
+                disabled={saving}
+              >
+                Cancel
+              </Button>
+              <Button type="submit" disabled={saving}>
+                {saving ? 'Updating...' : 'Update Profile'}
+              </Button>
+            </div>
+          </form>
+        </CardContent>
+      </Card>
+    </div>
   );
 }
-
-

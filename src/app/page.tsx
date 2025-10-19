@@ -47,15 +47,15 @@ export default function HomePage() {
               </div>
             </div>
 
-            <div className="flex flex-wrap gap-4">
+            <div className="flex flex-wrap gap-4 mt-2">
               <Link href="/course">
-                <Button className="bg-red-700 hover:bg-[#9a0000] text-white px-6 py-3 rounded-xl text-base font-semibold shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+                <Button className="secondary-btn">
                   Explore Courses
                 </Button>
               </Link>
               <Button
                 variant="outline"
-                className="border-2 border-red-700 dark:border-gray-800 dark:hover:border-white text-red-700 hover:bg-red-700 hover:text-white px-6 py-3 rounded-xl text-base font-semibold shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"
+                className="primary-btn"
               >
                 Contact Now
               </Button>
