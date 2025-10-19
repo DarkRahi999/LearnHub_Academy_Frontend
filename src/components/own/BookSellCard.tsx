@@ -1,4 +1,4 @@
-import { Heart, ShoppingCart, StarIcon, Eye } from "lucide-react";
+import { Heart, ShoppingCart, StarIcon } from "lucide-react";
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
@@ -26,13 +26,13 @@ export default function BookSellCard({ book, onBuy, onWishlist }: Props) {
   const {
     id,
     title,
-    author,
-    highlight,
+    // author,
+    // highlight,
     price,
     discountPrice,
     rating = 0,
     img,
-    description,
+    // description,
     tags = [],
   } = book;
 
