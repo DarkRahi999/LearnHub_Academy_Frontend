@@ -157,9 +157,9 @@ export default function UserManagement() {
 
   return (
     <>
-      <div className="container mx-auto py-6">
+      <div>
         <div className="flex justify-between items-center mb-6">
-          <div className='mx-4'>
+          <div>
             <h1 className="text-3xl font-bold flex items-center gap-2">
               <Users className="h-8 w-8" />
               User Management
@@ -182,7 +182,7 @@ export default function UserManagement() {
             </CardContent>
           </Card>
         ) : (
-          <Card>
+          <div className="bg-transparent">
             <CardHeader>
               <CardTitle>Users ({users.length})</CardTitle>
               <CardDescription>Manage user accounts and permissions</CardDescription>
@@ -299,7 +299,7 @@ export default function UserManagement() {
                 ))}
               </div>
             </CardContent>
-          </Card>
+          </div>
         )}
 
         {/* Create User Form */}

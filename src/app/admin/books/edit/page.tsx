@@ -84,34 +84,34 @@ export default function EditBookPage() {
     }
   };
 
-  const handleUrlUpload = async () => {
-    if (!imageUrl) {
-      toast({
-        title: "Error",
-        description: "Please enter a valid URL",
-        variant: "destructive",
-      });
-      return;
-    }
+  // const handleUrlUpload = async () => {
+  //   if (!imageUrl) {
+  //     toast({
+  //       title: "Error",
+  //       description: "Please enter a valid URL",
+  //       variant: "destructive",
+  //     });
+  //     return;
+  //   }
 
-    setUploading(true);
-    try {
-      const result = await uploadImageFromUrl(imageUrl);
-      setImageUrl(result.secure_url);
-      toast({
-        title: "Success",
-        description: "Image processed successfully",
-      });
-    } catch {
-      toast({
-        title: "Error",
-        description: "Failed to process image URL",
-        variant: "destructive",
-      });
-    } finally {
-      setUploading(false);
-    }
-  };
+  //   setUploading(true);
+  //   try {
+  //     const result = await uploadImageFromUrl(imageUrl);
+  //     setImageUrl(result.secure_url);
+  //     toast({
+  //       title: "Success",
+  //       description: "Image processed successfully",
+  //     });
+  //   } catch {
+  //     toast({
+  //       title: "Error",
+  //       description: "Failed to process image URL",
+  //       variant: "destructive",
+  //     });
+  //   } finally {
+  //     setUploading(false);
+  //   }
+  // };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -216,8 +216,8 @@ export default function EditBookPage() {
       allowedRoles={[UserRole.ADMIN, UserRole.SUPER_ADMIN]}
       requiredPermissions={[Permission.UPDATE_BOOK]}
     >
-      <div className="container mx-auto py-8">
-        <div className="max-w-2xl mx-auto">
+      <div className="">
+        <div className="">
           <div className="flex justify-between items-center mb-8">
             <div>
               <h1 className="text-3xl font-bold">Edit Book</h1>
@@ -303,13 +303,13 @@ export default function EditBookPage() {
                     placeholder="Enter image URL or upload an image"
                     className="flex-1"
                   />
-                  <Button
+                  {/* <Button
                     type="button"
                     onClick={handleUrlUpload}
                     disabled={uploading || cloudinaryUploading}
                   >
                     {uploading || cloudinaryUploading ? 'Processing...' : 'Process URL'}
-                  </Button>
+                  </Button> */}
                   <input
                     type="file"
                     ref={fileInputRef}

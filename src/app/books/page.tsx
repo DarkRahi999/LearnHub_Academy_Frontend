@@ -137,7 +137,7 @@ export default function BooksPage() {
         </Card>
       ) : (
         <>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {books.map((book) => (
               <BookCard key={book.id} book={book} />
             ))}
@@ -145,33 +145,33 @@ export default function BooksPage() {
 
           {totalPages > 1 && (
             <div className="flex justify-center mt-8 space-x-2">
-              <Button
+              <button
                 onClick={() => handlePageChange(page - 1)}
                 disabled={page === 1}
-                variant="outline"
+                className={`primary-btn ${page === 1 ? 'opacity-50 cursor-not-allowed' : ''}`}
               >
                 Previous
-              </Button>
+              </button>
 
               {Array.from({ length: totalPages }, (_, i) => i + 1).map(
                 (pageNum) => (
-                  <Button
+                  <button
                     key={pageNum}
                     onClick={() => handlePageChange(pageNum)}
-                    variant={pageNum === page ? "default" : "outline"}
+                    className={pageNum === page ? "secondary-btn" : "primary-btn"}
                   >
                     {pageNum}
-                  </Button>
+                  </button>
                 )
               )}
 
-              <Button
+              <button
                 onClick={() => handlePageChange(page + 1)}
                 disabled={page === totalPages}
-                variant="outline"
+                className={`primary-btn ${page === totalPages ? 'opacity-50 cursor-not-allowed' : ''}`}
               >
                 Next
-              </Button>
+              </button>
             </div>
           )}
         </>

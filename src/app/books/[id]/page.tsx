@@ -3,9 +3,8 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import { Book, bookService } from '@/services/book.service';
-import { Button } from '@/components/ui/button';
 import Image from 'next/image';
-import { ArrowLeft, ShoppingCart } from 'lucide-react';
+import { ArrowLeft, ShoppingCart, Eye } from 'lucide-react';
 
 export default function BookDetailPage() {
   const params = useParams();
@@ -51,10 +50,13 @@ export default function BookDetailPage() {
           <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6">
             {error || 'Book not found'}
           </div>
-          <Button onClick={() => window.history.back()}>
-            <ArrowLeft className="w-4 h-4 mr-2" />
+          <button 
+            onClick={() => window.history.back()} 
+            className="primary-btn"
+          >
+            <ArrowLeft className="w-4 h-4 mr-2 inline" />
             Back to Books
-          </Button>
+          </button>
         </div>
       </div>
     );
@@ -62,14 +64,13 @@ export default function BookDetailPage() {
 
   return (
     <div className="container mx-auto py-8">
-      <Button 
+      <button 
         onClick={() => window.history.back()} 
-        variant="outline" 
-        className="mb-6"
+        className="primary-btn mb-6"
       >
-        <ArrowLeft className="w-4 h-4 mr-2" />
+        <ArrowLeft className="w-4 h-4 mr-2 inline" />
         Back to Books
-      </Button>
+      </button>
 
       <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-lg overflow-hidden">
         <div className="md:flex">
@@ -95,9 +96,25 @@ export default function BookDetailPage() {
               {book.title}
             </h1>
             
-            <p className="text-red-700 dark:text-red-400 text-xl font-semibold mb-6">
-              ${book.price.toFixed(2)}
-            </p>
+            <div className="mb-6">
+              {book.discountPrice !== undefined && book.discountPrice !== null && book.discountPrice < book.price ? (
+                <div className="flex items-center gap-3">
+                  <p className="text-red-700 dark:text-red-400 text-2xl font-bold">
+                    {book.discountPrice.toFixed(2)} TK
+                  </p>
+                  <p className="text-lg text-gray-500 line-through">
+                    {book.price.toFixed(2)} TK
+                  </p>
+                  <span className="bg-red-100 text-red-800 text-sm font-semibold px-2 py-1 rounded">
+                    {Math.round(((book.price - book.discountPrice) / book.price) * 100)}% OFF
+                  </span>
+                </div>
+              ) : (
+                <p className="text-red-700 dark:text-red-400 text-2xl font-bold">
+                  {book.price.toFixed(2)} TK
+                </p>
+              )}
+            </div>
             
             <p className="text-slate-600 dark:text-slate-300 mb-6">
               {book.description}
@@ -113,13 +130,14 @@ export default function BookDetailPage() {
             </div>
             
             <div className="flex flex-wrap gap-4">
-              <Button className="bg-red-700 hover:bg-red-800 text-white px-6 py-3 rounded-lg text-lg">
+              <button className="secondary-btn px-6 py-3 text-lg flex items-center">
                 <ShoppingCart className="w-5 h-5 mr-2" />
                 Add to Cart
-              </Button>
-              <Button variant="outline" className="border-2 border-red-700 text-red-700 hover:bg-red-700 hover:text-white px-6 py-3 rounded-lg text-lg">
-                Buy Now
-              </Button>
+              </button>
+              <button className="primary-btn px-6 py-3 text-lg flex items-center">
+                <Eye className="w-5 h-5 mr-2" />
+                Preview
+              </button>
             </div>
           </div>
         </div>

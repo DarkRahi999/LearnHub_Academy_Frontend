@@ -192,9 +192,9 @@ export default function AdminManagement() {
         </div>
       }
     >
-      <div className="container mx-auto py-6">
+      <div className="">
         <div className="flex justify-between items-center mb-6">
-          <div className='mx-4'>
+          <div className=''>
             <h1 className="text-3xl font-bold flex items-center gap-2">
               <Shield className="h-8 w-8" />
               Admin Management
@@ -206,7 +206,7 @@ export default function AdminManagement() {
         </div>
 
         {/* Super Admin Notice */}
-        <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg flex items-start gap-3">
+        <div className="mb-6 p-4 bg-blue-50 border dark:bg-transparent border-blue-200 rounded-lg flex items-start gap-3">
           <Star className="h-5 w-5 text-blue-500 mt-0.5" />
           <div>
             <h3 className="font-medium text-blue-800">Super Admin Feature</h3>
@@ -218,7 +218,7 @@ export default function AdminManagement() {
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-          <Card>
+          <Card className='dark:bg-transparent'>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Total Admins</CardTitle>
               <Shield className="h-4 w-4 text-muted-foreground" />
@@ -227,7 +227,7 @@ export default function AdminManagement() {
               <div className="text-2xl font-bold">{stats.totalAdmins}</div>
             </CardContent>
           </Card>
-          <Card>
+          <Card className='dark:bg-transparent'>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Active Admins</CardTitle>
               <Users className="h-4 w-4 text-muted-foreground" />
@@ -236,7 +236,7 @@ export default function AdminManagement() {
               <div className="text-2xl font-bold">{stats.activeAdmins}</div>
             </CardContent>
           </Card>
-          <Card>
+          <Card className='dark:bg-transparent'>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Available Users</CardTitle>
               <UserPlus className="h-4 w-4 text-muted-foreground" />
@@ -262,7 +262,7 @@ export default function AdminManagement() {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Current Admins */}
-          <Card>
+          <Card className='dark:bg-transparent'>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Shield className="h-5 w-5" />
@@ -319,7 +319,7 @@ export default function AdminManagement() {
           </Card>
 
           {/* Regular Users */}
-          <Card>
+          <Card className='dark:bg-transparent'>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Users className="h-5 w-5" />

@@ -317,7 +317,7 @@ export default function SystemSettingsPage() {
 
         {Object.values(SettingCategory).map((category) => (
           <TabsContent key={category} value={category} className="space-y-4">
-            <Card>
+            <Card className='dark:bg-transparent'>
               <CardHeader>
                 <CardTitle>{getSettingCategoryDisplayName(category)} Settings</CardTitle>
                 <CardDescription>
