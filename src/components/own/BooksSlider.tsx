@@ -17,6 +17,7 @@ import Error from "../layouts/Error";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { NotebookText } from "lucide-react";
+import BookSellCard2 from "./BookSellCard2";
 
 const BooksSlider = () => {
   const [books, setBooks] = useState<Book[]>([]);
@@ -125,9 +126,9 @@ const BooksSlider = () => {
           {books.map((book) => (
             <CarouselItem
               key={book.id}
-              className="md:basis-1/2 lg:basis-1/3 gap-2 flex justify-center"
+              className="lg:basis-1/2 xl:basis-1/3 gap-2 flex justify-center"
             >
-              <BookSellCard
+              <BookSellCard2
                 book={mapBookToSellCard(book)}
                 onBuy={(b) => console.log("buy", b)}
                 onWishlist={(b) => console.log("wishlist", b)}

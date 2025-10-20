@@ -82,7 +82,7 @@ export default function BooksPage() {
 
   return (
     <div>
-      <h1 className="text-3xl font-bold text-red-700 mb-4">Our Books</h1>
+      <h1 className="text-3xl font-bold text-red-700 mb-4">Our Publications & Books</h1>
       {/* Search Bar */}
       <div className="mb-8">
         <form onSubmit={handleSearch} className="relative">
