@@ -8,7 +8,6 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 import Autoplay from "embla-carousel-autoplay";
-import BookSellCard from "./BookSellCard";
 import { Book } from "@/services/book.service";
 import { useEffect, useState } from "react";
 import { bookService } from "@/services/book.service";

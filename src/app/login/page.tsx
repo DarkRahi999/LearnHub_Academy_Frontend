@@ -3,7 +3,7 @@ import LoginForm from "./loginForm";
 export default function LoginPage() {
   return (
     <>
-      <div className="min-h-screen flex items-center justify-center bg-background">
+      <div className="min-h-[80vh] flex items-center justify-center bg-transparent">
         <div className="max-w-md w-full space-y-8">
           <div>
             <h2 className="mt-6 text-center text-3xl font-extrabold text-foreground">

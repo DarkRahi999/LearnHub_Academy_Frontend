@@ -6,23 +6,24 @@ import Link from "next/link";
 import { Phone, Mail, MapPin } from "lucide-react";
 import { motion } from "motion/react";
 import { fadeRightAnimation, fadeUpAnimation } from "@/lib/utils";
+import instituteDetails from "@/app/db/institute";
 
 const Footer = () => {
   return (
     <motion.footer className="bg-gray-900 dark:bg-gray-800 text-white pt-12">
       <div className="container mx-auto">
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 md:gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-13 gap-4 md:gap-8 lg:gap-20">
           {/* Logo and Description */}
           <motion.div
             {...fadeUpAnimation(0, 0.4, 0.3)}
-            className="lg:col-span-2"
+            className="lg:col-span-4"
           >
             <div className="flex justify-center sm:justify-start">
               <Image
                 src="/logo/logo.png"
                 alt="LearnHub Academy Logo"
-                width={180}
-                height={60}
+                width={260}
+                height={120}
                 className="object-contain"
               />
             </div>
@@ -30,7 +31,7 @@ const Footer = () => {
               {...fadeUpAnimation(0, 0.3, 0.3)}
               className="sm:pl-8 text-center sm:text-left text-2xl font-bold text-white pb-4"
             >
-              ADMISSION CHALLENGE
+              {instituteDetails.name}
             </motion.h1>
             <div className="flex justify-center sm:justify-start space-x-4 sm:pl-8">
               <motion.li
@@ -102,7 +103,7 @@ const Footer = () => {
           </motion.div>
 
           {/* Quick Links */}
-          <motion.div>
+          <motion.div className="lg:col-span-3 px-5 sm:px-0">
             <motion.h3
               className="text-xl font-bold mb-4 border-b border-gray-700 pb-2"
               {...fadeUpAnimation(0, 0.3, 0.1)}
@@ -162,7 +163,7 @@ const Footer = () => {
           </motion.div>
 
           {/* Terms and Company */}
-          <div>
+          <div className="lg:col-span-3 px-5 sm:px-0">
             <motion.h3
               {...fadeUpAnimation(0, 0.3, 0.1)}
               className="text-xl font-bold mb-4 border-b border-gray-700 pb-2"
@@ -222,7 +223,7 @@ const Footer = () => {
           </div>
 
           {/* Contact Info */}
-          <div>
+          <div className="lg:col-span-3 px-5 sm:px-0">
             <motion.h3
               {...fadeUpAnimation(0, 0.3, 0.1)}
               className="text-xl font-bold mb-4 border-b border-gray-700 pb-2"
@@ -275,7 +276,7 @@ const Footer = () => {
         </div>
         <div className="border-t border-gray-700 mt-8  pt-4 text-center text-gray-400">
           <motion.p {...fadeUpAnimation(20, 0.3, 1)}>
-            &copy; {new Date().getFullYear()} ADMISSION CHALLENGE. All rights
+            &copy; {new Date().getFullYear()} {instituteDetails.name}. All rights
             reserved.
           </motion.p>
         </div>

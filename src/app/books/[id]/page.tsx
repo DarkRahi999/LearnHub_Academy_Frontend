@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import { Book, bookService } from '@/services/book.service';
 import Image from 'next/image';
-import { ArrowLeft, ShoppingCart, Eye, BookOpen, Info, User } from 'lucide-react';
+import { ArrowLeft, ShoppingCart, Eye, BookOpen, Info, User, DollarSign } from 'lucide-react';
 
 export default function BookDetailPage() {
   const params = useParams();
@@ -57,7 +57,7 @@ export default function BookDetailPage() {
   }
 
   return (
-    <div className="container mx-auto py-10 px-4 lg:px-8">
+    <div className="">
       <button
         onClick={() => window.history.back()}
         className="primary-btn mb-6 flex items-center"
@@ -70,7 +70,7 @@ export default function BookDetailPage() {
       <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-lg overflow-hidden">
         <div className="md:flex">
           {/* --- Image --- */}
-          <div className="md:w-2/5">
+          <div className="md:w-4/12">
             {book.imageUrl ? (
               <div className="relative h-96 w-full">
                 <Image
@@ -88,13 +88,13 @@ export default function BookDetailPage() {
           </div>
 
           {/* --- Book Details --- */}
-          <div className="p-8 md:w-3/5">
+          <div className="p-8 md:w-8/12">
             <h1 className="text-3xl font-bold text-slate-800 dark:text-white mb-4">
               {book.title}
             </h1>
 
             <p className="text-slate-600 dark:text-slate-300 mb-2 text-sm">
-              by <span className="font-semibold">{book.author || 'Unknown Author'}</span>
+              by <span className="font-semibold">{'Unknown Author'}</span>
             </p>
 
             <div className="mb-6">
@@ -119,12 +119,16 @@ export default function BookDetailPage() {
               {book.description || 'No description available.'}
             </p>
 
-            <div className="flex flex-wrap gap-4">
-              <button className="secondary-btn px-6 py-3 text-lg flex items-center">
+            <div className="grid grid-cols-2 gap-4">
+              <button className="primary-btn text-center text-lg flex justify-center items-center col-span-2 mx-36">
+                <DollarSign className="w-5 h-5 mr-2" />
+                Buy Now
+              </button>
+              <button className="secondary-btn text-lg flex items-center justify-center col-span-2 sm:col-span-1">
                 <ShoppingCart className="w-5 h-5 mr-2" />
                 Add to Cart
               </button>
-              <button className="primary-btn px-6 py-3 text-lg flex items-center">
+              <button className="primary-btn text-lg flex items-center justify-center col-span-2 sm:col-span-1">
                 <Eye className="w-5 h-5 mr-2" />
                 Preview
               </button>
@@ -143,15 +147,15 @@ export default function BookDetailPage() {
         </div>
 
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-4 text-slate-700 dark:text-slate-300">
-          <p><strong>Publisher:</strong> {book.publisher || 'Not specified'}</p>
-          <p><strong>ISBN:</strong> {book.isbn || 'N/A'}</p>
-          <p><strong>Category:</strong> {book.category || 'General'}</p>
-          <p><strong>Language:</strong> {book.language || 'English'}</p>
-          <p><strong>Pages:</strong> {book.pageCount || 'N/A'}</p>
-          <p><strong>Binding:</strong> {book.binding || 'Paperback'}</p>
-          <p><strong>Publication Year:</strong> {book.publicationYear || 'N/A'}</p>
-          <p><strong>Weight:</strong> {book.weight ? `${book.weight}g` : 'N/A'}</p>
-          <p><strong>Dimensions:</strong> {book.dimensions || 'Standard'}</p>
+          <p><strong>Publisher:</strong> {'Not specified'}</p>
+          <p><strong>ISBN:</strong> { 'N/A'}</p>
+          <p><strong>Category:</strong> {'General'}</p>
+          <p><strong>Language:</strong> {'English'}</p>
+          <p><strong>Pages:</strong> {'N/A'}</p>
+          <p><strong>Binding:</strong> {'Paperback'}</p>
+          <p><strong>Publication Year:</strong> {'N/A'}</p>
+          <p><strong>Weight:</strong> {'N/A'}</p>
+          <p><strong>Dimensions:</strong> {'Standard'}</p>
         </div>
       </section>
 
@@ -164,8 +168,7 @@ export default function BookDetailPage() {
           </h2>
         </div>
         <p className="text-slate-600 dark:text-slate-300 leading-relaxed">
-          {book.summary ||
-            'This book offers a deep insight into its subject, filled with compelling ideas, rich storytelling, and detailed context. It’s a must-read for anyone interested in expanding their understanding of the topic.'}
+          {'This book offers a deep insight into its subject, filled with compelling ideas, rich storytelling, and detailed context. It’s a must-read for anyone interested in expanding their understanding of the topic.'}
         </p>
       </section>
 
@@ -181,15 +184,15 @@ export default function BookDetailPage() {
           <div className="w-32 h-32 bg-gray-200 rounded-full overflow-hidden flex-shrink-0">
             <Image
               src={"https://randomuser.me/api/portraits/men/36.jpg"}
-              alt={book.author || 'Author'}
+              alt={'Author'}
               width={128}
               height={128}
               className="object-cover"
             />
           </div>
           <p className="text-slate-600 dark:text-slate-300 leading-relaxed">
-            {book.authorBio ||
-              `${book.author || 'The author'} is a renowned writer known for captivating storytelling and a deep understanding of character development. Their works continue to inspire readers worldwide.`}
+            {
+              `${ 'The author'} is a renowned writer known for captivating storytelling and a deep understanding of character development. Their works continue to inspire readers worldwide.`}
           </p>
         </div>
       </section>

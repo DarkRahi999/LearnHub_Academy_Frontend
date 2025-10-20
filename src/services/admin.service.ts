@@ -39,7 +39,7 @@ class AdminService {
     searchParams.append('page', params.page.toString());
     searchParams.append('limit', params.limit.toString());
 
-    const response = await fetch(`${API_BASE_URL}/auth/admins?${searchParams.toString()}`, {
+    const response = await fetch(`${API_BASE_URL}/api/auth/admins?${searchParams.toString()}`, {
       headers: this.getAuthHeaders(),
     });
 
@@ -52,7 +52,7 @@ class AdminService {
   }
 
   async promoteToAdmin(userId: string): Promise<AdminActionResponse> {
-    const response = await fetch(`${API_BASE_URL}/auth/admins/promote`, {
+    const response = await fetch(`${API_BASE_URL}/api/auth/admins/promote`, {
       method: 'POST',
       headers: this.getAuthHeaders(),
       body: JSON.stringify({ userId }),
@@ -67,7 +67,7 @@ class AdminService {
   }
 
   async demoteAdmin(userId: string): Promise<AdminActionResponse> {
-    const response = await fetch(`${API_BASE_URL}/auth/admins/demote`, {
+    const response = await fetch(`${API_BASE_URL}/api/auth/admins/demote`, {
       method: 'POST',
       headers: this.getAuthHeaders(),
       body: JSON.stringify({ userId }),

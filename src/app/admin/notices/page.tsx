@@ -118,7 +118,7 @@ export default function NoticeManagement() {
 
         {/* Create/Edit Form */}
         {(showCreateForm || editingNotice) && (
-          <Card className="mb-6">
+          <Card className="mb-6 bg-transparent">
             <CardHeader>
               <CardTitle>
                 {editingNotice ? 'Edit Notice' : 'Create New Notice'}
@@ -175,7 +175,7 @@ export default function NoticeManagement() {
         ) : (
           <div className="space-y-4">
             {notices.length === 0 ? (
-              <Card>
+              <Card className="bg-transparent">
                 <CardContent className="text-center py-12">
                   <div className="text-muted-foreground">
                     <Calendar className="w-12 h-12 mx-auto mb-4 opacity-50" />
@@ -192,7 +192,7 @@ export default function NoticeManagement() {
               </Card>
             ) : (
               notices.map((notice) => (
-                <Card key={notice.id} className="hover:shadow-lg transition-shadow">
+                <Card key={notice.id} className="hover:shadow-lg transition-shadow bg-transparent">
                   <CardHeader>
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
