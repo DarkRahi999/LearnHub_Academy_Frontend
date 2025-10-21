@@ -31,7 +31,7 @@ function useDebounce<T>(value: T, delay: number): T {
 
 export default function NoticesPage() {
   const { user, isLoading: authLoading } = useAuth();
-  const { markAsRead } = useNotificationBadge();
+  const { markAsRead, refreshCount } = useNotificationBadge();
   const [notices, setNotices] = useState<Notice[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -91,11 +91,26 @@ export default function NoticesPage() {
 
   const handleNoticeClick = async (notice: Notice) => {
     if (!notice.isRead) {
-      await markAsRead(notice.id);
-      // Update local state optimistically
+      // Optimistically update the UI
       setNotices((prev) =>
         prev.map((n) => (n.id === notice.id ? { ...n, isRead: true } : n))
       );
+      
+      try {
+        await markAsRead(notice.id);
+        // Add a small delay to ensure the UI updates properly
+        await new Promise(resolve => setTimeout(resolve, 100));
+        // Refresh the notification count immediately
+        await refreshCount();
+        // Refresh the notices list to ensure consistency
+        await fetchNotices(debouncedSearchTerm);
+      } catch (error) {
+        // If there's an error, revert the optimistic update
+        setNotices((prev) =>
+          prev.map((n) => (n.id === notice.id ? { ...n, isRead: false } : n))
+        );
+        console.error('Failed to mark notice as read:', error);
+      }
     }
   };
 

@@ -6,7 +6,7 @@ type NotificationContextType = {
   unreadCount: number;
   loading: boolean;
   markAsRead: (noticeId: number) => Promise<void>;
-  refreshCount: () => void;
+  refreshCount: () => Promise<void>;
 };
 
 export function useNotificationBadge(): NotificationContextType {
@@ -42,8 +42,8 @@ export function useNotificationBadge(): NotificationContextType {
     
     try {
       await noticeService.markNoticeAsRead(noticeId);
-      // Immediately update the count optimistically
-      setUnreadCount(prev => Math.max(0, prev - 1));
+      // After marking as read, refresh the count from the server to ensure accuracy
+      await fetchUnreadCount();
     } catch (error) {
       console.error('Failed to mark notice as read:', error);
       // If there's an error, refresh to get accurate count
@@ -51,11 +51,16 @@ export function useNotificationBadge(): NotificationContextType {
     }
   }, [fetchUnreadCount, user]);
 
-  const refreshCount = useCallback(() => {
+  const refreshCount = useCallback(async () => {
     if (user && !authLoading) {
-      fetchUnreadCount();
+      await fetchUnreadCount();
     }
   }, [fetchUnreadCount, user, authLoading]);
+
+  // Expose a function to manually set the unread count (for optimistic updates)
+  const setUnreadCountDirect = useCallback((count: number) => {
+    setUnreadCount(count);
+  }, []);
 
   useEffect(() => {
     // Reset state when user changes (login/logout)
@@ -81,7 +86,7 @@ export function useNotificationBadge(): NotificationContextType {
       if (user && !authLoading && isInitialized.current) {
         fetchUnreadCount();
       }
-    }, 60000); // Refresh every 60 seconds
+    }, 10000); // Refresh every 10 seconds for better responsiveness
     
     return () => clearInterval(interval);
   }, [fetchUnreadCount, user, authLoading]);

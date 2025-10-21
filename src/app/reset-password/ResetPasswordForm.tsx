@@ -14,7 +14,9 @@ import { Input } from "@/components/ui/input";
 import { z } from "zod";
 import { resetPassword } from "@/services/auth.service";
 import { useToast } from "@/hooks/use-toast";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
+import Link from "next/link";
+import { useState } from "react";
 
 const ResetPasswordFormSchema = z.object({
   email: z.string().email("Invalid email address"),
@@ -29,10 +31,16 @@ const ResetPasswordFormSchema = z.object({
 export default function ResetPasswordForm() {
   const { toast } = useToast();
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  
+  // Get email from query parameters if available
+  const emailFromQuery = searchParams.get('email') || "";
+  
   const form = useForm<z.infer<typeof ResetPasswordFormSchema>>({
     resolver: zodResolver(ResetPasswordFormSchema),
     defaultValues: {
-      email: "",
+      email: emailFromQuery,
       otp: "",
       newPassword: "",
       confirmPassword: "",
@@ -40,6 +48,7 @@ export default function ResetPasswordForm() {
   });
 
   async function onSubmit(values: z.infer<typeof ResetPasswordFormSchema>) {
+    setIsSubmitting(true);
     try {
       await resetPassword(values);
       toast({
@@ -52,13 +61,33 @@ export default function ResetPasswordForm() {
       setTimeout(() => {
         router.push("/login");
       }, 2000);
-    } catch (error) {
+    } catch (error: any) {
       console.error("Failed to reset password:", error);
+      
+      // Show specific error messages based on the error type
+      let errorMessage = "Failed to reset password. Please try again.";
+      
+      if (error.message) {
+        if (error.message.includes("OTP not found or already used")) {
+          errorMessage = "Invalid OTP or OTP has already been used. Please request a new OTP.";
+        } else if (error.message.includes("Invalid OTP")) {
+          errorMessage = "Incorrect OTP. Please check your email and try again.";
+        } else if (error.message.includes("OTP expired")) {
+          errorMessage = "OTP has expired. Please request a new OTP.";
+        } else if (error.message.includes("Too many failed attempts")) {
+          errorMessage = "Too many failed attempts. Please wait and request a new OTP.";
+        } else {
+          errorMessage = error.message;
+        }
+      }
+      
       toast({
         title: "Error",
-        description: "Failed to reset password. Please try again.",
+        description: errorMessage,
         variant: "destructive",
       });
+    } finally {
+      setIsSubmitting(false);
     }
   }
 
@@ -67,7 +96,14 @@ export default function ResetPasswordForm() {
       <div className="text-center mb-4">
         <h2 className="text-xl font-bold">Reset Password</h2>
         <p className="text-sm text-gray-600 mt-2">
-          Enter your email, OTP, and new password below.
+          Enter your email, OTP code, and new password below.
+        </p>
+      </div>
+      
+      <div className="border rounded-md p-4 mb-4 bg-blue-50">
+        <p className="text-center text-blue-800 text-sm">
+          <strong>OTP Instructions:</strong> Check your email for the 6-digit code we sent. 
+          If you don't see it, check your spam folder.
         </p>
       </div>
       
@@ -95,14 +131,21 @@ export default function ResetPasswordForm() {
             name="otp"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-sm font-semibold">OTP</FormLabel>
+                <FormLabel className="text-sm font-semibold">OTP Code</FormLabel>
                 <FormControl>
                   <Input 
-                    placeholder="Enter the 6-digit OTP" 
+                    placeholder="Enter the 6-digit code from your email" 
                     {...field} 
+                    maxLength={6}
                   />
                 </FormControl>
                 <FormMessage />
+                <p className="text-xs text-gray-500 mt-1">
+                  Check your email for the 6-digit OTP code we sent. If you didn't receive it, you can{" "}
+                  <Link href="/forgot-password" className="text-blue-600 hover:underline">
+                    request a new one
+                  </Link>
+                </p>
               </FormItem>
             )}
           />
@@ -143,11 +186,27 @@ export default function ResetPasswordForm() {
             )}
           />
           
-          <Button type="submit" className="w-full">
-            Reset Password
+          <Button 
+            type="submit" 
+            className="w-full"
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? "Resetting Password..." : "Reset Password"}
           </Button>
+          
+          <div className="text-center text-sm mt-2">
+            <Link href="/forgot-password" className="text-blue-600 hover:underline">
+              Didn't receive an OTP? Request Again
+            </Link>
+          </div>
         </form>
       </Form>
+      
+      <div className="text-center mt-4">
+        <Link href="/login" className="text-blue-600 hover:underline text-sm">
+          Back to Login
+        </Link>
+      </div>
     </div>
   );
 }

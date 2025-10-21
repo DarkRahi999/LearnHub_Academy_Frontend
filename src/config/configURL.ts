@@ -15,6 +15,7 @@ export const API_URLS = {
     register: `${API_BASE_URL}/api/auth/signup`,
     forgotPassword: `${API_BASE_URL}/api/auth/forgot-password`,
     resetPassword: `${API_BASE_URL}/api/auth/reset-password`,
+    verifyOtp: `${API_BASE_URL}/api/auth/verify-otp`,
   },
   users: {
     getAll: `${API_BASE_URL}/api/auth/users`,

@@ -152,6 +152,18 @@ export const forgotPassword = async (email: string): Promise<{ message: string }
   }
 };
 
+// VERIFY OTP
+export const verifyOtp = async (data: { email: string; otp: string }): Promise<{ message: string }> => {
+  try {
+    const res = await authApi.post<{ message: string }>(API_URLS.auth.verifyOtp, data);
+    return res.data;
+  } catch (error: unknown) {
+    const err = error as { response?: { data?: { message?: string } }; message?: string };
+    console.error("Error verifying OTP:", err.response?.data || err.message);
+    throw new Error(err.response?.data?.message || 'Failed to verify OTP');
+  }
+};
+
 // RESET PASSWORD
 export const resetPassword = async (data: { email: string; otp: string; newPassword: string; confirmPassword: string }): Promise<{ message: string }> => {
   try {

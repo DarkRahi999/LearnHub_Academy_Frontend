@@ -8,8 +8,10 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Calendar, User, Edit, Trash2, Plus } from 'lucide-react';
 import { noticeService, Notice, CreateNoticeDto } from '@/services/notice.service';
+import { useToast } from '@/hooks/use-toast';
 
 export default function NoticeManagement() {
+  const { toast } = useToast();
   const [notices, setNotices] = useState<Notice[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -45,8 +47,22 @@ export default function NoticeManagement() {
       setFormData({ subHeading: '', description: '' });
       setShowCreateForm(false);
       fetchNotices();
+      
+      // Show success toast
+      toast({
+        title: "Success",
+        description: "Notice created successfully!",
+        variant: "default",
+      });
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to create notice');
+      
+      // Show error toast
+      toast({
+        title: "Error",
+        description: "Failed to create notice. Please try again.",
+        variant: "destructive",
+      });
     }
   };
 
@@ -60,8 +76,22 @@ export default function NoticeManagement() {
       setFormData({ subHeading: '', description: '' });
       setEditingNotice(null);
       fetchNotices();
+      
+      // Show success toast
+      toast({
+        title: "Success",
+        description: "Notice updated successfully!",
+        variant: "default",
+      });
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to update notice');
+      
+      // Show error toast
+      toast({
+        title: "Error",
+        description: "Failed to update notice. Please try again.",
+        variant: "destructive",
+      });
     }
   };
 
@@ -72,8 +102,22 @@ export default function NoticeManagement() {
       setError(null);
       await noticeService.deleteNotice(id);
       fetchNotices();
+      
+      // Show success toast
+      toast({
+        title: "Success",
+        description: "Notice deleted successfully!",
+        variant: "default",
+      });
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to delete notice');
+      
+      // Show error toast
+      toast({
+        title: "Error",
+        description: "Failed to delete notice. Please try again.",
+        variant: "destructive",
+      });
     }
   };
 
