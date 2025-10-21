@@ -61,25 +61,10 @@ export default function ResetPasswordForm() {
       setTimeout(() => {
         router.push("/login");
       }, 2000);
-    } catch (error: any) {
+    } catch (error) {
       console.error("Failed to reset password:", error);
-      
-      // Show specific error messages based on the error type
-      let errorMessage = "Failed to reset password. Please try again.";
-      
-      if (error.message) {
-        if (error.message.includes("OTP not found or already used")) {
-          errorMessage = "Invalid OTP or OTP has already been used. Please request a new OTP.";
-        } else if (error.message.includes("Invalid OTP")) {
-          errorMessage = "Incorrect OTP. Please check your email and try again.";
-        } else if (error.message.includes("OTP expired")) {
-          errorMessage = "OTP has expired. Please request a new OTP.";
-        } else if (error.message.includes("Too many failed attempts")) {
-          errorMessage = "Too many failed attempts. Please wait and request a new OTP.";
-        } else {
-          errorMessage = error.message;
-        }
-      }
+      // Type guard to check if error is an object with message property
+      const errorMessage = error instanceof Error ? error.message : "Failed to reset password. Please try again.";
       
       toast({
         title: "Error",
@@ -103,7 +88,7 @@ export default function ResetPasswordForm() {
       <div className="border rounded-md p-4 mb-4 bg-blue-50">
         <p className="text-center text-blue-800 text-sm">
           <strong>OTP Instructions:</strong> Check your email for the 6-digit code we sent. 
-          If you don't see it, check your spam folder.
+          If you don&apos;t see it, check your spam folder.
         </p>
       </div>
       
@@ -141,7 +126,7 @@ export default function ResetPasswordForm() {
                 </FormControl>
                 <FormMessage />
                 <p className="text-xs text-gray-500 mt-1">
-                  Check your email for the 6-digit OTP code we sent. If you didn't receive it, you can{" "}
+                  Check your email for the 6-digit OTP code we sent. If you didn&apos;t receive it, you can{" "}
                   <Link href="/forgot-password" className="text-blue-600 hover:underline">
                     request a new one
                   </Link>
@@ -196,7 +181,7 @@ export default function ResetPasswordForm() {
           
           <div className="text-center text-sm mt-2">
             <Link href="/forgot-password" className="text-blue-600 hover:underline">
-              Didn't receive an OTP? Request Again
+              Didn&apos;t receive an OTP? Request Again
             </Link>
           </div>
         </form>

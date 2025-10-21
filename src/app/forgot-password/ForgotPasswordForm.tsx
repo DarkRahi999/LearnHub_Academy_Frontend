@@ -131,26 +131,10 @@ export default function ForgotPasswordForm() {
         description: "OTP verified successfully. Please enter your new password.",
         variant: "default",
       });
-    } catch (error: any) {
+    } catch (error) {
       console.error("OTP verification failed:", error);
-      console.log("Error response:", error.response);
-      
-      // Show specific error messages based on the error type
-      let errorMessage = "Failed to verify OTP. Please try again.";
-      
-      if (error.message) {
-        if (error.message.includes("OTP not found or already used")) {
-          errorMessage = "Invalid OTP or OTP has already been used. Please request a new OTP.";
-        } else if (error.message.includes("Invalid OTP")) {
-          errorMessage = "Incorrect OTP. Please check your email and try again.";
-        } else if (error.message.includes("OTP expired")) {
-          errorMessage = "OTP has expired. Please request a new OTP.";
-        } else if (error.message.includes("Too many failed attempts")) {
-          errorMessage = "Too many failed attempts. Please wait and request a new OTP.";
-        } else {
-          errorMessage = error.message;
-        }
-      }
+      // Type guard to check if error is an object with message property
+      const errorMessage = error instanceof Error ? error.message : "Failed to verify OTP. Please try again.";
       
       toast({
         title: "Error",
@@ -174,25 +158,10 @@ export default function ForgotPasswordForm() {
       setTimeout(() => {
         window.location.href = "/login";
       }, 2000);
-    } catch (error: any) {
+    } catch (error) {
       console.error("Failed to reset password:", error);
-      
-      // Show specific error messages based on the error type
-      let errorMessage = "Failed to reset password. Please try again.";
-      
-      if (error.message) {
-        if (error.message.includes("OTP not found or already used")) {
-          errorMessage = "Invalid OTP or OTP has already been used. Please request a new OTP.";
-        } else if (error.message.includes("Invalid OTP")) {
-          errorMessage = "Incorrect OTP. Please check your email and try again.";
-        } else if (error.message.includes("OTP expired")) {
-          errorMessage = "OTP has expired. Please request a new OTP.";
-        } else if (error.message.includes("Too many failed attempts")) {
-          errorMessage = "Too many failed attempts. Please wait and request a new OTP.";
-        } else {
-          errorMessage = error.message;
-        }
-      }
+      // Type guard to check if error is an object with message property
+      const errorMessage = error instanceof Error ? error.message : "Failed to reset password. Please try again.";
       
       toast({
         title: "Error",
@@ -208,12 +177,12 @@ export default function ForgotPasswordForm() {
         <h2 className="text-xl font-bold">Forgot Password</h2>
         {step === "email" && (
           <p className="text-sm text-gray-600 mt-2">
-            Enter your email address and we'll send you a 6-digit OTP code.
+            Enter your email address and we&apos;ll send you a 6-digit OTP code.
           </p>
         )}
         {step === "otp" && (
           <p className="text-sm text-gray-600 mt-2">
-            We've sent a code to <strong>{submittedEmail}</strong>. Enter it below.
+            We&apos;ve sent a code to <strong>{submittedEmail}</strong>. Enter it below.
           </p>
         )}
         {step === "password" && (
@@ -256,7 +225,7 @@ export default function ForgotPasswordForm() {
         <div className="border rounded-md p-4">
           <div className="bg-blue-50 p-3 rounded-md mb-4">
             <p className="text-center text-blue-800 text-sm">
-              Check your email for the 6-digit code. If you don't see it, check your spam folder.
+              Check your email for the 6-digit code. If you don&apos;t see it, check your spam folder.
             </p>
           </div>
           

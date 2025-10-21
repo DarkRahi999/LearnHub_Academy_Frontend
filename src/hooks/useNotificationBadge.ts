@@ -57,11 +57,6 @@ export function useNotificationBadge(): NotificationContextType {
     }
   }, [fetchUnreadCount, user, authLoading]);
 
-  // Expose a function to manually set the unread count (for optimistic updates)
-  const setUnreadCountDirect = useCallback((count: number) => {
-    setUnreadCount(count);
-  }, []);
-
   useEffect(() => {
     // Reset state when user changes (login/logout)
     if (!user) {

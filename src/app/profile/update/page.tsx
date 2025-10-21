@@ -37,6 +37,7 @@ const ProfileFormSchema = z.object({
   nationality: z.string().optional(),
   religion: z.string().optional(),
   avatarUrl: z.string().optional(),
+  emailNoticeEnabled: z.boolean().optional(),
 });
 
 export default function UpdateProfilePage() {
@@ -64,6 +65,7 @@ export default function UpdateProfilePage() {
       nationality: "",
       religion: "",
       avatarUrl: "",
+      emailNoticeEnabled: true,
     },
   });
 
@@ -101,6 +103,7 @@ export default function UpdateProfilePage() {
           nationality: data.nationality ?? "",
           religion: data.religion ?? "",
           avatarUrl: data.avatarUrl ?? "",
+          emailNoticeEnabled: data.emailNoticeEnabled ?? true,
         });
       } catch {
         const local = getCurrentUser();
@@ -116,6 +119,7 @@ export default function UpdateProfilePage() {
             nationality: local.nationality ?? "",
             religion: local.religion ?? "",
             avatarUrl: local.avatarUrl ?? "",
+            emailNoticeEnabled: local.emailNoticeEnabled ?? true,
           });
         }
       } finally {
@@ -138,6 +142,7 @@ export default function UpdateProfilePage() {
         nationality: values.nationality,
         religion: values.religion,
         avatarUrl: values.avatarUrl,
+        emailNoticeEnabled: values.emailNoticeEnabled,
       });
       setUser(updatedUser);
       toast({
@@ -165,8 +170,8 @@ export default function UpdateProfilePage() {
 
   if (loading) {
     return (
-      <div className="container mx-auto py-6">
-        <Card className="max-w-4xl mx-auto">
+      <div>
+        <Card>
           <CardContent className="p-8 text-center">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
             <p>Loading profile...</p>
@@ -178,8 +183,8 @@ export default function UpdateProfilePage() {
 
   if (!user) {
     return (
-      <div className="container mx-auto py-6">
-        <Card className="max-w-4xl mx-auto">
+      <div>
+        <Card>
           <CardContent className="p-8 text-center">
             <div className="text-lg text-red-500">Failed to load profile data</div>
           </CardContent>
@@ -189,7 +194,7 @@ export default function UpdateProfilePage() {
   }
 
   return (
-    <div className="container mx-auto py-6">
+    <div>
       <div className="flex justify-between items-center mb-6">
         <div>
           <h1 className="text-3xl font-bold flex items-center gap-2">
@@ -202,7 +207,7 @@ export default function UpdateProfilePage() {
         </div>
       </div>
 
-      <Card className="max-w-4xl mx-auto">
+      <Card className="">
         <CardHeader>
           <div className="flex items-center gap-4">
             <Image
@@ -360,6 +365,24 @@ export default function UpdateProfilePage() {
                     {...register('religion')}
                     placeholder="Enter religion"
                   />
+                </div>
+
+                {/* Email Notice Preference */}
+                <div className="space-y-2 md:col-span-2">
+                  <div className="flex items-center space-x-2">
+                    <input
+                      id="emailNoticeEnabled"
+                      type="checkbox"
+                      className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                      {...register('emailNoticeEnabled')}
+                    />
+                    <Label htmlFor="emailNoticeEnabled" className="font-medium">
+                      Receive Email Notifications for Notices
+                    </Label>
+                  </div>
+                  <p className="text-xs text-gray-500">
+                    Enable this to receive email notifications when new notices are posted.
+                  </p>
                 </div>
 
                 {/* Avatar URL */}

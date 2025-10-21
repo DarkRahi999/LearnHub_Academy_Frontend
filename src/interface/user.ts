@@ -72,6 +72,7 @@ export interface UserProfile {
   nationality?: string;
   religion?: string;
   avatarUrl: string;
+  emailNoticeEnabled?: boolean;
   isBlocked?: boolean;
   lastLoginAt?: string;
   createdAt?: string;

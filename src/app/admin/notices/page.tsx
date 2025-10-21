@@ -14,6 +14,7 @@ export default function NoticeManagement() {
   const { toast } = useToast();
   const [notices, setNotices] = useState<Notice[]>([]);
   const [loading, setLoading] = useState(true);
+  const [formLoading, setFormLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [editingNotice, setEditingNotice] = useState<Notice | null>(null);
@@ -42,6 +43,7 @@ export default function NoticeManagement() {
   const handleCreateNotice = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
+      setFormLoading(true);
       setError(null);
       await noticeService.createNotice(formData);
       setFormData({ subHeading: '', description: '' });
@@ -63,6 +65,8 @@ export default function NoticeManagement() {
         description: "Failed to create notice. Please try again.",
         variant: "destructive",
       });
+    } finally {
+      setFormLoading(false);
     }
   };
 
@@ -71,6 +75,7 @@ export default function NoticeManagement() {
     if (!editingNotice) return;
     
     try {
+      setFormLoading(true);
       setError(null);
       await noticeService.updateNotice(editingNotice.id, formData);
       setFormData({ subHeading: '', description: '' });
@@ -92,6 +97,8 @@ export default function NoticeManagement() {
         description: "Failed to update notice. Please try again.",
         variant: "destructive",
       });
+    } finally {
+      setFormLoading(false);
     }
   };
 
@@ -99,6 +106,7 @@ export default function NoticeManagement() {
     if (!confirm('Are you sure you want to delete this notice?')) return;
     
     try {
+      setFormLoading(true);
       setError(null);
       await noticeService.deleteNotice(id);
       fetchNotices();
@@ -118,6 +126,8 @@ export default function NoticeManagement() {
         description: "Failed to delete notice. Please try again.",
         variant: "destructive",
       });
+    } finally {
+      setFormLoading(false);
     }
   };
 
@@ -200,10 +210,17 @@ export default function NoticeManagement() {
                   />
                 </div>
                 <div className="flex gap-2">
-                  <Button type="submit">
-                    {editingNotice ? 'Update Notice' : 'Create Notice'}
+                  <Button type="submit" disabled={formLoading}>
+                    {formLoading ? (
+                      <>
+                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                        {editingNotice ? 'Updating...' : 'Creating...'}
+                      </>
+                    ) : (
+                      editingNotice ? 'Update Notice' : 'Create Notice'
+                    )}
                   </Button>
-                  <Button type="button" variant="outline" onClick={cancelEdit}>
+                  <Button type="button" variant="outline" onClick={cancelEdit} disabled={formLoading}>
                     Cancel
                   </Button>
                 </div>
@@ -279,9 +296,19 @@ export default function NoticeManagement() {
                           size="sm"
                           onClick={() => handleDeleteNotice(notice.id)}
                           className="flex items-center gap-1"
+                          disabled={formLoading}
                         >
-                          <Trash2 className="w-4 h-4" />
-                          Delete
+                          {formLoading ? (
+                            <>
+                              <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-white mr-1"></div>
+                              Deleting...
+                            </>
+                          ) : (
+                            <>
+                              <Trash2 className="w-4 h-4" />
+                              Delete
+                            </>
+                          )}
                         </Button>
                       </div>
                     </div>
