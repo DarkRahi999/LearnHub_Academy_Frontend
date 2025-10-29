@@ -23,7 +23,7 @@ class ExamCourseService {
   //W---------={ Get all courses }=----------</br>
   async getAllExamCourses(): Promise<ExamCourse[]> {
     try {
-      const response = await courseApi.get<ExamCourse[]>(`/api/courses`);
+      const response = await courseApi.get<ExamCourse[]>(`/api/examCourses`);
       return response.data;
     } catch (error) {
       console.error('Error fetching courses:', error);
@@ -34,7 +34,7 @@ class ExamCourseService {
   //W---------={ Get course by id }=----------</br>
   async getExamCourseById(id: number): Promise<ExamCourseResponse> {
     try {
-      const response = await courseApi.get<ExamCourseResponse>(`/api/courses/${id}`);
+      const response = await courseApi.get<ExamCourseResponse>(`/api/examCourses/${id}`);
       return response.data;
     } catch (error) {
       console.error('Error fetching course:', error);
@@ -45,7 +45,7 @@ class ExamCourseService {
   //W---------={ Create course }=----------</br>
   async createExamCourse(courseData: CreateExamCourseDto): Promise<ExamCourse> {
     try {
-      const response = await courseApi.post<ExamCourse>(`/api/courses`, courseData);
+      const response = await courseApi.post<ExamCourse>(`/api/examCourses`, courseData);
       return response.data;
     } catch (error) {
       console.error('Error creating course:', error);
@@ -56,7 +56,7 @@ class ExamCourseService {
   //W---------={ Update course }=----------</br>
   async updateExamCourse(id: number, courseData: UpdateExamCourseDto): Promise<ExamCourse> {
     try {
-      const response = await courseApi.put<ExamCourse>(`/api/courses/${id}`, courseData);
+      const response = await courseApi.put<ExamCourse>(`/api/examCourses/${id}`, courseData);
       return response.data;
     } catch (error) {
       console.error('Error updating course:', error);
@@ -67,7 +67,7 @@ class ExamCourseService {
   //W---------={ Delete course }=----------</br>
   async deleteExamCourse(id: number): Promise<void> {
     try {
-      await courseApi.delete(`/api/courses/${id}`);
+      await courseApi.delete(`/api/examCourses/${id}`);
     } catch (error) {
       console.error('Error deleting course:', error);
       throw new Error('Failed to delete course: ' + (error as Error).message);

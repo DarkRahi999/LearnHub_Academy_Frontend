@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { courseService } from '@/services/course.service';
 import { useToast } from '@/hooks/use-toast';
@@ -15,6 +15,7 @@ import { z } from "zod";
 import {
   Form,
 } from "@/components/ui/form";
+import { ImageUpload } from '@/components/ui/image-upload';
 import { useCloudinaryUpload } from '@/hooks/useCloudinaryUpload';
 
 // Define validation schema using Zod
@@ -48,9 +49,7 @@ export function CourseCreateForm({ onSuccess }: CourseCreateFormProps) {
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const [pointedTexts, setPointedTexts] = useState(['', '', '']); // Minimum 3 items
-  const [uploading, setUploading] = useState(false);
-  const fileInputRef = useRef<HTMLInputElement>(null);
-  const { uploadImage, uploading: cloudinaryUploading, error: uploadError } = useCloudinaryUpload();
+  const { uploading: cloudinaryUploading, error: uploadError } = useCloudinaryUpload();
 
   // Initialize form with react-hook-form and Zod validation
   const form = useForm<CourseFormValues>({
@@ -81,29 +80,6 @@ export function CourseCreateForm({ onSuccess }: CourseCreateFormProps) {
     if (pointedTexts.length > 3) {
       const newPointedTexts = pointedTexts.filter((_, i) => i !== index);
       setPointedTexts(newPointedTexts);
-    }
-  };
-
-  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    setUploading(true);
-    try {
-      const result = await uploadImage(file);
-      form.setValue('imageUrl', result.secure_url);
-      toast({
-        title: "Success",
-        description: "Image uploaded successfully",
-      });
-    } catch {
-      toast({
-        title: "Error",
-        description: "Failed to upload image",
-        variant: "destructive",
-      });
-    } finally {
-      setUploading(false);
     }
   };
 
@@ -256,28 +232,12 @@ export function CourseCreateForm({ onSuccess }: CourseCreateFormProps) {
           <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
             Image Upload
           </label>
-          <div className="flex items-center gap-4">
-            <F1Input
-              name="imageUrl"
-              placeholder="Image will be uploaded automatically"
-              className="flex-1"
-              readOnly
-            />
-            <input
-              type="file"
-              ref={fileInputRef}
-              onChange={handleFileChange}
-              accept="image/*"
-              className="hidden"
-            />
-            <Button
-              type="button"
-              onClick={() => fileInputRef.current?.click()}
-              disabled={uploading || cloudinaryUploading}
-            >
-              {uploading || cloudinaryUploading ? 'Uploading...' : 'Upload Image'}
-            </Button>
-          </div>
+          <ImageUpload
+            value={form.watch('imageUrl') || ''}
+            onChange={(url) => form.setValue('imageUrl', url)}
+            placeholder="Click to upload course image"
+            disabled={loading || cloudinaryUploading}
+          />
           {uploadError && (
             <p className="text-sm text-red-500 mt-1">{uploadError}</p>
           )}
@@ -288,13 +248,13 @@ export function CourseCreateForm({ onSuccess }: CourseCreateFormProps) {
             type="button"
             onClick={() => router.push('/admin/courses')}
             variant="outline"
-            disabled={loading || uploading || cloudinaryUploading}
+            disabled={loading || cloudinaryUploading}
           >
             Cancel
           </Button>
           <Button
             type="submit"
-            disabled={loading || uploading || cloudinaryUploading}
+            disabled={loading || cloudinaryUploading}
             className="bg-blue-600 hover:bg-blue-700"
           >
             {loading ? 'Creating...' : 'Create Course'}

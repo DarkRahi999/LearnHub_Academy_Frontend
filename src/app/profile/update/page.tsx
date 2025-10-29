@@ -26,6 +26,8 @@ import { getCurrentUser, getUserProfile, updateUserProfile } from "@/services/au
 import { useToast } from "@/hooks/use-toast";
 import { z } from "zod";
 import { User, Mail, Phone, Calendar, Globe, Heart } from "lucide-react";
+import { ImageUpload } from "@/components/ui/image-upload";
+import { useCloudinaryUpload } from '@/hooks/useCloudinaryUpload';
 
 const ProfileFormSchema = z.object({
   firstName: z.string().min(2, { message: "First name must be at least 2 characters" }),
@@ -45,6 +47,7 @@ export default function UpdateProfilePage() {
   const [user, setUser] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const { uploading: cloudinaryUploading, error: uploadError } = useCloudinaryUpload();
 
   const {
     register,
@@ -385,16 +388,20 @@ export default function UpdateProfilePage() {
                   </p>
                 </div>
 
-                {/* Avatar URL */}
+                {/* Avatar Upload */}
                 <div className="space-y-2 md:col-span-2">
-                  <Label htmlFor="avatarUrl">Avatar URL</Label>
-                  <Input
-                    id="avatarUrl"
-                    {...register('avatarUrl')}
-                    placeholder="Enter avatar URL (optional)"
+                  <Label>Avatar Upload</Label>
+                  <ImageUpload
+                    value={watch('avatarUrl') || ''}
+                    onChange={(url) => setValue('avatarUrl', url)}
+                    placeholder="Click to upload avatar"
+                    disabled={saving || cloudinaryUploading}
                   />
+                  {uploadError && (
+                    <p className="text-sm text-red-500 mt-1">{uploadError}</p>
+                  )}
                   <p className="text-xs text-gray-500">
-                    Provide a URL to your profile image. Leave empty to use default avatar.
+                    Upload a new profile image. Leave empty to use default avatar.
                   </p>
                 </div>
               </div>

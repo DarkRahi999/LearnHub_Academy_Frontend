@@ -1,7 +1,11 @@
-"use client";
-import { useState, useRef } from "react";
+'use client';
+
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
@@ -10,8 +14,6 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 import {
   Select,
   SelectContent,
@@ -19,27 +21,41 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { UserSignup, Gender } from "@/interface/user";
-import { createUser } from "@/services/signup.service";
-import { z } from "zod";
+import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
-import { useCloudinaryUpload } from "@/hooks/useCloudinaryUpload";
+import { Gender, UserSignup } from "@/interface/user";
+import { createUser } from "@/services/signup.service";
+import { ImageUpload } from "@/components/ui/image-upload";
+import { useCloudinaryUpload } from '@/hooks/useCloudinaryUpload';
 
-// Separate schemas for each step
+//W---------={ Separate schemas for each step }=----------
 const BasicInfoSchema = z.object({
-  firstName: z
-    .string()
-    .min(2, { message: "Name must be at least 2 characters" }),
-  lastName: z
-    .string()
-    .min(2, { message: "Name must be at least 2 characters" })
-    .optional(),
-  phone: z.string().regex(/^01[0-9]{9}$/, { message: "Invalid phone number" }),
+  firstName: z.string().min(2, { message: "First Name is required" }),
+  lastName: z.string().optional(),
+  phone: z.string()
+    .min(1, { message: "Phone number is minimum 11 characters" })
+    .max(16, { message: "Phone number is maximum 16 characters" })
+    .regex(/^01[0-9]{9}$/, { message: "Invalid phone number" }),
 });
 
 const OptionalInfoSchema = z.object({
   gender: z.enum(["male", "female", "other"]).optional(),
-  dob: z.string().min(1, { message: "Date of birth is required" }),
+  dob: z.string()
+    .min(1, { message: "Date of birth is required" })
+    .refine((v) => {
+      const d = new Date(v);
+      const t = new Date();
+      const age = t.getFullYear() - d.getFullYear()
+        - (t < new Date(t.getFullYear(), d.getMonth(), d.getDate()) ? 1 : 0);
+      return age >= 15;
+    }, { message: "You must be at least 15 years old" })
+    .refine((v) => {
+      const d = new Date(v);
+      const t = new Date();
+      const age = t.getFullYear() - d.getFullYear()
+        - (t < new Date(t.getFullYear(), d.getMonth(), d.getDate()) ? 1 : 0);
+      return age <= 75;
+    }, { message: "Invalid date of birth" }),
   avatarUrl: z.string().optional(),
 });
 
@@ -47,8 +63,7 @@ const AccountInfoSchema = z.object({
   email: z
     .string({ message: "Invalid email address" })
     .regex(/@gmail\.com$/, { message: "Email must be a gmail address" }),
-  password: z
-    .string()
+  password: z.string()
     .min(6, { message: "Password must be at least 6 characters" })
     .regex(/[A-Z]/, {
       message: "Password must contain at least one uppercase letter",
@@ -61,20 +76,20 @@ const AccountInfoSchema = z.object({
     }),
 });
 
-// Define the complete form type
-type CompleteFormValues = z.infer<typeof BasicInfoSchema> & 
-  z.infer<typeof OptionalInfoSchema> & 
+//W---------={ Define the complete form type }=----------
+type CompleteFormValues =
+  z.infer<typeof BasicInfoSchema> &
+  z.infer<typeof OptionalInfoSchema> &
   z.infer<typeof AccountInfoSchema>;
 
 const SignupForm = () => {
   const { toast } = useToast();
   const [step, setStep] = useState<1 | 2 | 3>(1);
   const [formData, setFormData] = useState<Partial<CompleteFormValues>>({});
-  const fileInputRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
   const { uploadImage, uploading: cloudinaryUploading, error: uploadError } = useCloudinaryUpload();
-  
-  // Create separate form instances for each step
+
+  //W---------={  Create separate form instances for each step }=----------
   const basicForm = useForm<z.infer<typeof BasicInfoSchema>>({
     resolver: zodResolver(BasicInfoSchema),
     defaultValues: {
@@ -125,13 +140,13 @@ const SignupForm = () => {
     }
   };
 
-  //W---------{ 2. Define a submit handler. }----------
+  //W---------{ Define a submit handler. }----------
   async function onSubmit(values: z.infer<typeof AccountInfoSchema>) {
     try {
-      // Combine all form data
+      //---------{  Combine all form data. }----------
       const completeData: CompleteFormValues = { ...formData, ...values } as CompleteFormValues;
-      
-      // Map string gender to Gender enum
+
+      //---------{  Map string gender to Gender enum. }----------
       let gender: Gender = Gender.Male;
       if (completeData.gender === "male") {
         gender = Gender.Male;
@@ -140,8 +155,8 @@ const SignupForm = () => {
       } else if (completeData.gender === "other") {
         gender = Gender.Other;
       }
-      
-      //W---------{ DOB convert করা optional }----------
+
+      //---------{ convert DOB optional }----------
       const payload: Omit<UserSignup, "id"> = {
         firstName: completeData.firstName,
         lastName: completeData.lastName || "",
@@ -154,26 +169,18 @@ const SignupForm = () => {
         ...(completeData.avatarUrl && { avatarUrl: completeData.avatarUrl }),
       };
 
-      const newUser = await createUser(payload); //W---------{ axios POST call }----------
+      const newUser = await createUser(payload);
 
-      //W---------{ Store token and user data in localStorage }----------
+      //---------{ Store token and user data in localStorage }----------
       localStorage.setItem("access_token", newUser.access_token);
-      localStorage.setItem("user_data", JSON.stringify(newUser.user));
+      localStorage.setItem("user", JSON.stringify(newUser.user));
 
       toast({
         title: "Success",
         description:
-          "Account created successfully! Welcome to LearnHub Academy! You can update your profile information in the profile section.",
+          "Account created successfully!",
         variant: "default",
       });
-
-      // Remove the second toast notification
-      // Show profile update notification
-      // toast({
-      //   title: "Profile Update",
-      //   description: "You can update your profile information in the profile section.",
-      //   variant: "default",
-      // });
 
       //W---------{ Redirect to home page }----------
       window.location.href = "/";
@@ -184,7 +191,7 @@ const SignupForm = () => {
           ? error.message
           : "Signup failed. Please try again.";
       toast({
-        title: "Error",
+        title: "Signup failed. Please try again.",
         description: errorMessage,
         variant: "destructive",
       });
@@ -193,16 +200,16 @@ const SignupForm = () => {
 
   const goNext = async () => {
     let isValid = false;
-    
-    // Validate only the fields for the current step using the appropriate form instance
+
+    //---------{ Validate only the fields for the current step }----------
     if (step === 1) {
       isValid = await basicForm.trigger();
     } else if (step === 2) {
       isValid = await optionalForm.trigger();
     }
-    
+
     if (isValid) {
-      // Save current step data
+      //---------{ Save current step data }----------
       if (step === 1) {
         const data = basicForm.getValues();
         setFormData(prev => ({ ...prev, ...data }));
@@ -219,17 +226,17 @@ const SignupForm = () => {
   };
 
   return (
-    <div className="">
-      {/* Render the appropriate form based on the current step */}
+    <div>
+      {/* -=> Render the form based on the current step */}
       {step === 1 && (
         <Form {...basicForm}>
           <form action="" onSubmit={(e) => e.preventDefault()} method="post">
             <div className="grid gap-2 border-2 dark:border-gray-600 rounded-md p-3 xs:p-4">
               <div className="flex items-center justify-center gap-2 text-sm mb-2">
                 <span className="font-semibold">1. Basic</span>
-                <span>›</span>
+                <span>&rsaquo;</span>
                 <span className="text-muted-foreground">2. Optional</span>
-                <span>›</span>
+                <span>&rsaquo;</span>
                 <span className="text-muted-foreground">3. Account</span>
               </div>
               <div className="grid gap-2 grid-cols-1 xs:grid-cols-2">
@@ -309,16 +316,16 @@ const SignupForm = () => {
           </form>
         </Form>
       )}
-      
+
       {step === 2 && (
         <Form {...optionalForm}>
           <form action="" onSubmit={(e) => e.preventDefault()} method="post">
             <div className="grid gap-2 border-2 dark:border-gray-600 rounded-md p-3 xs:p-4">
               <div className="flex items-center justify-center gap-2 text-sm mb-2">
                 <span className="font-semibold">1. Basic</span>
-                <span>›</span>
+                <span>&rsaquo;</span>
                 <span className="font-semibold">2. Optional</span>
-                <span>›</span>
+                <span>&rsaquo;</span>
                 <span className="text-muted-foreground">3. Account</span>
               </div>
               <div className="grid gap-2 grid-cols-1 xs:grid-cols-2">
@@ -373,30 +380,14 @@ const SignupForm = () => {
                     <FormLabel className="text-sm font-semibold">
                       Avatar:
                     </FormLabel>
-                    <div className="flex items-center gap-4">
-                      <Input
+                    <FormControl>
+                      <ImageUpload
                         value={optionalForm.watch('avatarUrl') || ''}
-                        placeholder="Avatar will be uploaded automatically"
-                        readOnly
-                      />
-                      <input
-                        type="file"
-                        ref={fileInputRef}
-                        onChange={handleAvatarUpload}
-                        accept="image/*"
-                        className="hidden"
-                      />
-                      <Button
-                        type="button"
-                        onClick={() => fileInputRef.current?.click()}
+                        onChange={(url) => optionalForm.setValue('avatarUrl', url)}
+                        placeholder="Click to upload avatar"
                         disabled={uploading || cloudinaryUploading}
-                      >
-                        {uploading || cloudinaryUploading ? 'Uploading...' : 'Upload Avatar'}
-                      </Button>
-                    </div>
-                    {uploadError && (
-                      <p className="text-sm text-red-500 mt-1">{uploadError}</p>
-                    )}
+                      />
+                    </FormControl>
                     <FormMessage />
                   </FormItem>
                 </div>
@@ -417,16 +408,16 @@ const SignupForm = () => {
           </form>
         </Form>
       )}
-      
+
       {step === 3 && (
         <Form {...accountForm}>
           <form action="" onSubmit={accountForm.handleSubmit(onSubmit)} method="post">
             <div className="grid gap-2 border-2 dark:border-gray-600 rounded-md p-3 xs:p-4">
               <div className="flex items-center justify-center gap-2 text-sm mb-2">
                 <span className="font-semibold">1. Basic</span>
-                <span>›</span>
+                <span>&rsaquo;</span>
                 <span className="font-semibold">2. Optional</span>
-                <span>›</span>
+                <span>&rsaquo;</span>
                 <span className="font-semibold">3. Account</span>
               </div>
               <div className="grid gap-2 grid-cols-1 xs:grid-cols-3">

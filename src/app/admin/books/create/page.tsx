@@ -3,7 +3,7 @@
 import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import RoleGuard from "@/components/auth/RoleGuard";
-import { UserRole, Permission } from "@/interface/user";
+import { UserRole } from "@/interface/user";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -11,6 +11,8 @@ import { Label } from "@/components/ui/label";
 import { bookService } from "@/services/book.service";
 import { useToast } from "@/hooks/use-toast";
 import { useCloudinaryUpload } from "@/hooks/useCloudinaryUpload";
+import { ImageUpload } from "@/components/ui/image-upload";
+import { Permission } from "@/interface/permission";
 
 export default function CreateBookPage() {
   const [title, setTitle] = useState("");
@@ -218,39 +220,12 @@ export default function CreateBookPage() {
 
             <div>
               <Label>Image Upload</Label>
-              <div className="flex items-center gap-4">
-                <Input
-                  value={imageUrl}
-                  onChange={(e) => setImageUrl(e.target.value)}
-                  placeholder="Enter image URL or upload an image"
-                  className="flex-1"
-                />
-                {/* <Button
-                  type="button"
-                  onClick={handleUrlUpload}
-                  disabled={uploading || cloudinaryUploading}
-                >
-                  {uploading || cloudinaryUploading
-                    ? "Processing..."
-                    : "Process URL"}
-                </Button> */}
-                <input
-                  type="file"
-                  ref={fileInputRef}
-                  onChange={handleFileChange}
-                  accept="image/*"
-                  className="hidden"
-                />
-                <Button
-                  type="button"
-                  onClick={() => fileInputRef.current?.click()}
-                  disabled={uploading || cloudinaryUploading}
-                >
-                  {uploading || cloudinaryUploading
-                    ? "Uploading..."
-                    : "Upload Image"}
-                </Button>
-              </div>
+              <ImageUpload
+                value={imageUrl}
+                onChange={setImageUrl}
+                placeholder="Click to upload book image"
+                disabled={uploading || cloudinaryUploading}
+              />
               {uploadError && (
                 <p className="text-sm text-red-500 mt-1">{uploadError}</p>
               )}

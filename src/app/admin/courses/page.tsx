@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import RoleGuard from "@/components/auth/RoleGuard";
-import { UserRole, Permission } from "@/interface/user";
+import { UserRole } from "@/interface/user";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { courseService, Course } from "@/services/course.service";
@@ -11,6 +11,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Edit, Trash2, Plus, BookOpen, Eye } from "lucide-react";
 import Image from "next/image";
 import AccessDenied from "@/components/layouts/Access";
+import { Permission } from "@/interface/permission";
 
 export default function CourseManagement() {
   const { toast } = useToast();

@@ -1,9 +1,10 @@
 "use client";
 
 import RoleGuard from "@/components/auth/RoleGuard";
-import { UserRole, Permission } from "@/interface/user";
+import { UserRole } from "@/interface/user";
 import { useRouter } from "next/navigation";
-import { CourseCreateForm } from "@/components/feature/CourseCreateForm";
+import { CourseCreateForm } from "@/app/course/CourseCreateForm";
+import { Permission } from "@/interface/permission";
 
 export default function CreateCourse() {
   const router = useRouter();

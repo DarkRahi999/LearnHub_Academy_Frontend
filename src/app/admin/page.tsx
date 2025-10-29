@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import RoleGuard from "@/components/auth/RoleGuard";
 import RoleBadge from "@/components/auth/RoleBadge";
-import { UserRole, Permission, UserProfile } from "@/interface/user";
+import { UserRole, UserProfile } from "@/interface/user";
 import { Button } from "@/components/ui/button";
 import { getCurrentUser } from "@/services/auth.service";
 import {
@@ -13,9 +13,11 @@ import {
   Settings,
   BookOpen,
   NotebookText,
+  ChartBar,
 } from "lucide-react";
 import Loading from "@/components/layouts/Loading";
 import AccessDenied from "@/components/layouts/Access";
+import { Permission } from "@/interface/permission";
 
 export default function AdminDashboard() {
   const [user, setUser] = useState<UserProfile | null>(null);
@@ -112,6 +114,27 @@ export default function AdminDashboard() {
               <p className="text-gray-600 mb-4">Create and manage courses</p>
               <Button asChild>
                 <a href="/admin/courses">Manage Courses</a>
+              </Button>
+            </div>
+          </RoleGuard>
+
+          {/* -=> Question Management */}
+          <RoleGuard
+            allowedRoles={[UserRole.ADMIN, UserRole.SUPER_ADMIN]}
+            requiredPermissions={[
+              Permission.CREATE_QUESTION,
+              Permission.UPDATE_QUESTION,
+              Permission.DELETE_QUESTION,
+            ]}
+          >
+            <div className="border rounded-lg p-6 hover:shadow-md transition-shadow">
+              <div className="flex items-center gap-3 mb-3">
+                <ChartBar className="h-6 w-6 text-indigo-600" />
+                <h3 className="text-xl font-semibold">Question Management</h3>
+              </div>
+              <p className="text-gray-600 mb-4">Create and manage Questions</p>
+              <Button asChild>
+                <a href="/admin/questions">Manage Questions</a>
               </Button>
             </div>
           </RoleGuard>

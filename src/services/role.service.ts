@@ -1,4 +1,5 @@
-import { UserRole, Permission } from '@/interface/user';
+import { Permission } from '@/interface/permission';
+import { UserRole } from '@/interface/user';
 
 export class RoleService {
   private static rolePermissions: Record<UserRole, Permission[]> = {
@@ -6,39 +7,33 @@ export class RoleService {
       Permission.VIEW_PROFILE,
       Permission.UPDATE_PROFILE,
       Permission.VIEW_NOTICES,
-      Permission.VIEW_POSTS,
     ],
     [UserRole.ADMIN]: [
       Permission.VIEW_PROFILE,
       Permission.UPDATE_PROFILE,
       Permission.VIEW_NOTICES,
-      Permission.VIEW_POSTS,
       Permission.CREATE_NOTICE,
       Permission.UPDATE_NOTICE,
       Permission.DELETE_NOTICE,
       Permission.MANAGE_USERS,
-      Permission.CREATE_POST,
-      Permission.UPDATE_POST,
-      Permission.DELETE_POST,
       Permission.CREATE_COURSE,
       Permission.UPDATE_COURSE,
       Permission.DELETE_COURSE,
       Permission.CREATE_BOOK,
       Permission.UPDATE_BOOK,
       Permission.DELETE_BOOK,
+      Permission.CREATE_QUESTION,
+      Permission.UPDATE_QUESTION,
+      Permission.DELETE_QUESTION,
     ],
     [UserRole.SUPER_ADMIN]: [
       Permission.VIEW_PROFILE,
       Permission.UPDATE_PROFILE,
       Permission.VIEW_NOTICES,
-      Permission.VIEW_POSTS,
       Permission.CREATE_NOTICE,
       Permission.UPDATE_NOTICE,
       Permission.DELETE_NOTICE,
       Permission.MANAGE_USERS,
-      Permission.CREATE_POST,
-      Permission.UPDATE_POST,
-      Permission.DELETE_POST,
       Permission.MANAGE_ADMINS,
       Permission.MANAGE_PERMISSIONS,
       Permission.SYSTEM_SETTINGS,
@@ -48,6 +43,9 @@ export class RoleService {
       Permission.CREATE_BOOK,
       Permission.UPDATE_BOOK,
       Permission.DELETE_BOOK,
+      Permission.CREATE_QUESTION,
+      Permission.UPDATE_QUESTION,
+      Permission.DELETE_QUESTION,
     ],
   };
 
@@ -73,12 +71,12 @@ export class RoleService {
     if (managerRole === UserRole.SUPER_ADMIN) {
       return true;
     }
-    
+
     // Admin can manage users but not other admins or super admins
     if (managerRole === UserRole.ADMIN) {
       return targetRole === UserRole.USER;
     }
-    
+
     // Users cannot manage anyone
     return false;
   }
@@ -88,12 +86,12 @@ export class RoleService {
     if (assignerRole === UserRole.SUPER_ADMIN) {
       return true;
     }
-    
+
     // Admin can only assign user role
     if (assignerRole === UserRole.ADMIN) {
       return targetRole === UserRole.USER;
     }
-    
+
     // Users cannot assign any role
     return false;
   }

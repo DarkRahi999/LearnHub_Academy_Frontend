@@ -173,7 +173,7 @@ const Footer = () => {
             <ul className="space-y-2">
               <motion.li {...fadeRightAnimation(20, 0.3, 0.2)}>
                 <Link
-                  href="/about"
+                  href="/company/about"
                   className="text-gray-400 hover:text-white hover:underline transition-colors flex items-center"
                 >
                   <span className="mr-2">→</span> About Us
@@ -181,7 +181,7 @@ const Footer = () => {
               </motion.li>
               <motion.li {...fadeRightAnimation(20, 0.3, 0.3)}>
                 <Link
-                  href="/teacher"
+                  href="/company/teacher"
                   className="text-gray-400 hover:text-white transition-colors flex items-center"
                 >
                   <span className="mr-2">→</span> Teachers Panel
@@ -189,7 +189,7 @@ const Footer = () => {
               </motion.li>
               <motion.li {...fadeRightAnimation(20, 0.3, 0.4)}>
                 <Link
-                  href="/terms"
+                  href="/company/terms"
                   className="text-gray-400 hover:text-white transition-colors flex items-center"
                 >
                   <span className="mr-2">→</span> Terms & Conditions
@@ -197,7 +197,7 @@ const Footer = () => {
               </motion.li>
               <motion.li {...fadeRightAnimation(20, 0.3, 0.5)}>
                 <Link
-                  href="/privacy"
+                  href="/company/privacy"
                   className="text-gray-400 hover:text-white hover:underline transition-colors flex items-center"
                 >
                   <span className="mr-2">→</span> Privacy Policy
@@ -205,7 +205,7 @@ const Footer = () => {
               </motion.li>
               <motion.li {...fadeRightAnimation(20, 0.3, 0.6)}>
                 <Link
-                  href="/careers"
+                  href="/company/careers"
                   className="text-gray-400 hover:text-white hover:underline transition-colors flex items-center"
                 >
                   <span className="mr-2">→</span> Careers
@@ -213,7 +213,7 @@ const Footer = () => {
               </motion.li>
               <motion.li {...fadeRightAnimation(20, 0.3, 0.7)}>
                 <Link
-                  href="/contact"
+                  href="/company/contact"
                   className="text-gray-400 hover:text-white hover:underline transition-colors flex items-center"
                 >
                   <span className="mr-2">→</span> Contact
