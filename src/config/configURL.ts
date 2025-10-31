@@ -96,4 +96,13 @@ export const API_URLS = {
     update: (id: number) => `${API_BASE_URL}/api/questions/${id}`,
     delete: (id: number) => `${API_BASE_URL}/api/questions/${id}`,
   },
+  exams: {
+    getAll: `${API_BASE_URL}/api/exams`,
+    getById: (id: number) => `${API_BASE_URL}/api/exams/${id}`,
+    create: `${API_BASE_URL}/api/exams`,
+    update: (id: number) => `${API_BASE_URL}/api/exams/${id}`,
+    delete: (id: number) => `${API_BASE_URL}/api/exams/${id}`,
+    start: (id: number) => `${API_BASE_URL}/api/exams/${id}/start`,
+    submit: (id: number) => `${API_BASE_URL}/api/exams/${id}/submit`,
+  },
 };

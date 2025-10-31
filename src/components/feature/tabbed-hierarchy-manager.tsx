@@ -747,7 +747,6 @@ export function TabbedHierarchyManager({ onQuestionSelected }: TabbedHierarchyMa
   const handleSaveQuestion = async (updatedQuestion: Question) => {
     try {
       const savedQuestion = await questionService.updateQuestion(updatedQuestion.id, {
-        name: updatedQuestion.name,
         questionText: updatedQuestion.questionText,
         optionA: updatedQuestion.optionA,
         optionB: updatedQuestion.optionB,
@@ -755,6 +754,7 @@ export function TabbedHierarchyManager({ onQuestionSelected }: TabbedHierarchyMa
         optionD: updatedQuestion.optionD,
         correctAnswer: updatedQuestion.correctAnswer,
         description: updatedQuestion.description,
+        previousYearInfo: updatedQuestion.previousYearInfo,
         subChapterId: updatedQuestion.subChapterId
       });
       
@@ -1095,7 +1095,6 @@ export function TabbedHierarchyManager({ onQuestionSelected }: TabbedHierarchyMa
 
   // Edit Question Form Component
   const EditQuestionForm = ({ question, onSave, onCancel }: EditQuestionFormProps) => {
-    const [name, setName] = useState(question.name);
     const [questionText, setQuestionText] = useState(question.questionText);
     const [optionA, setOptionA] = useState(question.optionA);
     const [optionB, setOptionB] = useState(question.optionB);
@@ -1103,6 +1102,7 @@ export function TabbedHierarchyManager({ onQuestionSelected }: TabbedHierarchyMa
     const [optionD, setOptionD] = useState(question.optionD);
     const [correctAnswer, setCorrectAnswer] = useState(question.correctAnswer);
     const [description, setDescription] = useState(question.description || "");
+    const [previousYearInfo, setPreviousYearInfo] = useState(question.previousYearInfo || "");
     const [loading, setLoading] = useState(false);
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -1111,14 +1111,14 @@ export function TabbedHierarchyManager({ onQuestionSelected }: TabbedHierarchyMa
       try {
         await onSave({ 
           ...question, 
-          name, 
           questionText, 
           optionA, 
           optionB, 
           optionC, 
           optionD, 
           correctAnswer, 
-          description 
+          description,
+          previousYearInfo
         });
       } finally {
         setLoading(false);
@@ -1138,16 +1138,6 @@ export function TabbedHierarchyManager({ onQuestionSelected }: TabbedHierarchyMa
             <DialogTitle>Edit Question</DialogTitle>
           </DialogHeader>
           <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium mb-1">Question Name *</label>
-              <Input
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="Question name"
-                required
-                disabled={loading}
-              />
-            </div>
             <div>
               <label className="block text-sm font-medium mb-1">Question Text *</label>
               <Textarea
@@ -1224,6 +1214,15 @@ export function TabbedHierarchyManager({ onQuestionSelected }: TabbedHierarchyMa
                 onChange={(e) => setDescription(e.target.value)}
                 placeholder="Description (optional)"
                 rows={2}
+                disabled={loading}
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1">Previous Year Info</label>
+              <Input
+                value={previousYearInfo}
+                onChange={(e) => setPreviousYearInfo(e.target.value)}
+                placeholder="e.g., HSC 2020, Dhaka Board"
                 disabled={loading}
               />
             </div>
@@ -1978,7 +1977,7 @@ export function TabbedHierarchyManager({ onQuestionSelected }: TabbedHierarchyMa
                     </div>
                   )}
                   
-                  <h4 className="font-medium">{question.name}</h4>
+                  <h4 className="font-medium">{question.questionText}</h4>
                   <p className="text-sm text-gray-600 mt-1">{question.questionText}</p>
                   <div className="mt-2 flex items-center">
                     <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">

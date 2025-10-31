@@ -31,6 +31,30 @@ class QuestionService {
     }
   }
 
+  //W---------={ Get filtered questions }=----------</br>
+  async getFilteredQuestions(
+    courseId?: number,
+    groupId?: number,
+    subjectId?: number,
+    chapterId?: number,
+    subChapterId?: number
+  ): Promise<Question[]> {
+    try {
+      const params: any = {};
+      if (courseId) params.courseId = courseId;
+      if (groupId) params.groupId = groupId;
+      if (subjectId) params.subjectId = subjectId;
+      if (chapterId) params.chapterId = chapterId;
+      if (subChapterId) params.subChapterId = subChapterId;
+
+      const response = await questionApi.get<Question[]>(`/api/questions`, { params });
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching filtered questions:', error);
+      throw new Error('Failed to fetch filtered questions: ' + (error as Error).message);
+    }
+  }
+
   //W---------={ Get question by id }=----------</br>
   async getQuestionById(id: number): Promise<QuestionResponse> {
     try {

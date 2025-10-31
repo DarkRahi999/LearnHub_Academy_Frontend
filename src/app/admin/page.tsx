@@ -14,6 +14,7 @@ import {
   BookOpen,
   NotebookText,
   ChartBar,
+  Calendar,
 } from "lucide-react";
 import Loading from "@/components/layouts/Loading";
 import AccessDenied from "@/components/layouts/Access";
@@ -135,6 +136,25 @@ export default function AdminDashboard() {
               <p className="text-gray-600 mb-4">Create and manage Questions</p>
               <Button asChild>
                 <a href="/admin/questions">Manage Questions</a>
+              </Button>
+            </div>
+          </RoleGuard>
+
+          {/* -=> Exam Management */}
+          <RoleGuard
+            allowedRoles={[UserRole.ADMIN, UserRole.SUPER_ADMIN]}
+            requiredPermissions={[
+              Permission.CREATE_QUESTION,
+            ]}
+          >
+            <div className="border rounded-lg p-6 hover:shadow-md transition-shadow">
+              <div className="flex items-center gap-3 mb-3">
+                <Calendar className="h-6 w-6 text-purple-600" />
+                <h3 className="text-xl font-semibold">Exam Management</h3>
+              </div>
+              <p className="text-gray-600 mb-4">Create and manage online exams</p>
+              <Button asChild>
+                <a href="/admin/exams">Manage Exams</a>
               </Button>
             </div>
           </RoleGuard>

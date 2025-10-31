@@ -29,7 +29,6 @@ interface QuestionFormProps {
 }
 
 interface FormErrors {
-  name?: string;
   questionText?: string;
   optionA?: string;
   optionB?: string;
@@ -53,7 +52,6 @@ export function QuestionForm({
   defaultSubChapterId
 }: QuestionFormProps) {
   // Form state
-  const [name, setName] = useState("");
   const [questionText, setQuestionText] = useState("");
   const [optionA, setOptionA] = useState("");
   const [optionB, setOptionB] = useState("");
@@ -61,6 +59,7 @@ export function QuestionForm({
   const [optionD, setOptionD] = useState("");
   const [correctAnswer, setCorrectAnswer] = useState("");
   const [description, setDescription] = useState("");
+  const [previousYearInfo, setPreviousYearInfo] = useState("");
 
   // Selection state - initialized with default values if provided
   const [selectedCourseId, setSelectedCourseId] = useState<number | null>(defaultCourseId || null);
@@ -226,10 +225,6 @@ export function QuestionForm({
   const validateForm = (): boolean => {
     const errors: FormErrors = {};
     
-    if (!name.trim()) {
-      errors.name = "Question name is required";
-    }
-    
     if (!questionText.trim()) {
       errors.questionText = "Question text is required";
     }
@@ -290,7 +285,6 @@ export function QuestionForm({
 
     try {
       const questionData: CreateQuestionDto = {
-        name,
         courseId: selectedCourseId!,
         groupId: selectedGroupId!,
         subjectId: selectedSubjectId!,
@@ -302,13 +296,13 @@ export function QuestionForm({
         optionC,
         optionD,
         correctAnswer,
-        description
+        description,
+        previousYearInfo
       };
 
       await questionService.createQuestion(questionData);
       
       // Reset form
-      setName("");
       setQuestionText("");
       setOptionA("");
       setOptionB("");
@@ -316,6 +310,7 @@ export function QuestionForm({
       setOptionD("");
       setCorrectAnswer("");
       setDescription("");
+      setPreviousYearInfo("");
       // Keep the default selections
       setSelectedCourseId(defaultCourseId || null);
       setSelectedGroupId(defaultGroupId || null);
@@ -427,16 +422,6 @@ export function QuestionForm({
         
         {/* Question Details */}
         <div>
-          <label className="block text-sm font-medium mb-1">Question Name *</label>
-          <Input
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            placeholder="Enter question name"
-          />
-          {formErrors.name && <p className="text-red-500 text-sm mt-1">{formErrors.name}</p>}
-        </div>
-        
-        <div>
           <label className="block text-sm font-medium mb-1">Question Text *</label>
           <Textarea
             value={questionText}
@@ -512,6 +497,15 @@ export function QuestionForm({
             onChange={(e) => setDescription(e.target.value)}
             placeholder="Enter description"
             rows={2}
+          />
+        </div>
+        
+        <div>
+          <label className="block text-sm font-medium mb-1">Previous Year Info (Optional)</label>
+          <Input
+            value={previousYearInfo}
+            onChange={(e) => setPreviousYearInfo(e.target.value)}
+            placeholder="e.g., HSC 2020, Dhaka Board"
           />
         </div>
         

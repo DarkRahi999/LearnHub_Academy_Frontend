@@ -11,6 +11,7 @@ import {
   Shield,
   BookOpen,
   NotebookText,
+  Calendar,
 } from "lucide-react";
 import { Button } from "../ui/button";
 import { NavButton } from "../own/NavButton";
@@ -358,6 +359,19 @@ export default function Header() {
                   className="w-full justify-start h-12 text-left transition-all duration-300 ease-in-out hover:bg-accent/50 hover:scale-105 hover:translate-x-2"
                 >
                   <Link
+                    href="/exams"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    <Calendar className="w-5 h-5 mr-3 transition-transform duration-300 group-hover:scale-110" />
+                    Exams
+                  </Link>
+                </Button>
+                <Button
+                  variant="ghost"
+                  asChild
+                  className="w-full justify-start h-12 text-left transition-all duration-300 ease-in-out hover:bg-accent/50 hover:scale-105 hover:translate-x-2"
+                >
+                  <Link
                     href="/notices"
                     onClick={() => setIsMobileMenuOpen(false)}
                     className="relative"
@@ -511,6 +525,19 @@ export default function Header() {
                 >
                   <UsersRound className="w-5 h-5 mr-3" />
                   Forgot Password
+                </Link>
+              </Button>
+              <Button
+                variant="ghost"
+                asChild
+                className="w-full justify-start h-12 text-left transition-all duration-300 ease-in-out hover:bg-accent/50 hover:scale-105 hover:translate-x-2"
+              >
+                <Link
+                  href="/exams"
+                  onClick={() => setIsDesktopProfileOpen(false)}
+                >
+                  <Calendar className="w-5 h-5 mr-3 transition-transform duration-300 group-hover:scale-110" />
+                  Exams
                 </Link>
               </Button>
               <div className="pt-2 border-t border-border">
