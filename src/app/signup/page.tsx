@@ -4,7 +4,7 @@ export default function SignupPage() {
   return (
     <>
       <div className="min-h-[80vh] flex items-center justify-center bg-transparent px-4 sm:px-6 lg:px-8">
-        <div className="max-w-xl 2xl:max-w-2xl w-full">
+        <div className="max-w-2xl w-full space-y-8">
           <div>
             <h2 className="mt-6 text-center text-3xl font-bold">
               Create your account

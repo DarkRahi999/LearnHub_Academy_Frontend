@@ -157,6 +157,13 @@ const SignupForm = () => {
         variant: "default",
       });
 
+      // Show profile update notification
+      toast({
+        title: "Profile Update",
+        description: "You can update your profile information in the profile section.",
+        variant: "default",
+      });
+
       //W---------{ Redirect to home page }----------
       window.location.href = "/";
     } catch (error: unknown) {
@@ -383,7 +390,6 @@ const SignupForm = () => {
           </form>
         </Form>
       )}
-
       {step === 3 && (
         <Form {...accountForm}>
           <form action="" onSubmit={accountForm.handleSubmit(onSubmit)} method="post">
