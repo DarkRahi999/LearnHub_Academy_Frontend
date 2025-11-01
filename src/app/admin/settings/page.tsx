@@ -2,14 +2,13 @@
 
 import { useState, useEffect } from 'react';
 import RoleGuard from '@/components/auth/RoleGuard';
-import { Permission } from '@/interface/user';
 import { Button } from '@/components/ui/button';
+import { Permission } from '@/interface/permission';
 
 export default function SystemSettings() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // TODO: Implement API call to fetch notices
     setLoading(false);
   }, []);
 

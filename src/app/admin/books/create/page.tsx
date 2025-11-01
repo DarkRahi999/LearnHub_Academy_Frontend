@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import RoleGuard from "@/components/auth/RoleGuard";
 import { UserRole } from "@/interface/user";
@@ -22,68 +22,13 @@ export default function CreateBookPage() {
   const [price, setPrice] = useState("");
   const [discountPrice, setDiscountPrice] = useState("");
   const [loading, setLoading] = useState(false);
-  const [uploading, setUploading] = useState(false);
-  const fileInputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
   const { toast } = useToast();
   const {
-    uploadImage,
     uploadImageFromUrl,
     uploading: cloudinaryUploading,
     error: uploadError,
   } = useCloudinaryUpload();
-
-  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    setUploading(true);
-    try {
-      const result = await uploadImage(file);
-      setImageUrl(result.secure_url);
-      toast({
-        title: "Success",
-        description: "Image uploaded successfully",
-      });
-    } catch {
-      toast({
-        title: "Error",
-        description: "Failed to upload image",
-        variant: "destructive",
-      });
-    } finally {
-      setUploading(false);
-    }
-  };
-
-  // const handleUrlUpload = async () => {
-  //   if (!imageUrl) {
-  //     toast({
-  //       title: "Error",
-  //       description: "Please enter a valid URL",
-  //       variant: "destructive",
-  //     });
-  //     return;
-  //   }
-
-  //   setUploading(true);
-  //   try {
-  //     const result = await uploadImageFromUrl(imageUrl);
-  //     setImageUrl(result.secure_url);
-  //     toast({
-  //       title: "Success",
-  //       description: "Image processed successfully",
-  //     });
-  //   } catch {
-  //     toast({
-  //       title: "Error",
-  //       description: "Failed to process image URL",
-  //       variant: "destructive",
-  //     });
-  //   } finally {
-  //     setUploading(false);
-  //   }
-  // };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -224,7 +169,7 @@ export default function CreateBookPage() {
                 value={imageUrl}
                 onChange={setImageUrl}
                 placeholder="Click to upload book image"
-                disabled={uploading || cloudinaryUploading}
+                disabled={cloudinaryUploading}
               />
               {uploadError && (
                 <p className="text-sm text-red-500 mt-1">{uploadError}</p>
@@ -236,13 +181,13 @@ export default function CreateBookPage() {
                 variant="outline"
                 onClick={() => router.push("/admin/books")}
                 type="button"
-                disabled={loading || uploading || cloudinaryUploading}
+                disabled={loading || cloudinaryUploading}
               >
                 Cancel
               </Button>
               <Button
                 type="submit"
-                disabled={loading || uploading || cloudinaryUploading}
+                disabled={loading || cloudinaryUploading}
               >
                 {loading ? "Creating..." : "Create Book"}
               </Button>

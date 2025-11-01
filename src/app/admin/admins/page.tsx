@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import RoleGuard from '@/components/auth/RoleGuard';
-import { Permission, UserProfile, UserRole } from '@/interface/user';
+import { UserProfile, UserRole } from '@/interface/user';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -19,6 +19,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
+import { Permission } from '@/interface/permission';
 
 interface AdminWithActions extends UserProfile {
   canDemote: boolean;

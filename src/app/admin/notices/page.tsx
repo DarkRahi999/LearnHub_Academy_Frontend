@@ -2,13 +2,13 @@
 
 import { useState, useEffect } from 'react';
 import RoleGuard from '@/components/auth/RoleGuard';
-import { Permission } from '@/interface/user';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Calendar, User, Edit, Trash2, Plus } from 'lucide-react';
 import { noticeService, Notice, CreateNoticeDto } from '@/services/notice.service';
 import { useToast } from '@/hooks/use-toast';
+import { Permission } from '@/interface/permission';
 
 export default function NoticeManagement() {
   const { toast } = useToast();

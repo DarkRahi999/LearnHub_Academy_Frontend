@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import RoleGuard from "@/components/auth/RoleGuard";
 import { UserRole } from "@/interface/user";
@@ -27,9 +27,6 @@ export default function EditCoursePage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [uploading, setUploading] = useState(false);
-  const fileInputRef = useRef<HTMLInputElement>(null);
-  
   const router = useRouter();
   const searchParams = useSearchParams();
   const courseId = searchParams.get('id');
@@ -316,7 +313,7 @@ export default function EditCoursePage() {
                       value={formData.imageUrl}
                       onChange={(url) => setFormData(prev => ({ ...prev, imageUrl: url }))}
                       placeholder="Click to upload course image"
-                      disabled={uploading || cloudinaryUploading || loading}
+                      disabled={saving || cloudinaryUploading || loading}
                     />
                     {uploadError && (
                       <p className="text-sm text-red-500 mt-1">{uploadError}</p>
@@ -328,13 +325,13 @@ export default function EditCoursePage() {
                       type="button"
                       onClick={() => router.push("/admin/courses")}
                       variant="outline"
-                      disabled={saving || uploading || cloudinaryUploading}
+                      disabled={saving || cloudinaryUploading}
                     >
                       Cancel
                     </Button>
                     <Button
                       type="submit"
-                      disabled={saving || uploading || cloudinaryUploading}
+                      disabled={saving || cloudinaryUploading}
                       className="bg-blue-600 hover:bg-blue-700"
                     >
                       {saving ? "Updating..." : "Update Course"}

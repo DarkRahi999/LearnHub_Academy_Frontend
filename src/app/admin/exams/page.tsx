@@ -12,13 +12,11 @@ import { useToast } from "@/hooks/use-toast";
 import { Permission } from "@/interface/permission";
 import { Question } from "@/interface/question";
 import { SubChapter } from "@/interface/subchapter";
-import { Exam } from "@/interface/exam";
+import { Exam, CreateExamDto, UpdateExamDto } from "@/interface/exam";
 import { questionService } from "@/services/question/question.service";
 import { subChapterService } from "@/services/question/subchapter.service";
 import { examService } from "@/services/exam/exam.service";
-import { Plus, Calendar, Clock, Users, Edit, Eye } from "lucide-react";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { Plus, Calendar, Clock, Users } from "lucide-react";
 
 // Import services for filtering
 import { examCourseService } from "@/services/question/course.service";
@@ -35,9 +33,31 @@ interface FilterOptions {
   subChapterId?: number;
 }
 
+// Interface for course, group, subject, chapter
+interface Course {
+  id: number;
+  title: string;
+}
+
+interface Group {
+  id: number;
+  name: string;
+}
+
+interface Subject {
+  id: number;
+  name: string;
+  groupId: number;
+}
+
+interface Chapter {
+  id: number;
+  name: string;
+  subjectId: number;
+}
+
 export default function ExamManagementPage() {
   const { toast } = useToast();
-  const router = useRouter();
   const [exams, setExams] = useState<Exam[]>([]);
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [showEditForm, setShowEditForm] = useState(false);
@@ -56,10 +76,10 @@ export default function ExamManagementPage() {
   const [fetching, setFetching] = useState(true);
   
   // Filter states
-  const [courses, setCourses] = useState<any[]>([]);
-  const [groups, setGroups] = useState<any[]>([]);
-  const [subjects, setSubjects] = useState<any[]>([]);
-  const [chapters, setChapters] = useState<any[]>([]);
+  const [courses, setCourses] = useState<Course[]>([]);
+  const [groups, setGroups] = useState<Group[]>([]);
+  const [subjects, setSubjects] = useState<Subject[]>([]);
+  const [chapters, setChapters] = useState<Chapter[]>([]);
   const [filterOptions, setFilterOptions] = useState<FilterOptions>({});
   const [filteredQuestions, setFilteredQuestions] = useState<Question[]>([]);
 
@@ -78,7 +98,8 @@ export default function ExamManagementPage() {
         setExams(examsData);
         setQuestions(questionsData);
         setSubChapters(subChaptersData);
-        setCourses(coursesData);
+        // Map ExamCourse to Course interface
+        setCourses(coursesData.map(course => ({ id: course.id, title: course.name })));
         setGroups(groupsData);
         setFilteredQuestions(questionsData); // Initially show all questions
       } catch (error) {
@@ -197,7 +218,7 @@ export default function ExamManagementPage() {
 
     setLoading(true);
     try {
-      const examData = {
+      const examData: CreateExamDto = {
         name: examName,
         description: examDescription,
         examDate: examDate, // Date only
@@ -227,11 +248,11 @@ export default function ExamManagementPage() {
         title: "Success",
         description: "Exam created successfully"
       });
-    } catch (error: any) {
+    } catch (error) {
       console.error("Failed to create exam:", error);
       toast({
         title: "Error",
-        description: error.message || "Failed to create exam",
+        description: (error as Error).message || "Failed to create exam",
         variant: "destructive"
       });
     } finally {
@@ -271,7 +292,7 @@ export default function ExamManagementPage() {
 
     setLoading(true);
     try {
-      const examData = {
+      const examData: UpdateExamDto = {
         name: examName,
         description: examDescription,
         examDate: examDate, // Date only
@@ -305,11 +326,11 @@ export default function ExamManagementPage() {
         title: "Success",
         description: "Exam updated successfully"
       });
-    } catch (error: any) {
+    } catch (error) {
       console.error("Failed to update exam:", error);
       toast({
         title: "Error",
-        description: error.message || "Failed to update exam",
+        description: (error as Error).message || "Failed to update exam",
         variant: "destructive"
       });
     } finally {
@@ -702,7 +723,6 @@ export default function ExamManagementPage() {
                         size="sm" 
                         onClick={() => startEditing(exam)}
                       >
-                        <Edit className="w-4 h-4 mr-2" />
                         Edit
                       </Button>
                       <Button 

@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -86,8 +85,7 @@ const SignupForm = () => {
   const { toast } = useToast();
   const [step, setStep] = useState<1 | 2 | 3>(1);
   const [formData, setFormData] = useState<Partial<CompleteFormValues>>({});
-  const [uploading, setUploading] = useState(false);
-  const { uploadImage, uploading: cloudinaryUploading, error: uploadError } = useCloudinaryUpload();
+  const { /*uploadImage,*/ uploading: cloudinaryUploading } = useCloudinaryUpload();
 
   //W---------={  Create separate form instances for each step }=----------
   const basicForm = useForm<z.infer<typeof BasicInfoSchema>>({
@@ -116,29 +114,6 @@ const SignupForm = () => {
       password: "",
     },
   });
-
-  const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    setUploading(true);
-    try {
-      const result = await uploadImage(file);
-      optionalForm.setValue('avatarUrl', result.secure_url);
-      toast({
-        title: "Success",
-        description: "Avatar uploaded successfully",
-      });
-    } catch {
-      toast({
-        title: "Error",
-        description: "Failed to upload avatar",
-        variant: "destructive",
-      });
-    } finally {
-      setUploading(false);
-    }
-  };
 
   //W---------{ Define a submit handler. }----------
   async function onSubmit(values: z.infer<typeof AccountInfoSchema>) {
@@ -385,7 +360,7 @@ const SignupForm = () => {
                         value={optionalForm.watch('avatarUrl') || ''}
                         onChange={(url) => optionalForm.setValue('avatarUrl', url)}
                         placeholder="Click to upload avatar"
-                        disabled={uploading || cloudinaryUploading}
+                        disabled={cloudinaryUploading}
                       />
                     </FormControl>
                     <FormMessage />

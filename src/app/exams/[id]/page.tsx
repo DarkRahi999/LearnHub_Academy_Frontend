@@ -1,22 +1,31 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
-import { useRouter, useParams } from "next/navigation";
-import { examService } from "@/services/exam/exam.service";
+import { useRouter, useParams, useSearchParams } from "next/navigation";
+import { examService, ExamSubmissionResponse, ExamAnswer } from "@/services/exam/exam.service";
 import { Exam } from "@/interface/exam";
+import { StartExamResponse } from "@/services/exam/exam.service";
 import { Clock, CheckCircle, XCircle } from "lucide-react";
+
+// Define interface for answer submission
+interface AnswerSubmission {
+  questionId: number;
+  answer: string;
+}
 
 // Remove useSearchParams and get examId from props instead
 export default function TakeExamPage() {
   const { toast } = useToast();
-  const { isAuthenticated, user, isLoading: authLoading } = useAuth();
+  const { isAuthenticated, /*user,*/ isLoading: authLoading } = useAuth();
   const router = useRouter();
   const params = useParams();
+  const searchParams = useSearchParams();
   const examId = params.id as string; // Get examId from params instead of searchParams
+  const isPracticeMode = searchParams.get('practice') === 'true'; // Check for practice mode
   
   const [exam, setExam] = useState<Exam | null>(null);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
@@ -29,8 +38,12 @@ export default function TakeExamPage() {
   const [loadingMessage, setLoadingMessage] = useState("Loading exam...");
   const [timeUntilStart, setTimeUntilStart] = useState<string>("");
   const [isExamAvailable, setIsExamAvailable] = useState<boolean>(false);
+  const [hasAttemptedExam, setHasAttemptedExam] = useState<boolean>(false);
+  const [examAttemptChecked, setExamAttemptChecked] = useState<boolean>(false);
+  const [showUnansweredConfirmation, setShowUnansweredConfirmation] = useState<boolean>(false);
   
   const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const autoSubmitTriggeredRef = useRef<boolean>(false); // Ref to track if auto-submit has been triggered
 
   // Redirect to login if not authenticated
   useEffect(() => {
@@ -38,6 +51,17 @@ export default function TakeExamPage() {
       router.push('/login');
     }
   }, [isAuthenticated, authLoading, router]);
+
+  // Cleanup function to clear timer when component unmounts
+  useEffect(() => {
+    return () => {
+      if (timerRef.current) {
+        console.log("Clearing timer on component unmount");
+        clearInterval(timerRef.current);
+        timerRef.current = null;
+      }
+    };
+  }, []);
 
   // Load exam data
   useEffect(() => {
@@ -71,9 +95,6 @@ export default function TakeExamPage() {
         console.log("Start time:", examData.startTime);
         console.log("End time:", examData.endTime);
         
-        // Calculate initial time until start
-        calculateTimeUntilStart(examData.examDate, examData.startTime, examData.endTime);
-        
         // Add a small delay to prevent loading screen from flashing
         await new Promise(resolve => setTimeout(resolve, 300));
       } catch (error) {
@@ -92,13 +113,164 @@ export default function TakeExamPage() {
     loadExam();
   }, [examId, router, toast, isAuthenticated, authLoading]);
 
+  // Check if user has already attempted this exam
+  useEffect(() => {
+    const checkExamAttempt = async () => {
+      if (!examId || authLoading || !isAuthenticated) return;
+      
+      try {
+        const response = await examService.checkUserExamAttempt(parseInt(examId));
+        setHasAttemptedExam(response.hasAttempted);
+        setExamAttemptChecked(true);
+      } catch (error) {
+        console.error("Failed to check exam attempt:", error);
+        setExamAttemptChecked(true); // Still set as checked to avoid blocking UI
+      }
+    };
+
+    checkExamAttempt();
+  }, [examId, isAuthenticated, authLoading]);
+
+  // Handle exam submission (both manual and auto)
+  const handleSubmitExam = useCallback(async (isAutoSubmit: boolean = false, forceSubmit: boolean = false) => {
+    if (!exam) return;
+    
+    // Prevent double submission with additional logging
+    if (examSubmitted) {
+      return;
+    }
+    
+    // For practice mode, we always treat it as a practice submission
+    const isPracticeSubmission = isPracticeMode;
+    
+    // Only show the unanswered questions warning for manual submissions in real exam mode
+    if (!isAutoSubmit && !isPracticeSubmission && !forceSubmit) {
+      // Check if all questions have been answered
+      const unansweredQuestions = exam.questions.filter(q => !selectedAnswers[q.id]);
+      
+      if (unansweredQuestions.length > 0) {
+        // The confirmation dialog is handled in handleManualSubmitExam
+        return;
+      }
+    }
+    
+    try {
+      if (isPracticeSubmission) {
+        // For practice exams, just calculate results locally without submitting to backend
+        const resultsData = exam.questions.map(question => ({
+          questionId: question.id,
+          selected: selectedAnswers[question.id] || "",
+          correct: question.correctAnswer,
+          isCorrect: selectedAnswers[question.id] === question.correctAnswer
+        }));
+        
+        setResults(resultsData);
+        setExamSubmitted(true);
+        
+        // Use setTimeout to avoid calling toast during render
+        setTimeout(() => {
+          toast({
+            title: "Practice Exam Completed",
+            description: "Your practice exam results are displayed below. No data was saved.",
+            variant: "default"
+          });
+        }, 0);
+        return;
+      }
+      
+      // For real exams, submit to backend
+      const answers: AnswerSubmission[] = exam.questions.map(question => ({
+        questionId: question.id,
+        answer: selectedAnswers[question.id] || ""
+      }));
+      
+      const response: ExamSubmissionResponse = await examService.submitExamAnswers(parseInt(examId), answers);
+      
+      // Map the backend response to the format expected by the results display
+      // Handle both auto-submit and manual submit cases properly
+      let resultsData;
+      if (response && response.answers) {
+        // Backend response format
+        resultsData = exam.questions.map(question => {
+          const answer = response.answers.find((a: ExamAnswer) => a.questionId === question.id);
+          return {
+            questionId: question.id,
+            selected: answer?.userAnswer || "",
+            correct: question.correctAnswer,
+            isCorrect: answer?.userAnswer === question.correctAnswer
+          };
+        });
+      } else {
+        // Fallback to local calculation if backend response is not as expected
+        resultsData = exam.questions.map(question => ({
+          questionId: question.id,
+          selected: selectedAnswers[question.id] || "",
+          correct: question.correctAnswer,
+          isCorrect: selectedAnswers[question.id] === question.correctAnswer
+        }));
+      }
+      
+      setResults(resultsData);
+      setExamSubmitted(true);
+      
+      // Use setTimeout to avoid calling toast during render
+      setTimeout(() => {
+        toast({
+          title: "Exam Submitted",
+          description: "Your exam has been submitted successfully!",
+          variant: "default"
+        });
+      }, 0);
+    } catch (error) {
+      console.error("Failed to submit exam:", error);
+      // For auto-submit, we should still show results even if there's an error
+      if (isAutoSubmit) {
+        // Calculate results locally as fallback
+        const resultsData = exam.questions.map(question => ({
+          questionId: question.id,
+          selected: selectedAnswers[question.id] || "",
+          correct: question.correctAnswer,
+          isCorrect: selectedAnswers[question.id] === question.correctAnswer
+        }));
+        
+        setResults(resultsData);
+        setExamSubmitted(true);
+        
+        setTimeout(() => {
+          toast({
+            title: "Exam Auto-Submitted",
+            description: "Your exam was auto-submitted. Results calculated locally.",
+            variant: "default"
+          });
+        }, 0);
+        return;
+      }
+      
+      // Use setTimeout to avoid calling toast during render
+      setTimeout(() => {
+        toast({
+          title: "Error",
+          description: (error as Error).message || "Failed to submit exam",
+          variant: "destructive"
+        });
+      }, 0);
+    }
+  }, [exam, examSubmitted, isPracticeMode, selectedAnswers, examId, toast]);
+
   // Calculate time until exam starts
-  const calculateTimeUntilStart = (examDate: string, startTime: string, endTime: string) => {
+  const calculateTimeUntilStart = useCallback((examDate: string, startTime: string, endTime: string) => {
     try {
       // Validate input parameters
       if (!examDate || !startTime || !endTime) {
         setTimeUntilStart("Invalid exam date/time");
         setIsExamAvailable(false);
+        return;
+      }
+      
+      // If in practice mode, exam is always available
+      if (isPracticeMode) {
+        setTimeUntilStart("Practice Mode");
+        setIsExamAvailable(true);
         return;
       }
       
@@ -180,7 +352,7 @@ export default function TakeExamPage() {
       setTimeUntilStart("Error calculating time");
       setIsExamAvailable(false);
     }
-  };
+  }, [isPracticeMode]);
 
   // Update countdown timer until exam starts
   useEffect(() => {
@@ -202,17 +374,31 @@ export default function TakeExamPage() {
         clearInterval(interval);
       }
     };
-  }, [exam, examStarted]);
+  }, [exam, examStarted, calculateTimeUntilStart]);
 
-  // Timer effect for exam duration
+  // Timer effect for exam duration (handles UI display and auto-submit for both real and practice exams)
   useEffect(() => {
-    let interval: NodeJS.Timeout | null = null;
-    
+    // Reset the auto-submit trigger flag when exam state changes
     if (examStarted && timeLeft > 0 && !examSubmitted) {
-      interval = setInterval(() => {
+      autoSubmitTriggeredRef.current = false;
+    }
+    
+    // Clear any existing interval first
+    if (timerRef.current) {
+      console.log("Clearing existing timer interval");
+      clearInterval(timerRef.current);
+      timerRef.current = null;
+    }
+    
+    // Apply timer for both real and practice exams
+    if (examStarted && timeLeft > 0 && !examSubmitted) {
+      console.log("Starting timer with timeLeft:", timeLeft);
+      timerRef.current = setInterval(() => {
         setTimeLeft(prev => {
-          if (prev <= 1) {
-            handleSubmitExam();
+          if (prev <= 1 && !examSubmitted && !autoSubmitTriggeredRef.current) {
+            autoSubmitTriggeredRef.current = true; // Mark auto-submit as triggered
+            // Auto-submit when duration expires for both real and practice exams
+            handleSubmitExam(true); // Auto-submit when time runs out
             return 0;
           }
           return prev - 1;
@@ -222,48 +408,59 @@ export default function TakeExamPage() {
 
     // Clean up interval on unmount or when dependencies change
     return () => {
-      if (interval) {
-        clearInterval(interval);
+      if (timerRef.current) {
+        console.log("Clearing timer interval on cleanup");
+        clearInterval(timerRef.current);
+        timerRef.current = null;
       }
     };
-  }, [examStarted, timeLeft, examSubmitted]);
+  }, [examStarted, timeLeft, examSubmitted, handleSubmitExam]);
 
-  // Additional effect to check if exam time has expired based on end time
-  useEffect(() => {
-    let interval: NodeJS.Timeout | null = null;
-    
-    if (examStarted && exam && timeLeft > 0 && !examSubmitted) {
-      interval = setInterval(() => {
-        // Check if current time has passed the exam end time
-        const now = new Date();
-        const examDateTimeEnd = new Date(exam.examDate);
-        const [endHours, endMinutes] = exam.endTime.split(':').map(Number);
-        examDateTimeEnd.setHours(endHours, endMinutes, 0, 0);
-        
-        // If current time is past exam end time, submit the exam automatically
-        if (now >= examDateTimeEnd) {
-          handleSubmitExam(true); // Pass true to indicate auto-submit
-        }
-      }, 1000);
-    }
-
-    // Clean up interval on unmount or when dependencies change
-    return () => {
-      if (interval) {
-        clearInterval(interval);
-      }
-    };
-  }, [examStarted, exam, timeLeft, examSubmitted]);
+  // Remove any secondary timer effects to prevent double auto-submit
+  // Only the primary timer above should handle auto-submit for both real and practice exams
 
   const handleStartExam = async () => {
-    if (!isExamAvailable) return;
+    if (!isExamAvailable && !isPracticeMode) return;
     if (!exam) return;
+    
+    // Reset the auto-submit trigger flag when starting a new exam
+    autoSubmitTriggeredRef.current = false;
+    
+    // Check if exam time has ended to determine if this should be practice mode
+    const now = new Date();
+    const examDateTimeEnd = new Date(exam.examDate);
+    const [endHours, endMinutes] = exam.endTime.split(':').map(Number);
+    examDateTimeEnd.setHours(endHours, endMinutes, 0, 0);
+    
+    const isExamEnded = now > examDateTimeEnd;
+    
+    // If in practice mode or exam has ended, start in practice mode
+    if (isPracticeMode || isExamEnded) {
+      // Just set the exam as started and use the full duration
+      setTimeLeft(exam.duration * 60); // Convert minutes to seconds
+      setExamStarted(true);
+      toast({
+        title: "Practice Mode",
+        description: "You are now in practice mode. Your results will not be saved. Exam will auto-submit after " + exam.duration + " minutes."
+      });
+      return;
+    }
+    
+    // Check if user has already attempted this exam
+    if (hasAttemptedExam) {
+      toast({
+        title: "Error",
+        description: "You have already taken this exam.",
+        variant: "destructive"
+      });
+      return;
+    }
     
     try {
       setLoadingMessage("Starting exam...");
       setLoading(true); // Show loading state during exam start
       // Call the backend API to start the exam
-      const response = await examService.startExam(parseInt(examId));
+      const response: StartExamResponse = await examService.startExam(parseInt(examId));
       if (response.success) {
         // Calculate the actual remaining time based on current time and exam end time
         const now = new Date();
@@ -294,6 +491,17 @@ export default function TakeExamPage() {
       }
     } catch (error) {
       console.error("Failed to start exam:", error);
+      
+      // Handle specific error for already taken exam
+      if ((error as Error).message && (error as Error).message.includes("already taken")) {
+        toast({
+          title: "Error",
+          description: "You have already taken this exam.",
+          variant: "destructive"
+        });
+        return;
+      }
+      
       toast({
         title: "Error",
         description: "Failed to start exam",
@@ -323,61 +531,32 @@ export default function TakeExamPage() {
     }
   };
 
-  const handleSubmitExam = async (isAutoSubmit: boolean = false) => {
-    if (!exam) return;
-    
-    // Only show the unanswered questions warning for manual submissions
-    if (!isAutoSubmit) {
-      // Check if all questions have been answered
+  // Wrapper function for manual exam submission (button click)
+  const handleManualSubmitExam = () => {
+    // Check if all questions have been answered
+    if (exam) {
       const unansweredQuestions = exam.questions.filter(q => !selectedAnswers[q.id]);
-      if (unansweredQuestions.length > 0) {
-        const confirm = window.confirm(
-          `You have ${unansweredQuestions.length} unanswered questions. Are you sure you want to submit the exam?`
-        );
-        if (!confirm) {
-          // Optionally jump to the first unanswered question
-          const firstUnansweredIndex = exam.questions.findIndex(q => !selectedAnswers[q.id]);
-          if (firstUnansweredIndex !== -1) {
-            setCurrentQuestionIndex(firstUnansweredIndex);
-          }
-          return;
-        }
+      
+      if (unansweredQuestions.length > 0 && !isPracticeMode) {
+        // Show confirmation dialog
+        setShowUnansweredConfirmation(true);
+        return;
       }
     }
     
-    try {
-      // In a real implementation, this would submit to the backend
-      // For now, we'll just calculate results locally
-      
-      // Calculate results
-      const examResults = exam.questions.map(question => {
-        const selected = selectedAnswers[question.id] || "";
-        const isCorrect = selected === question.correctAnswer;
-        return {
-          questionId: question.id,
-          selected,
-          correct: question.correctAnswer,
-          isCorrect
-        };
-      });
-      
-      setResults(examResults);
-      setExamSubmitted(true);
-      
-      // We don't need to manually clear intervals anymore as useEffect handles cleanup
-    } catch (error) {
-      console.error("Failed to submit exam:", error);
-      toast({
-        title: "Error",
-        description: "Failed to submit exam",
-        variant: "destructive"
-      });
-    }
+    // If no unanswered questions or in practice mode, submit directly
+    handleSubmitExam(false);
+  };
+
+  // Wrapper function for forced exam submission (after confirmation)
+  const handleForcedSubmitExam = () => {
+    setShowUnansweredConfirmation(false);
+    handleSubmitExam(false, true);
   };
   
-  // Wrapper function for manual exam submission (button click)
-  const handleManualSubmitExam = () => {
-    handleSubmitExam(false);
+  // Function to cancel exam submission
+  const handleCancelSubmitExam = () => {
+    setShowUnansweredConfirmation(false);
   };
 
   const formatTime = (seconds: number) => {
@@ -387,7 +566,7 @@ export default function TakeExamPage() {
   };
 
   // Show loading state while auth is being checked
-  if (authLoading || loading) {
+  if (authLoading || loading || !examAttemptChecked) {
     return (
       <div className="container mx-auto py-8">
         <div className="flex justify-center items-center h-64">
@@ -452,17 +631,27 @@ export default function TakeExamPage() {
                   <li>You have {exam.duration} minutes to complete the exam</li>
                   <li>Answer all questions to the best of your ability</li>
                   <li>You can navigate between questions using the buttons</li>
-                  <li>Click "Submit Exam" when you're finished</li>
+                  <li>Click &quot;Submit Exam&quot; when you&apos;re finished</li>
                 </ul>
               </div>
               
               <div className="pt-6">
+                {hasAttemptedExam && !isPracticeMode ? (
+                  <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-4">
+                    <p className="text-red-800 text-center">
+                      <strong>Note:</strong> You have already taken this exam and cannot take it again.
+                    </p>
+                  </div>
+                ) : null}
+                
                 <Button 
                   onClick={handleStartExam} 
                   className="w-full"
-                  disabled={!isExamAvailable}
+                  disabled={(!isExamAvailable && !isPracticeMode) || (hasAttemptedExam && !isPracticeMode)}
                 >
-                  {isExamAvailable ? "Start Exam" : "Exam Not Available Yet"}
+                  {hasAttemptedExam && !isPracticeMode ? "Exam Already Taken" : 
+                   isPracticeMode ? "Start Practice Exam" :
+                   isExamAvailable ? "Start Exam" : "Exam Not Available Yet"}
                 </Button>
               </div>
             </div>
@@ -476,6 +665,9 @@ export default function TakeExamPage() {
     const correctAnswers = results.filter(r => r.isCorrect).length;
     const totalQuestions = results.length;
     const percentage = Math.round((correctAnswers / totalQuestions) * 100);
+    
+    // Use the isPracticeMode variable we already have
+    const isCurrentlyPracticeMode = isPracticeMode;
     
     // Calculate letter grade based on percentage
     let letterGrade = "F";
@@ -508,9 +700,17 @@ export default function TakeExamPage() {
       <div className="container mx-auto py-8">
         <Card>
           <CardHeader>
-            <CardTitle className="text-2xl">{exam.name} - Results</CardTitle>
+            <CardTitle className="text-2xl">{exam.name} - {isCurrentlyPracticeMode ? "Practice Results" : "Results"}</CardTitle>
           </CardHeader>
           <CardContent>
+            {isCurrentlyPracticeMode ? (
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+                <p className="text-blue-800 text-center">
+                  <strong>Note:</strong> This was a practice exam. Your results are not saved or recorded.
+                </p>
+              </div>
+            ) : null}
+            
             <div className="text-center mb-8">
               <div className="text-4xl font-bold mb-2">
                 {correctAnswers}/{totalQuestions}
@@ -568,29 +768,33 @@ export default function TakeExamPage() {
                             </div>
                           </div>
                           
-                          {question.description && (
-                            <div className="mt-3 p-3 bg-blue-50 rounded text-sm">
-                              <strong>Explanation:</strong> {question.description}
+                          {!result?.isCorrect && (
+                            <div className="mt-3 text-sm">
+                              <p className="text-gray-600">
+                                Your answer: <span className="font-medium">{selectedAnswers[question.id] || "Not answered"}</span>
+                              </p>
+                              <p className="text-green-600">
+                                Correct answer: <span className="font-medium">{question.correctAnswer}</span>
+                              </p>
+                              {question.description && (
+                                <p className="mt-2 text-blue-600">
+                                  Explanation: {question.description}
+                                </p>
+                              )}
                             </div>
                           )}
-                          
-                          <div className="mt-2 text-sm">
-                            <span className="font-medium">Your answer:</span> {selectedAnswers[question.id] || "Not answered"}
-                            <span className="mx-2">|</span>
-                            <span className="font-medium">Correct answer:</span> {question.correctAnswer}
-                          </div>
                         </div>
                       </div>
                     </CardContent>
                   </Card>
                 );
               })}
-            </div>
-            
-            <div className="mt-8 text-center">
-              <Button onClick={() => router.push('/exams')}>
-                Back to Exams
-              </Button>
+              
+              <div className="flex justify-center mt-8">
+                <Button onClick={() => router.push('/exams')}>
+                  Back to Exams
+                </Button>
+              </div>
             </div>
           </CardContent>
         </Card>
@@ -599,7 +803,6 @@ export default function TakeExamPage() {
   }
 
   const currentQuestion = exam.questions[currentQuestionIndex];
-  const progress = ((currentQuestionIndex + 1) / exam.questions.length) * 100;
   
   // Calculate how many questions have been answered
   const answeredCount = exam.questions.filter(q => selectedAnswers[q.id]).length;
@@ -620,6 +823,34 @@ export default function TakeExamPage() {
           <span className="font-mono">{formatTime(timeLeft)}</span>
         </div>
       </div>
+      
+      {/* Time expired message for practice exams */}
+      {isPracticeMode && timeLeft <= 0 && !examSubmitted && (
+        <div className="mb-4 p-4 bg-yellow-100 border border-yellow-300 rounded-lg text-center">
+          <p className="text-yellow-800 font-medium">Time has expired for this practice exam</p>
+          <p className="text-yellow-700 text-sm mt-1">Please submit your exam to see the results</p>
+        </div>
+      )}
+      
+      {/* Confirmation Dialog */}
+      {showUnansweredConfirmation && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
+            <h3 className="text-lg font-semibold mb-2">Unanswered Questions</h3>
+            <p className="mb-4">
+              You have unanswered questions. Are you sure you want to submit the exam?
+            </p>
+            <div className="flex justify-end space-x-3">
+              <Button variant="outline" onClick={handleCancelSubmitExam}>
+                Cancel
+              </Button>
+              <Button onClick={handleForcedSubmitExam}>
+                Submit Anyway
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
       
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
         {/* Question Navigation Panel */}
@@ -731,9 +962,9 @@ export default function TakeExamPage() {
                   Previous
                 </Button>
                 
-                {currentQuestionIndex === exam.questions.length - 1 ? (
+                {(currentQuestionIndex === exam.questions.length - 1 || (isPracticeMode && timeLeft <= 0)) ? (
                   <Button onClick={handleManualSubmitExam}>
-                    Submit Exam
+                    {timeLeft <= 0 ? "Time Expired - Submit Exam" : "Submit Exam"}
                   </Button>
                 ) : (
                   <Button onClick={handleNextQuestion}>

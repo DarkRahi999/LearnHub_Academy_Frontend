@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import RoleGuard from "@/components/auth/RoleGuard";
-import { UserRole, Permission } from "@/interface/user";
+import { UserRole } from "@/interface/user";
 import { Button } from "@/components/ui/button";
 import { bookService, Book } from "@/services/book.service";
 import { useToast } from "@/hooks/use-toast";
@@ -10,6 +10,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Plus, Edit, Trash2, Eye, NotebookText } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
+import { Permission } from "@/interface/permission";
 
 export default function BooksManagementPage() {
   const { toast } = useToast();

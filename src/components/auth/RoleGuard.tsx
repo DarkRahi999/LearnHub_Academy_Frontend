@@ -1,7 +1,8 @@
 'use client';
 
 import { ReactNode } from 'react';
-import { UserRole, Permission } from '@/interface/user';
+import { UserRole } from '@/interface/user';
+import { Permission } from '@/interface/permission';
 import { RoleService } from '@/services/role.service';
 import { getCurrentUser } from '@/services/auth.service';
 

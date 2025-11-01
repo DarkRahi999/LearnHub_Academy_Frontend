@@ -18,6 +18,9 @@ export enum Permission {
   CREATE_QUESTION = 'create_question',
   UPDATE_QUESTION = 'update_question',
   DELETE_QUESTION = 'delete_question',
+  CREATE_EXAM = 'create_exam',
+  UPDATE_EXAM = 'update_exam',
+  DELETE_EXAM = 'delete_exam',
   
   // Super Admin permissions
   MANAGE_ADMINS = 'manage_admins',

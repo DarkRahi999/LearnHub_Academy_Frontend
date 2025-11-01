@@ -40,7 +40,7 @@ class QuestionService {
     subChapterId?: number
   ): Promise<Question[]> {
     try {
-      const params: any = {};
+      const params: Record<string, string | number> = {};
       if (courseId) params.courseId = courseId;
       if (groupId) params.groupId = groupId;
       if (subjectId) params.subjectId = subjectId;

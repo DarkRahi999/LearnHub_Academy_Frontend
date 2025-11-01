@@ -6,11 +6,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useAuth } from "@/hooks/useAuth";
 import { examService } from "@/services/exam/exam.service";
 import { Exam } from "@/interface/exam";
-import { Calendar, Clock, Users, Play } from "lucide-react";
+import { Calendar, Clock, Users, BookOpen, Hourglass, PlayCircle } from "lucide-react";
 import Link from "next/link";
 
 export default function ExamsPage() {
-  const { user } = useAuth();
+  const { /*user*/ } = useAuth();
   const [exams, setExams] = useState<Exam[]>([]);
   const [loading, setLoading] = useState(true);
   const [timeRemaining, setTimeRemaining] = useState<Record<number, string>>({});
@@ -31,15 +31,14 @@ export default function ExamsPage() {
     loadExams();
   }, []);
 
-  // Calculate time remaining for each exam
-  const calculateTimeRemaining = useCallback((examDate: string, startTime: string, endTime: string) => {
+  // Calculate time remaining for exams
+  const calculateTimeRemaining = useCallback((examId: number, examDate: string, startTime: string, endTime: string) => {
     try {
       // Validate input parameters
       if (!examDate || !startTime || !endTime) {
-        return "Soon";
+        return "Invalid time";
       }
       
-      // Parse the date - handle different formats
       let startDateTime: Date;
       let endDateTime: Date;
       
@@ -61,35 +60,48 @@ export default function ExamsPage() {
       
       // Final check if the dates are valid
       if (isNaN(startDateTime.getTime()) || isNaN(endDateTime.getTime())) {
-        return "Soon";
+        return "Invalid time";
       }
       
       const now = new Date();
       
-      // Check if exam has ended
-      if (now > endDateTime) {
-        return "Exam has ended";
-      }
-      
-      // Check if exam hasn't started yet
+      // If exam hasn't started yet (upcoming)
       if (now < startDateTime) {
         const diff = startDateTime.getTime() - now.getTime();
-        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-        const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const hours = Math.floor(diff / (1000 * 60 * 60));
         const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
         const seconds = Math.floor((diff % (1000 * 60)) / 1000);
         
-        if (days > 0) return `${days}d ${hours}h ${minutes}m ${seconds}s`;
-        if (hours > 0) return `${hours}h ${minutes}m ${seconds}s`;
-        if (minutes > 0) return `${minutes}m ${seconds}s`;
-        return `${seconds}s`;
+        if (hours > 0) {
+          return `Starts in: ${hours}h ${minutes}m ${seconds}s`;
+        } else if (minutes > 0) {
+          return `Starts in: ${minutes}m ${seconds}s`;
+        } else {
+          return `Starts in: ${seconds}s`;
+        }
       }
       
-      // Exam is currently ongoing
-      return "Exam is ongoing";
+      // If exam has ended (practice)
+      if (now > endDateTime) {
+        return "Ended";
+      }
+      
+      // Calculate remaining time for ongoing exams
+      const diff = endDateTime.getTime() - now.getTime();
+      const hours = Math.floor(diff / (1000 * 60 * 60));
+      const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+      
+      if (hours > 0) {
+        return `Time left: ${hours}h ${minutes}m ${seconds}s`;
+      } else if (minutes > 0) {
+        return `Time left: ${minutes}m ${seconds}s`;
+      } else {
+        return `Time left: ${seconds}s`;
+      }
     } catch (error) {
       console.error("Error calculating time remaining:", error);
-      return "Soon";
+      return "Error";
     }
   }, []);
 
@@ -98,7 +110,8 @@ export default function ExamsPage() {
     const updateAllTimes = () => {
       const newTimeRemaining: Record<number, string> = {};
       exams.forEach(exam => {
-        newTimeRemaining[exam.id] = calculateTimeRemaining(exam.examDate, exam.startTime, exam.endTime);
+        // Calculate time for all exams (ongoing and upcoming)
+        newTimeRemaining[exam.id] = calculateTimeRemaining(exam.id, exam.examDate, exam.startTime, exam.endTime);
       });
       setTimeRemaining(newTimeRemaining);
     };
@@ -112,12 +125,12 @@ export default function ExamsPage() {
     return () => clearInterval(interval);
   }, [exams, calculateTimeRemaining]);
 
-  // Function to determine exam status based on date and time
-  const getExamStatus = (examDate: string, startTime: string, endTime: string) => {
+  // Function to determine if an exam is currently ongoing
+  const isOngoingExam = (examDate: string, startTime: string, endTime: string) => {
     try {
       // Validate input parameters
       if (!examDate || !startTime || !endTime) {
-        return "Unknown";
+        return false;
       }
       
       let startDateTime: Date;
@@ -141,79 +154,97 @@ export default function ExamsPage() {
       
       // Final check if the dates are valid
       if (isNaN(startDateTime.getTime()) || isNaN(endDateTime.getTime())) {
-        return "Unknown";
+        return false;
       }
       
       const now = new Date();
       
-      // Check if exam has ended
-      if (now > endDateTime) {
-        return "Ended";
-      }
-      
-      // Check if exam is currently ongoing
-      if (now >= startDateTime && now <= endDateTime) {
-        return "Ongoing";
-      }
-      
-      // Exam hasn't started yet
-      return "Upcoming";
+      // Return true if exam is currently ongoing
+      return now >= startDateTime && now <= endDateTime;
     } catch (error) {
       console.error("Error calculating exam status:", error);
-      return "Unknown";
+      return false;
     }
   };
 
-  const formatExamStartTime = (examDate: string, startTime: string) => {
+  // Function to determine if an exam has ended (for practice)
+  const isPracticeExam = (examDate: string, endTime: string) => {
+    try {
+      // Validate input parameters
+      if (!examDate || !endTime) {
+        return false;
+      }
+      
+      let endDateTime: Date;
+      
+      // Handle end time
+      if (examDate.includes('T')) {
+        const datePart = examDate.split('T')[0];
+        endDateTime = new Date(`${datePart}T${endTime}`);
+      } else {
+        endDateTime = new Date(`${examDate}T${endTime}`);
+      }
+      
+      // Final check if the date is valid
+      if (isNaN(endDateTime.getTime())) {
+        return false;
+      }
+      
+      const now = new Date();
+      
+      // Return true if exam has ended
+      return now > endDateTime;
+    } catch (error) {
+      console.error("Error calculating exam status:", error);
+      return false;
+    }
+  };
+
+  // Function to determine if an exam is upcoming (not started yet)
+  const isUpcomingExam = (examDate: string, startTime: string) => {
     try {
       // Validate input parameters
       if (!examDate || !startTime) {
-        return "Invalid date/time";
+        return false;
       }
       
-      // Handle different date formats
-      let examStartTime: Date;
+      let startDateTime: Date;
+      
+      // Handle start time
       if (examDate.includes('T')) {
-        // If it's already a full date-time string
         const datePart = examDate.split('T')[0];
-        examStartTime = new Date(`${datePart}T${startTime}`);
+        startDateTime = new Date(`${datePart}T${startTime}`);
       } else {
-        // If it's just a date string
-        examStartTime = new Date(`${examDate}T${startTime}`);
+        startDateTime = new Date(`${examDate}T${startTime}`);
       }
       
-      // Check if the date is valid
-      if (isNaN(examStartTime.getTime())) {
-        return "Invalid date/time format";
+      // Final check if the date is valid
+      if (isNaN(startDateTime.getTime())) {
+        return false;
       }
       
-      return examStartTime.toLocaleString();
+      const now = new Date();
+      
+      // Return true if exam hasn't started yet
+      return now < startDateTime;
     } catch (error) {
-      console.error("Error formatting exam start time:", error);
-      return "Error formatting date";
+      console.error("Error calculating exam status:", error);
+      return false;
     }
   };
 
-  const formatExamDateTime = (examDate: string, startTime: string, endTime: string) => {
-    try {
-      // Validate input parameters
-      if (!examDate || !startTime || !endTime) {
-        return "Invalid date/time";
-      }
-      
-      const startDate = new Date(examDate);
-      
-      // Check if the date is valid
-      if (isNaN(startDate.getTime())) {
-        return "Invalid date format";
-      }
-      
-      return `${startDate.toLocaleDateString()} ${startTime} - ${endTime}`;
-    } catch (error) {
-      console.error("Error formatting exam date time:", error);
-      return "Error formatting date";
-    }
-  };
+  // Separate exams into categories
+  const ongoingExams = exams.filter(exam => 
+    isOngoingExam(exam.examDate, exam.startTime, exam.endTime) && exam.isActive
+  );
+  
+  const upcomingExams = exams.filter(exam => 
+    isUpcomingExam(exam.examDate, exam.startTime) && exam.isActive
+  );
+  
+  const practiceExams = exams.filter(exam => 
+    isPracticeExam(exam.examDate, exam.endTime) && exam.isActive
+  );
 
   if (loading) {
     return (
@@ -228,32 +259,26 @@ export default function ExamsPage() {
   return (
     <div className="container mx-auto py-8">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold">Available Exams</h1>
-        <p className="text-gray-600">Check out the upcoming exams and test your knowledge</p>
+        <h1 className="text-3xl font-bold">All Exams</h1>
+        <p className="text-gray-600">Browse ongoing, upcoming, and practice exams</p>
       </div>
 
-      {exams.length === 0 ? (
-        <div className="text-center py-12">
-          <p className="text-gray-500 text-lg">No exams available at the moment</p>
-          <p className="text-gray-400 mt-2">Check back later for new exams</p>
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {exams.map(exam => {
-            const examStatus = getExamStatus(exam.examDate, exam.startTime, exam.endTime);
-            return (
-              <Card key={exam.id} className="hover:shadow-lg transition-shadow">
+      {/* Ongoing Exams Section - Only show when there are ongoing exams */}
+      {ongoingExams.length > 0 && (
+        <div className="mb-12">
+          <div className="flex items-center mb-6">
+            <PlayCircle className="w-5 h-5 mr-2 text-green-500" />
+            <h2 className="text-2xl font-semibold">Ongoing Exams</h2>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {ongoingExams.map(exam => (
+              <Card key={exam.id} className="hover:shadow-lg transition-shadow border-green-300 border-2">
                 <CardHeader>
                   <CardTitle className="flex justify-between items-start">
                     <span>{exam.name}</span>
-                    <span className={`px-2 py-1 rounded-full text-xs ${
-                      examStatus === "Ongoing" ? "bg-green-100 text-green-800" :
-                      examStatus === "Ended" ? "bg-red-100 text-red-800" :
-                      exam.isActive ? "bg-blue-100 text-blue-800" : "bg-gray-100 text-gray-800"
-                    }`}>
-                      {examStatus === "Ongoing" ? "Ongoing" :
-                       examStatus === "Ended" ? "Ended" :
-                       exam.isActive ? "Active" : "Inactive"}
+                    <span className="px-2 py-1 rounded-full text-xs bg-green-100 text-green-800">
+                      Ongoing
                     </span>
                   </CardTitle>
                 </CardHeader>
@@ -263,9 +288,14 @@ export default function ExamsPage() {
                   <div className="space-y-3">
                     <div className="flex items-center text-sm">
                       <Calendar className="w-4 h-4 mr-2 text-gray-500" />
-                      <span>Starts: {formatExamStartTime(exam.examDate, exam.startTime)}</span>
+                      <span>Date: {new Date(exam.examDate).toLocaleDateString()}</span>
                     </div>
                   
+                    <div className="flex items-center text-sm">
+                      <Clock className="w-4 h-4 mr-2 text-gray-500" />
+                      <span>Time: {exam.startTime} - {exam.endTime}</span>
+                    </div>
+                    
                     <div className="flex items-center text-sm">
                       <Clock className="w-4 h-4 mr-2 text-gray-500" />
                       <span>Duration: {exam.duration} minutes</span>
@@ -276,34 +306,168 @@ export default function ExamsPage() {
                       <span>{exam.totalQuestions} questions</span>
                     </div>
                     
-                    <div className="flex items-center text-sm text-blue-600 font-medium">
+                    {/* Time remaining for ongoing exams */}
+                    <div className="flex items-center text-sm font-medium text-green-600">
                       <Clock className="w-4 h-4 mr-2" />
-                      <span>Starts in: {
-                        timeRemaining[exam.id] && 
-                        !timeRemaining[exam.id].includes("Invalid") && 
-                        !timeRemaining[exam.id].includes("Error") ? 
-                        timeRemaining[exam.id] : 
-                        "Soon"
-                      }</span>
+                      <span>
+                        {timeRemaining[exam.id] || "Calculating..."}
+                      </span>
                     </div>
                   </div>
                   
                   <div className="mt-6">
-                    <Button className="w-full" asChild disabled={!exam.isActive || examStatus === "Ended"}>
+                    <Button className="w-full" asChild>
                       <Link href={`/exams/${exam.id}`}>
-                        <Play className="w-4 h-4 mr-2" />
-                        {examStatus === "Ongoing" ? "Join Exam" :
-                         examStatus === "Ended" ? "Exam Ended" :
-                         exam.isActive ? "Start Exam" : "Exam Not Available"}
+                        Join Exam
                       </Link>
                     </Button>
                   </div>
                 </CardContent>
               </Card>
-            );
-          })}
+            ))}
+          </div>
         </div>
       )}
+
+      {/* Upcoming Exams Section */}
+      <div className="mb-12">
+        <div className="flex items-center mb-6">
+          <Hourglass className="w-5 h-5 mr-2 text-blue-500" />
+          <h2 className="text-2xl font-semibold">Upcoming Exams</h2>
+        </div>
+        
+        {upcomingExams.length === 0 ? (
+          <div className="text-center py-8 bg-blue-50 rounded-lg">
+            <p className="text-gray-600">No upcoming exams available at the moment</p>
+            <p className="text-gray-500 mt-1">Check back later for new exams</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {upcomingExams.map(exam => (
+              <Card key={exam.id} className="hover:shadow-lg transition-shadow border-blue-200 border-2">
+                <CardHeader>
+                  <CardTitle className="flex justify-between items-start">
+                    <span>{exam.name}</span>
+                    <span className="px-2 py-1 rounded-full text-xs bg-blue-100 text-blue-800">
+                      Upcoming
+                    </span>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-gray-600 mb-4">{exam.description}</p>
+                  
+                  <div className="space-y-3">
+                    <div className="flex items-center text-sm">
+                      <Calendar className="w-4 h-4 mr-2 text-gray-500" />
+                      <span>Date: {new Date(exam.examDate).toLocaleDateString()}</span>
+                    </div>
+                  
+                    <div className="flex items-center text-sm">
+                      <Clock className="w-4 h-4 mr-2 text-gray-500" />
+                      <span>Time: {exam.startTime} - {exam.endTime}</span>
+                    </div>
+                    
+                    <div className="flex items-center text-sm">
+                      <Clock className="w-4 h-4 mr-2 text-gray-500" />
+                      <span>Duration: {exam.duration} minutes</span>
+                    </div>
+                    
+                    <div className="flex items-center text-sm">
+                      <Users className="w-4 h-4 mr-2 text-gray-500" />
+                      <span>{exam.totalQuestions} questions</span>
+                    </div>
+                    
+                    {/* Time until start for upcoming exams */}
+                    <div className="flex items-center text-sm font-medium text-blue-600">
+                      <Clock className="w-4 h-4 mr-2" />
+                      <span>
+                        {timeRemaining[exam.id] || "Calculating..."}
+                      </span>
+                    </div>
+                  </div>
+                  
+                  <div className="mt-6">
+                    <Button className="w-full" asChild>
+                      <Link href={`/exams/${exam.id}`}>
+                        Start Exam
+                      </Link>
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Practice Exams Section */}
+      <div>
+        <div className="flex items-center mb-6">
+          <BookOpen className="w-5 h-5 mr-2 text-purple-500" />
+          <h2 className="text-2xl font-semibold">Practice Exams</h2>
+        </div>
+        
+        {practiceExams.length === 0 ? (
+          <div className="text-center py-8 bg-purple-50 rounded-lg">
+            <p className="text-gray-600">No practice exams available yet</p>
+            <p className="text-gray-500 mt-1">Ended exams will appear here for practice</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {practiceExams.map(exam => (
+              <Card key={exam.id} className="hover:shadow-lg transition-shadow border-purple-200 border-2">
+                <CardHeader>
+                  <CardTitle className="flex justify-between items-start">
+                    <span>{exam.name}</span>
+                    <span className="px-2 py-1 rounded-full text-xs bg-purple-100 text-purple-800">
+                      Practice
+                    </span>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-gray-600 mb-4">{exam.description}</p>
+                  
+                  <div className="space-y-3">
+                    <div className="flex items-center text-sm">
+                      <Calendar className="w-4 h-4 mr-2 text-gray-500" />
+                      <span>Date: {new Date(exam.examDate).toLocaleDateString()}</span>
+                    </div>
+                  
+                    <div className="flex items-center text-sm">
+                      <Clock className="w-4 h-4 mr-2 text-gray-500" />
+                      <span>Time: {exam.startTime} - {exam.endTime}</span>
+                    </div>
+                    
+                    <div className="flex items-center text-sm">
+                      <Clock className="w-4 h-4 mr-2 text-gray-500" />
+                      <span>Duration: {exam.duration} minutes</span>
+                    </div>
+                    
+                    <div className="flex items-center text-sm">
+                      <Users className="w-4 h-4 mr-2 text-gray-500" />
+                      <span>{exam.totalQuestions} questions</span>
+                    </div>
+                    
+                    {/* Status for practice exams */}
+                    <div className="flex items-center text-sm font-medium text-purple-600">
+                      <Clock className="w-4 h-4 mr-2" />
+                      <span>Status: Ended</span>
+                    </div>
+                  </div>
+                  
+                  <div className="mt-6">
+                    <Button className="w-full" variant="secondary" asChild>
+                      <Link href={`/exams/${exam.id}?practice=true`}>
+                        Practice Exam
+                      </Link>
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 }

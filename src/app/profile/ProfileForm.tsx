@@ -132,6 +132,12 @@ const ProfileForm = () => {
             </div>
             <div className="flex flex-col sm:flex-row gap-3 justify-end">
                 <Button asChild variant="outline" className="shadow-md">
+                    <a href="/profile/exams">Available Exams</a>
+                </Button>
+                <Button asChild variant="outline" className="shadow-md">
+                    <a href="/profile/reports">My Exam Reports</a>
+                </Button>
+                <Button asChild variant="outline" className="shadow-md">
                     <a href="/forgot-password">Forgot Password</a>
                 </Button>
                 <Button asChild className="shadow-md">

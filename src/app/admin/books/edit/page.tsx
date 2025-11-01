@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import RoleGuard from '@/components/auth/RoleGuard';
 import { UserRole } from '@/interface/user';
@@ -24,7 +24,6 @@ export default function EditBookPage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
   
   const router = useRouter();
   const searchParams = useSearchParams();

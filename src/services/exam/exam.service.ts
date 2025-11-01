@@ -76,6 +76,54 @@ export interface StartExamResponse {
   message: string;
 }
 
+export interface ExamAnswer {
+  questionId: number;
+  userAnswer: string;
+  correctAnswer: string;
+}
+
+export interface ExamSubmissionResponse {
+  success: boolean;
+  message: string;
+  answers: ExamAnswer[];
+}
+
+export interface ExamResult {
+  id: number;
+  user: number;
+  exam: number;
+  score: number;
+  totalQuestions: number;
+  correctAnswers: number;
+  percentage: number;
+  passed: boolean;
+  answers: ExamAnswer[];
+  isPractice: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+  examName?: string;
+  submittedAt?: Date;
+  userName?: string; // Added for admin report
+}
+
+export interface ExamStatistics {
+  examId: number;
+  examName?: string;
+  totalParticipants: number;
+  averageScore: number;
+  passRate: number;
+  highestScore: number;
+  lowestScore: number;
+}
+
+export interface AdminReport {
+  totalExams: number;
+  totalResults: number;
+  totalUsers: number;
+  recentResults: ExamResult[];
+  examStats: ExamStatistics[];
+}
+
 class ExamService {
   // Get all exams
   async getAllExams(): Promise<Exam[]> {
@@ -143,13 +191,90 @@ class ExamService {
   }
 
   // Submit exam answers
-  async submitExamAnswers(examId: number, answers: { questionId: number; answer: string }[]): Promise<any> {
+  async submitExamAnswers(examId: number, answers: { questionId: number; answer: string }[]): Promise<ExamSubmissionResponse> {
     try {
-      const response = await examApi.post(API_URLS.exams.submit(examId), { answers });
+      const response = await examApi.post<ExamSubmissionResponse>(API_URLS.exams.submit(examId), { answers });
       return response.data;
     } catch (error) {
       console.error('Error submitting exam answers:', error);
       throw new Error('Failed to submit exam answers: ' + (error as Error).message);
+    }
+  }
+
+  // Submit practice exam answers
+  async submitPracticeExamAnswers(examId: number, answers: { questionId: number; answer: string }[]): Promise<ExamSubmissionResponse> {
+    try {
+      const response = await examApi.post<ExamSubmissionResponse>(`${API_URLS.exams.submit(examId)}/practice`, { answers });
+      return response.data;
+    } catch (error) {
+      console.error('Error submitting practice exam answers:', error);
+      throw new Error('Failed to submit practice exam answers: ' + (error as Error).message);
+    }
+  }
+
+  // Get user's exam results
+  async getUserExamResults(): Promise<ExamResult[]> {
+    try {
+      const response = await examApi.get<ExamResult[]>(`${API_BASE_URL}/api/exams/user/results`);
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching user exam results:', error);
+      throw new Error('Failed to fetch user exam results: ' + (error as Error).message);
+    }
+  }
+
+  // Get user's exam history
+  async getUserExamHistory(): Promise<ExamResult[]> {
+    try {
+      const response = await examApi.get<ExamResult[]>(`${API_BASE_URL}/api/exams/user/history`);
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching user exam history:', error);
+      throw new Error('Failed to fetch user exam history: ' + (error as Error).message);
+    }
+  }
+
+  // Check if user has already attempted an exam
+  async checkUserExamAttempt(examId: number): Promise<{ hasAttempted: boolean }> {
+    try {
+      const response = await examApi.get<{ hasAttempted: boolean }>(`${API_BASE_URL}/api/exams/${examId}/check-attempt`);
+      return response.data;
+    } catch (error) {
+      console.error('Error checking exam attempt:', error);
+      throw new Error('Failed to check exam attempt: ' + (error as Error).message);
+    }
+  }
+
+  // Get exam statistics (admin only)
+  async getExamStatistics(): Promise<ExamStatistics[]> {
+    try {
+      const response = await examApi.get<ExamStatistics[]>(`${API_BASE_URL}/api/exams/statistics`);
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching exam statistics:', error);
+      throw new Error('Failed to fetch exam statistics: ' + (error as Error).message);
+    }
+  }
+
+  // Get admin report (admin only)
+  async getAdminReport(): Promise<AdminReport> {
+    try {
+      const response = await examApi.get<AdminReport>(`${API_BASE_URL}/api/exams/admin/report`);
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching admin report:', error);
+      throw new Error('Failed to fetch admin report: ' + (error as Error).message);
+    }
+  }
+
+  // Get specific exam statistics (admin only)
+  async getSpecificExamStatistics(examId: number): Promise<ExamStatistics> {
+    try {
+      const response = await examApi.get<ExamStatistics>(`${API_BASE_URL}/api/exams/${examId}/statistics`);
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching exam statistics:', error);
+      throw new Error('Failed to fetch exam statistics: ' + (error as Error).message);
     }
   }
 }

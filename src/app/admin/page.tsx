@@ -215,6 +215,25 @@ export default function AdminDashboard() {
               </Button>
             </div>
           </RoleGuard>
+
+          {/* -=> Reports */}
+          <RoleGuard
+            allowedRoles={[UserRole.ADMIN, UserRole.SUPER_ADMIN]}
+            requiredPermissions={[Permission.CREATE_EXAM]}
+          >
+            <div className="border rounded-lg p-6 hover:shadow-md transition-shadow">
+              <div className="flex items-center gap-3 mb-3">
+                <ChartBar className="h-6 w-6 text-blue-600" />
+                <h3 className="text-xl font-semibold">Exam Reports</h3>
+              </div>
+              <p className="text-gray-600 mb-4">
+                View exam statistics and performance metrics
+              </p>
+              <Button asChild>
+                <a href="/admin/reports">View Reports</a>
+              </Button>
+            </div>
+          </RoleGuard>
         </div>
       </div>
     </RoleGuard>
