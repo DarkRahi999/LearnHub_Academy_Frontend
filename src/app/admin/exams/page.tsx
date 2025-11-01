@@ -95,7 +95,11 @@ export default function ExamManagementPage() {
           examCourseService.getAllExamCourses(),
           groupService.getAllGroups()
         ]);
-        setExams(examsData);
+        // Sort exams by creation date in descending order (most recent first)
+        const sortedExams = [...examsData].sort((a, b) => 
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        );
+        setExams(sortedExams);
         setQuestions(questionsData);
         setSubChapters(subChaptersData);
         // Map ExamCourse to Course interface
@@ -230,7 +234,8 @@ export default function ExamManagementPage() {
       };
 
       const newExam = await examService.createExam(examData);
-      setExams([...exams, newExam]);
+      // Add new exam to the beginning of the list (most recent first)
+      setExams([newExam, ...exams]);
       
       // Reset form
       setExamName("");
@@ -306,8 +311,13 @@ export default function ExamManagementPage() {
 
       const updatedExam = await examService.updateExam(editingExam.id, examData);
       
-      // Update the exam in the list
-      setExams(exams.map(exam => exam.id === updatedExam.id ? updatedExam : exam));
+      // Update the exam in the list and maintain sort order
+      const updatedExams = exams.map(exam => exam.id === updatedExam.id ? updatedExam : exam);
+      // Re-sort to maintain order
+      const sortedExams = [...updatedExams].sort((a, b) => 
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      );
+      setExams(sortedExams);
       
       // Reset form
       setEditingExam(null);
@@ -341,8 +351,13 @@ export default function ExamManagementPage() {
   const handleDeleteExam = async (examId: number) => {
     try {
       await examService.deleteExam(examId);
-      // Update the exams list by filtering out the deleted exam
-      setExams(exams.filter(exam => exam.id !== examId));
+      // Update the exams list by filtering out the deleted exam and maintain sort order
+      const filteredExams = exams.filter(exam => exam.id !== examId);
+      // Re-sort to maintain order
+      const sortedExams = [...filteredExams].sort((a, b) => 
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      );
+      setExams(sortedExams);
       toast({
         title: "Success",
         description: "Exam deleted successfully"

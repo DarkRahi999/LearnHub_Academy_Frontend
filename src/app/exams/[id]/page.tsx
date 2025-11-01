@@ -179,9 +179,10 @@ export default function TakeExamPage() {
       }
       
       // For real exams, submit to backend
-      const answers: AnswerSubmission[] = exam.questions.map(question => ({
+      // Include all questions, even unanswered ones
+      const answers = exam.questions.map(question => ({
         questionId: question.id,
-        answer: selectedAnswers[question.id] || ""
+        answer: selectedAnswers[question.id] || "" // Empty string for unanswered questions
       }));
       
       const response: ExamSubmissionResponse = await examService.submitExamAnswers(parseInt(examId), answers);
@@ -191,15 +192,12 @@ export default function TakeExamPage() {
       let resultsData;
       if (response && response.answers) {
         // Backend response format
-        resultsData = exam.questions.map(question => {
-          const answer = response.answers.find((a: ExamAnswer) => a.questionId === question.id);
-          return {
-            questionId: question.id,
-            selected: answer?.userAnswer || "",
-            correct: question.correctAnswer,
-            isCorrect: answer?.userAnswer === question.correctAnswer
-          };
-        });
+        resultsData = response.answers.map(answer => ({
+          questionId: answer.questionId,
+          selected: answer.userAnswer,
+          correct: answer.correctAnswer,
+          isCorrect: answer.userAnswer === answer.correctAnswer
+        }));
       } else {
         // Fallback to local calculation if backend response is not as expected
         resultsData = exam.questions.map(question => ({
@@ -269,7 +267,7 @@ export default function TakeExamPage() {
       
       // If in practice mode, exam is always available
       if (isPracticeMode) {
-        setTimeUntilStart("Practice Mode");
+        setTimeUntilStart("Practice Mode"); 
         setIsExamAvailable(true);
         return;
       }
@@ -771,7 +769,9 @@ export default function TakeExamPage() {
                           {!result?.isCorrect && (
                             <div className="mt-3 text-sm">
                               <p className="text-gray-600">
-                                Your answer: <span className="font-medium">{selectedAnswers[question.id] || "Not answered"}</span>
+                                Your answer: <span className="font-medium">
+                                  {result?.selected ? result.selected : "Not answered"}
+                                </span>
                               </p>
                               <p className="text-green-600">
                                 Correct answer: <span className="font-medium">{question.correctAnswer}</span>
