@@ -6,16 +6,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 import { useRouter, useParams, useSearchParams } from "next/navigation";
-import { examService, ExamSubmissionResponse, ExamAnswer } from "@/services/exam/exam.service";
+import { examService, ExamSubmissionResponse } from "@/services/exam/exam.service";
 import { Exam } from "@/interface/exam";
 import { StartExamResponse } from "@/services/exam/exam.service";
 import { Clock, CheckCircle, XCircle } from "lucide-react";
-
-// Define interface for answer submission
-interface AnswerSubmission {
-  questionId: number;
-  answer: string;
-}
 
 // Remove useSearchParams and get examId from props instead
 export default function TakeExamPage() {
