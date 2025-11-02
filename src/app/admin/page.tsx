@@ -64,12 +64,12 @@ export default function AdminDashboard() {
               Permission.DELETE_NOTICE,
             ]}
           >
-            <div className="border rounded-lg p-6 hover:shadow-md transition-shadow">
+            <div className="border rounded-lg p-6 hover:shadow-md transition-shadow dark:border-slate-500">
               <div className="flex items-center gap-3 mb-3">
                 <FileText className="h-6 w-6 text-blue-600" />
                 <h3 className="text-xl font-semibold">Notice Management</h3>
               </div>
-              <p className="text-gray-600 mb-4">
+              <p className="text-gray-600 dark:text-gray-300 mb-4">
                 Create and manage notices for users
               </p>
               <Button asChild>
@@ -87,12 +87,12 @@ export default function AdminDashboard() {
               Permission.DELETE_BOOK,
             ]}
           >
-            <div className="border rounded-lg p-6 hover:shadow-md transition-shadow">
+            <div className="border rounded-lg p-6 hover:shadow-md transition-shadow dark:border-slate-500">
               <div className="flex items-center gap-3 mb-3">
                 <NotebookText className="h-6 w-6 text-green-600" />
                 <h3 className="text-xl font-semibold">Book Management</h3>
               </div>
-              <p className="text-gray-600 mb-4">Create and manage books</p>
+              <p className="text-gray-600 dark:text-gray-300 mb-4">Create and manage books</p>
               <Button asChild>
                 <a href="/admin/books">Manage Books</a>
               </Button>
@@ -108,12 +108,12 @@ export default function AdminDashboard() {
               Permission.DELETE_COURSE,
             ]}
           >
-            <div className="border rounded-lg p-6 hover:shadow-md transition-shadow">
+            <div className="border rounded-lg p-6 hover:shadow-md transition-shadow dark:border-slate-500">
               <div className="flex items-center gap-3 mb-3">
                 <BookOpen className="h-6 w-6 text-indigo-600" />
                 <h3 className="text-xl font-semibold">Course Management</h3>
               </div>
-              <p className="text-gray-600 mb-4">Create and manage courses</p>
+              <p className="text-gray-600 dark:text-gray-300 mb-4">Create and manage courses</p>
               <Button asChild>
                 <a href="/admin/courses">Manage Courses</a>
               </Button>
@@ -129,12 +129,12 @@ export default function AdminDashboard() {
               Permission.DELETE_QUESTION,
             ]}
           >
-            <div className="border rounded-lg p-6 hover:shadow-md transition-shadow">
+            <div className="border rounded-lg p-6 hover:shadow-md transition-shadow dark:border-slate-500">
               <div className="flex items-center gap-3 mb-3">
                 <ChartBar className="h-6 w-6 text-indigo-600" />
                 <h3 className="text-xl font-semibold">Question Management</h3>
               </div>
-              <p className="text-gray-600 mb-4">Create and manage Questions</p>
+              <p className="text-gray-600 dark:text-gray-300 mb-4">Create and manage Questions</p>
               <Button asChild>
                 <a href="/admin/questions">Manage Questions</a>
               </Button>
@@ -148,12 +148,12 @@ export default function AdminDashboard() {
               Permission.CREATE_QUESTION,
             ]}
           >
-            <div className="border rounded-lg p-6 hover:shadow-md transition-shadow">
+            <div className="border rounded-lg p-6 hover:shadow-md transition-shadow dark:border-slate-500">
               <div className="flex items-center gap-3 mb-3">
                 <Calendar className="h-6 w-6 text-purple-600" />
                 <h3 className="text-xl font-semibold">Exam Management</h3>
               </div>
-              <p className="text-gray-600 mb-4">Create and manage online exams</p>
+              <p className="text-gray-600 dark:text-gray-300 mb-4">Create and manage online exams</p>
               <Button asChild>
                 <a href="/admin/exams">Manage Exams</a>
               </Button>
@@ -165,12 +165,12 @@ export default function AdminDashboard() {
             allowedRoles={[UserRole.ADMIN, UserRole.SUPER_ADMIN]}
             requiredPermissions={[Permission.CREATE_EXAM]}
           >
-            <div className="border rounded-lg p-6 hover:shadow-md transition-shadow">
+            <div className="border rounded-lg p-6 hover:shadow-md transition-shadow dark:border-slate-500">
               <div className="flex items-center gap-3 mb-3">
                 <ChartBar className="h-6 w-6 text-blue-600" />
                 <h3 className="text-xl font-semibold">Exam Reports</h3>
               </div>
-              <p className="text-gray-600 mb-4">
+              <p className="text-gray-600 dark:text-gray-300 mb-4">
                 View exam statistics and performance metrics
               </p>
               <Button asChild>
@@ -184,12 +184,12 @@ export default function AdminDashboard() {
             allowedRoles={[UserRole.ADMIN, UserRole.SUPER_ADMIN]}
             requiredPermissions={[Permission.MANAGE_USERS]}
           >
-            <div className="border rounded-lg p-6 hover:shadow-md transition-shadow">
+            <div className="border rounded-lg p-6 hover:shadow-md transition-shadow dark:border-slate-500">
               <div className="flex items-center gap-3 mb-3">
                 <Users className="h-6 w-6 text-green-600" />
                 <h3 className="text-xl font-semibold">User Management</h3>
               </div>
-              <p className="text-gray-600 mb-4">
+              <p className="text-gray-600 dark:text-gray-300 mb-4">
                 View and manage user accounts
               </p>
               <Button asChild>
@@ -203,12 +203,12 @@ export default function AdminDashboard() {
             allowedRoles={[UserRole.SUPER_ADMIN]}
             requiredPermissions={[Permission.MANAGE_ADMINS]}
           >
-            <div className="border rounded-lg p-6 hover:shadow-md transition-shadow">
+            <div className="border rounded-lg p-6 hover:shadow-md transition-shadow dark:border-slate-500">
               <div className="flex items-center gap-3 mb-3">
                 <Shield className="h-6 w-6 text-yellow-600" />
                 <h3 className="text-xl font-semibold">Admin Management</h3>
               </div>
-              <p className="text-gray-600 mb-4">
+              <p className="text-gray-600 dark:text-gray-300 mb-4">
                 Manage admin roles and permissions
               </p>
               <Button asChild>
@@ -222,12 +222,12 @@ export default function AdminDashboard() {
             allowedRoles={[UserRole.SUPER_ADMIN]}
             requiredPermissions={[Permission.SYSTEM_SETTINGS]}
           >
-            <div className="border rounded-lg p-6 hover:shadow-md transition-shadow">
+            <div className="border rounded-lg p-6 hover:shadow-md transition-shadow dark:border-slate-500">
               <div className="flex items-center gap-3 mb-3">
                 <Settings className="h-6 w-6 text-red-600" />
                 <h3 className="text-xl font-semibold">System Settings</h3>
               </div>
-              <p className="text-gray-600 mb-4">
+              <p className="text-gray-600 dark:text-gray-300 mb-4">
                 Configure system-wide settings
               </p>
               <Button asChild>
@@ -241,21 +241,21 @@ export default function AdminDashboard() {
         {/* Report Management Section */}
         <div className="mt-8">
           <h2 className="text-2xl font-bold mb-4">Report Management</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             {/* Generate Reports */}
             <RoleGuard
               allowedRoles={[UserRole.ADMIN, UserRole.SUPER_ADMIN]}
               requiredPermissions={[Permission.CREATE_EXAM]}
             >
-              <div className="border rounded-lg p-6 hover:shadow-md transition-shadow bg-white">
+              <div className="border rounded-lg p-6 hover:shadow-md transition-shadow dark:border-slate-500">
                 <div className="flex items-center gap-3 mb-3">
                   <ChartBar className="h-6 w-6 text-green-600" />
                   <h3 className="text-xl font-semibold">Generate Reports</h3>
                 </div>
-                <p className="text-gray-600 mb-4">
+                <p className="text-gray-600 dark:text-gray-300 mb-4">
                   Create and export detailed exam performance reports
                 </p>
-                <Button asChild variant="outline">
+                <Button asChild>
                   <a href="/admin/reports/dashboard">Generate Report</a>
                 </Button>
               </div>
@@ -266,15 +266,15 @@ export default function AdminDashboard() {
               allowedRoles={[UserRole.ADMIN, UserRole.SUPER_ADMIN]}
               requiredPermissions={[Permission.CREATE_EXAM]}
             >
-              <div className="border rounded-lg p-6 hover:shadow-md transition-shadow bg-white">
-                <div className="flex items-center gap-3 mb-3">
+              <div className="border rounded-lg p-6 hover:shadow-md transition-shadow dark:border-slate-500">
+                <div className="flex items-center gap-3 mb-6">
                   <FileText className="h-6 w-6 text-purple-600" />
                   <h3 className="text-xl font-semibold">Exam Statistics</h3>
                 </div>
-                <p className="text-gray-600 mb-4">
+                <p className="text-gray-600 dark:text-gray-300 mb-4">
                   Analyze individual exam performance and participation
                 </p>
-                <Button asChild variant="outline">
+                <Button asChild>
                   <a href="/admin/reports/statistics">View Statistics</a>
                 </Button>
               </div>
@@ -285,15 +285,15 @@ export default function AdminDashboard() {
               allowedRoles={[UserRole.ADMIN, UserRole.SUPER_ADMIN]}
               requiredPermissions={[Permission.CREATE_EXAM]}
             >
-              <div className="border rounded-lg p-6 hover:shadow-md transition-shadow bg-white">
+              <div className="border rounded-lg p-6 hover:shadow-md transition-shadow dark:border-slate-500">
                 <div className="flex items-center gap-3 mb-3">
                   <Users className="h-6 w-6 text-orange-600" />
                   <h3 className="text-xl font-semibold">User Performance</h3>
                 </div>
-                <p className="text-gray-600 mb-4">
+                <p className="text-gray-600 dark:text-gray-300 mb-4">
                   Track individual user progress and performance trends
                 </p>
-                <Button asChild variant="outline">
+                <Button asChild>
                   <a href="/admin/reports/user-performance">View Performance</a>
                 </Button>
               </div>
@@ -304,15 +304,15 @@ export default function AdminDashboard() {
               allowedRoles={[UserRole.ADMIN, UserRole.SUPER_ADMIN]}
               requiredPermissions={[Permission.CREATE_EXAM]}
             >
-              <div className="border rounded-lg p-6 hover:shadow-md transition-shadow bg-white">
+              <div className="border rounded-lg p-6 hover:shadow-md transition-shadow dark:border-slate-500">
                 <div className="flex items-center gap-3 mb-3">
                   <UserCheck className="h-6 w-6 text-blue-600" />
                   <h3 className="text-xl font-semibold">Exam Participation</h3>
                 </div>
-                <p className="text-gray-600 mb-4">
+                <p className="text-gray-600 dark:text-gray-300 mb-4">
                   See which exams have how many participants and who participated
                 </p>
-                <Button asChild variant="outline">
+                <Button asChild>
                   <a href="/admin/reports/participation">View Participation</a>
                 </Button>
               </div>

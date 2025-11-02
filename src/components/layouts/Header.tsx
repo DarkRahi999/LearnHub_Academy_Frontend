@@ -50,7 +50,7 @@ export default function Header() {
   };
 
   return (
-    <header className="animate-slide-in-down bg-background border-b sticky top-0 z-20 h-12 p-2 transition-all duration-300 ease-in-out shadow-sm hover:shadow-lg animate-pulse-glow dark:bg-slate-900/90 dark:border-slate-800">
+    <header className="animate-slide-in-down border-b sticky top-0 z-20 h-12 p-2 transition-all duration-300 ease-in-out shadow-sm hover:shadow-lg animate-pulse-glow header-bg header-border">
       <div className="flex h-8 items-center justify-between container mx-auto px-5">
         <div className="flex items-center gap-2">
           <Link

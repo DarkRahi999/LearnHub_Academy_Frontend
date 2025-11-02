@@ -28,7 +28,9 @@ export default function LayoutClient({ children }: { children: ReactNode }) {
     >
       <Providers>
         <AuthProvider>
-          <div className="min-h-screen bg-gradient-to-br from-red-50 via-white to-rose-50 dark:from-slate-900 dark:via-slate-900 dark:to-slate-900">
+          {/*One More dark Option: dark:bg-radial dark:from-slate-950 dark:via-blue-950 dark:to-gray-900 */}
+          <div
+            className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-100 dark:bg-radial dark:from-blue-950 dark:via-slate-900 dark:to-gray-950">
             <Header />
             <main>{children}</main>
             <Toaster />
