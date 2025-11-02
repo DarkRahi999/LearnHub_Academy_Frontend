@@ -39,6 +39,9 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
+  /* --My Custom Variable */
+  --header-bg: var(--header-bg);
+  --header-border: var(--header-border);
   --scrollbar-track: var(--scrollbar-track);
   --scrollbar-thumb: var(--scrollbar-thumb);
 }
@@ -76,8 +79,11 @@
   --sidebar-accent-foreground: oklch(0.21 0.034 264.665);
   --sidebar-border: oklch(0.928 0.006 264.531);
   --sidebar-ring: oklch(0.707 0.022 261.325);
-  --scrollbar-track: oklch(1 0 0);
-  --scrollbar-thumb: oklch(0.577 0.245 27.325);
+  
+  --header-bg: rgba(239, 246, 255, 0.6);
+  --header-border: #bfdbfe; 
+  --scrollbar-track: rgba(234, 238, 243, 0.842);
+  --scrollbar-thumb: #bfdbfe ;
 
   /*W----------{  Website Font Variables  }----------_*/
   --font-1: "Salsa", cursive;
@@ -116,8 +122,11 @@
   --sidebar-accent-foreground: oklch(0.95 0.002 247.839);
   --sidebar-border: oklch(0.85 0.006 264.531);
   --sidebar-ring: oklch(0.6 0.027 264.364);
+
+  --header-bg: rgba(15, 23, 42, 0.9);
+  --header-border: #1e293b;
   --scrollbar-track: oklch(0.15 0.034 264.665);
-  --scrollbar-thumb: oklch(43.541% 0.17794 27.911);
+  --scrollbar-thumb: rgba(17, 32, 68, 0.9);
 }
 
 @layer base {
@@ -370,4 +379,13 @@ html {
 .secondary-btn:hover {
   box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2);
   transform: translateY(-4px);
+}
+
+/*W------={ My Custom reusable classes}=--------*/
+.header-bg {
+  background-color: var(--header-bg);
+}
+
+.header-border {
+  border-color: var(--header-border);
 }
