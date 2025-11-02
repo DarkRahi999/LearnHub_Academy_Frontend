@@ -116,6 +116,21 @@ export interface ExamStatistics {
   lowestScore: number;
 }
 
+// Add the missing ExamParticipation interface
+export interface ExamParticipation {
+  examId: number;
+  examName: string;
+  totalParticipants: number;
+  participants: {
+    userId: number;
+    userName: string;
+    score: number;
+    percentage: number;
+    passed: boolean;
+    submittedAt: Date | null;
+  }[];
+}
+
 export interface AdminReport {
   totalExams: number;
   totalResults: number;
@@ -245,25 +260,25 @@ class ExamService {
     }
   }
 
-  // Get exam statistics (admin only)
-  async getExamStatistics(): Promise<ExamStatistics[]> {
-    try {
-      const response = await examApi.get<ExamStatistics[]>(`${API_BASE_URL}/api/exams/statistics`);
-      return response.data;
-    } catch (error) {
-      console.error('Error fetching exam statistics:', error);
-      throw new Error('Failed to fetch exam statistics: ' + (error as Error).message);
-    }
-  }
-
   // Get admin report (admin only)
   async getAdminReport(): Promise<AdminReport> {
     try {
-      const response = await examApi.get<AdminReport>(`${API_BASE_URL}/api/exams/admin/report`);
+      const response = await examApi.get<AdminReport>(API_URLS.exams.adminReport);
       return response.data;
     } catch (error) {
       console.error('Error fetching admin report:', error);
       throw new Error('Failed to fetch admin report: ' + (error as Error).message);
+    }
+  }
+
+  // Get exam statistics (admin only)
+  async getExamStatistics(): Promise<ExamStatistics[]> {
+    try {
+      const response = await examApi.get<ExamStatistics[]>(API_URLS.exams.statistics);
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching exam statistics:', error);
+      throw new Error('Failed to fetch exam statistics: ' + (error as Error).message);
     }
   }
 
@@ -275,6 +290,17 @@ class ExamService {
     } catch (error) {
       console.error('Error fetching exam statistics:', error);
       throw new Error('Failed to fetch exam statistics: ' + (error as Error).message);
+    }
+  }
+  
+  // Get exam participation data (admin only)
+  async getExamParticipationData(): Promise<ExamParticipation[]> {
+    try {
+      const response = await examApi.get<ExamParticipation[]>(API_URLS.exams.participation);
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching exam participation data:', error);
+      throw new Error('Failed to fetch exam participation data: ' + (error as Error).message);
     }
   }
 }

@@ -20,7 +20,11 @@ export default function ExamsPage() {
     const loadExams = async () => {
       try {
         const examsData = await examService.getAllExams();
-        setExams(examsData);
+        // Sort exams by creation date (most recent first) as default
+        const sortedExams = [...examsData].sort((a, b) => 
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        );
+        setExams(sortedExams);
       } catch (error) {
         console.error("Failed to load exams:", error);
       } finally {
@@ -68,11 +72,14 @@ export default function ExamsPage() {
       // If exam hasn't started yet (upcoming)
       if (now < startDateTime) {
         const diff = startDateTime.getTime() - now.getTime();
-        const hours = Math.floor(diff / (1000 * 60 * 60));
+        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
         const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
         const seconds = Math.floor((diff % (1000 * 60)) / 1000);
         
-        if (hours > 0) {
+        if (days > 0) {
+          return `Starts in: ${days}d ${hours}h ${minutes}m`;
+        } else if (hours > 0) {
           return `Starts in: ${hours}h ${minutes}m ${seconds}s`;
         } else if (minutes > 0) {
           return `Starts in: ${minutes}m ${seconds}s`;
@@ -88,11 +95,14 @@ export default function ExamsPage() {
       
       // Calculate remaining time for ongoing exams
       const diff = endDateTime.getTime() - now.getTime();
-      const hours = Math.floor(diff / (1000 * 60 * 60));
+      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
       const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
       const seconds = Math.floor((diff % (1000 * 60)) / 1000);
       
-      if (hours > 0) {
+      if (days > 0) {
+        return `Time left: ${days}d ${hours}h ${minutes}m`;
+      } else if (hours > 0) {
         return `Time left: ${hours}h ${minutes}m ${seconds}s`;
       } else if (minutes > 0) {
         return `Time left: ${minutes}m ${seconds}s`;
@@ -233,18 +243,32 @@ export default function ExamsPage() {
     }
   };
 
-  // Separate exams into categories
+  // Separate exams into categories and sort them
+  // Sort ongoing exams by creation date (most recent first)
   const ongoingExams = exams.filter(exam => 
     isOngoingExam(exam.examDate, exam.startTime, exam.endTime) && exam.isActive
-  );
+  ).sort((a, b) => {
+    // Sort by creation date descending (most recent first)
+    return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+  });
   
+  // Sort upcoming exams by start time (earliest first)
   const upcomingExams = exams.filter(exam => 
     isUpcomingExam(exam.examDate, exam.startTime) && exam.isActive
-  );
+  ).sort((a, b) => {
+    // Create full datetime objects for comparison
+    const dateA = new Date(`${a.examDate}T${a.startTime}`);
+    const dateB = new Date(`${b.examDate}T${b.startTime}`);
+    return dateA.getTime() - dateB.getTime(); // Ascending order (earliest first)
+  });
   
+  // Sort practice exams by creation date (most recent first) and limit to last 50
   const practiceExams = exams.filter(exam => 
     isPracticeExam(exam.examDate, exam.endTime) && exam.isActive
-  );
+  ).sort((a, b) => {
+    // Sort by creation date descending (most recent first)
+    return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+  }).slice(0, 50); // Limit to last 50 exams
 
   if (loading) {
     return (

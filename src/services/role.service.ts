@@ -25,6 +25,9 @@ export class RoleService {
       Permission.CREATE_QUESTION,
       Permission.UPDATE_QUESTION,
       Permission.DELETE_QUESTION,
+      Permission.CREATE_EXAM,
+      Permission.UPDATE_EXAM,
+      Permission.DELETE_EXAM,
     ],
     [UserRole.SUPER_ADMIN]: [
       Permission.VIEW_PROFILE,
@@ -46,6 +49,9 @@ export class RoleService {
       Permission.CREATE_QUESTION,
       Permission.UPDATE_QUESTION,
       Permission.DELETE_QUESTION,
+      Permission.CREATE_EXAM,
+      Permission.UPDATE_EXAM,
+      Permission.DELETE_EXAM,
     ],
   };
 

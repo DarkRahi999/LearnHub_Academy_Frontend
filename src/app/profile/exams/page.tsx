@@ -104,10 +104,60 @@ export default function UserExamsPage() {
     return now >= examDateTimeStart && now <= examDateTimeEnd;
   };
 
-  // Separate exams into different categories
-  const upcomingExams = exams.filter(exam => isUpcomingExam(exam));
-  const activeExams = exams.filter(exam => isCurrentlyActive(exam));
-  const practiceExams = exams.filter(exam => isPracticeExam(exam));
+  // Function to calculate time until exam starts (for upcoming exams)
+  const calculateTimeUntilStart = (exam: Exam) => {
+    try {
+      const now = new Date();
+      const examDateTimeStart = new Date(exam.examDate);
+      const [startHours, startMinutes] = exam.startTime.split(':').map(Number);
+      examDateTimeStart.setHours(startHours, startMinutes, 0, 0);
+      
+      if (examDateTimeStart <= now) {
+        return "Starting soon";
+      }
+      
+      const timeDiff = examDateTimeStart.getTime() - now.getTime();
+      const days = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((timeDiff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((timeDiff % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((timeDiff % (1000 * 60)) / 1000);
+      
+      if (days > 0) {
+        return `Starts in: ${days}d ${hours}h ${minutes}m`;
+      } else if (hours > 0) {
+        return `Starts in: ${hours}h ${minutes}m ${seconds}s`;
+      } else if (minutes > 0) {
+        return `Starts in: ${minutes}m ${seconds}s`;
+      } else {
+        return `Starts in: ${seconds}s`;
+      }
+    } catch (error) {
+      console.error("Error calculating time until start:", error);
+      return "Error";
+    }
+  };
+
+  // Separate exams into different categories and sort them
+  const upcomingExams = exams.filter(exam => isUpcomingExam(exam))
+    .sort((a, b) => {
+      // Sort by start time (earliest first)
+      const dateA = new Date(`${a.examDate}T${a.startTime}`);
+      const dateB = new Date(`${b.examDate}T${b.startTime}`);
+      return dateA.getTime() - dateB.getTime();
+    });
+    
+  const activeExams = exams.filter(exam => isCurrentlyActive(exam))
+    .sort((a, b) => {
+      // Sort by creation date (most recent first)
+      return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+    });
+    
+  const practiceExams = exams.filter(exam => isPracticeExam(exam))
+    .sort((a, b) => {
+      // Sort by creation date (most recent first)
+      return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+    })
+    .slice(0, 50); // Limit to last 50 exams
 
   if (loading) {
     return (
@@ -243,6 +293,12 @@ export default function UserExamsPage() {
                     
                     <div className="flex items-center text-sm text-gray-500">
                       <span>Questions: {exam.totalQuestions}</span>
+                    </div>
+                    
+                    {/* Time until start for upcoming exams */}
+                    <div className="flex items-center text-sm font-medium text-yellow-600">
+                      <Clock className="mr-2 h-4 w-4" />
+                      <span>{calculateTimeUntilStart(exam)}</span>
                     </div>
                   </div>
                   

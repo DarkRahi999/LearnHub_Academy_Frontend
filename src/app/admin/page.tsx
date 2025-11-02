@@ -15,6 +15,7 @@ import {
   NotebookText,
   ChartBar,
   Calendar,
+  UserCheck
 } from "lucide-react";
 import Loading from "@/components/layouts/Loading";
 import AccessDenied from "@/components/layouts/Access";
@@ -159,6 +160,25 @@ export default function AdminDashboard() {
             </div>
           </RoleGuard>
 
+          {/* -=> Reports */}
+          <RoleGuard
+            allowedRoles={[UserRole.ADMIN, UserRole.SUPER_ADMIN]}
+            requiredPermissions={[Permission.CREATE_EXAM]}
+          >
+            <div className="border rounded-lg p-6 hover:shadow-md transition-shadow">
+              <div className="flex items-center gap-3 mb-3">
+                <ChartBar className="h-6 w-6 text-blue-600" />
+                <h3 className="text-xl font-semibold">Exam Reports</h3>
+              </div>
+              <p className="text-gray-600 mb-4">
+                View exam statistics and performance metrics
+              </p>
+              <Button asChild>
+                <a href="/admin/reports/dashboard">View Reports</a>
+              </Button>
+            </div>
+          </RoleGuard>
+
           {/* -=> User Management */}
           <RoleGuard
             allowedRoles={[UserRole.ADMIN, UserRole.SUPER_ADMIN]}
@@ -216,24 +236,88 @@ export default function AdminDashboard() {
             </div>
           </RoleGuard>
 
-          {/* -=> Reports */}
-          <RoleGuard
-            allowedRoles={[UserRole.ADMIN, UserRole.SUPER_ADMIN]}
-            requiredPermissions={[Permission.CREATE_EXAM]}
-          >
-            <div className="border rounded-lg p-6 hover:shadow-md transition-shadow">
-              <div className="flex items-center gap-3 mb-3">
-                <ChartBar className="h-6 w-6 text-blue-600" />
-                <h3 className="text-xl font-semibold">Exam Reports</h3>
+        </div>
+
+        {/* Report Management Section */}
+        <div className="mt-8">
+          <h2 className="text-2xl font-bold mb-4">Report Management</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {/* Generate Reports */}
+            <RoleGuard
+              allowedRoles={[UserRole.ADMIN, UserRole.SUPER_ADMIN]}
+              requiredPermissions={[Permission.CREATE_EXAM]}
+            >
+              <div className="border rounded-lg p-6 hover:shadow-md transition-shadow bg-white">
+                <div className="flex items-center gap-3 mb-3">
+                  <ChartBar className="h-6 w-6 text-green-600" />
+                  <h3 className="text-xl font-semibold">Generate Reports</h3>
+                </div>
+                <p className="text-gray-600 mb-4">
+                  Create and export detailed exam performance reports
+                </p>
+                <Button asChild variant="outline">
+                  <a href="/admin/reports/dashboard">Generate Report</a>
+                </Button>
               </div>
-              <p className="text-gray-600 mb-4">
-                View exam statistics and performance metrics
-              </p>
-              <Button asChild>
-                <a href="/admin/reports">View Reports</a>
-              </Button>
-            </div>
-          </RoleGuard>
+            </RoleGuard>
+
+            {/* Exam Statistics */}
+            <RoleGuard
+              allowedRoles={[UserRole.ADMIN, UserRole.SUPER_ADMIN]}
+              requiredPermissions={[Permission.CREATE_EXAM]}
+            >
+              <div className="border rounded-lg p-6 hover:shadow-md transition-shadow bg-white">
+                <div className="flex items-center gap-3 mb-3">
+                  <FileText className="h-6 w-6 text-purple-600" />
+                  <h3 className="text-xl font-semibold">Exam Statistics</h3>
+                </div>
+                <p className="text-gray-600 mb-4">
+                  Analyze individual exam performance and participation
+                </p>
+                <Button asChild variant="outline">
+                  <a href="/admin/reports/statistics">View Statistics</a>
+                </Button>
+              </div>
+            </RoleGuard>
+
+            {/* User Performance */}
+            <RoleGuard
+              allowedRoles={[UserRole.ADMIN, UserRole.SUPER_ADMIN]}
+              requiredPermissions={[Permission.CREATE_EXAM]}
+            >
+              <div className="border rounded-lg p-6 hover:shadow-md transition-shadow bg-white">
+                <div className="flex items-center gap-3 mb-3">
+                  <Users className="h-6 w-6 text-orange-600" />
+                  <h3 className="text-xl font-semibold">User Performance</h3>
+                </div>
+                <p className="text-gray-600 mb-4">
+                  Track individual user progress and performance trends
+                </p>
+                <Button asChild variant="outline">
+                  <a href="/admin/reports/user-performance">View Performance</a>
+                </Button>
+              </div>
+            </RoleGuard>
+            
+            {/* Exam Participation */}
+            <RoleGuard
+              allowedRoles={[UserRole.ADMIN, UserRole.SUPER_ADMIN]}
+              requiredPermissions={[Permission.CREATE_EXAM]}
+            >
+              <div className="border rounded-lg p-6 hover:shadow-md transition-shadow bg-white">
+                <div className="flex items-center gap-3 mb-3">
+                  <UserCheck className="h-6 w-6 text-blue-600" />
+                  <h3 className="text-xl font-semibold">Exam Participation</h3>
+                </div>
+                <p className="text-gray-600 mb-4">
+                  See which exams have how many participants and who participated
+                </p>
+                <Button asChild variant="outline">
+                  <a href="/admin/reports/participation">View Participation</a>
+                </Button>
+              </div>
+            </RoleGuard>
+          </div>
         </div>
       </div>
     </RoleGuard>
