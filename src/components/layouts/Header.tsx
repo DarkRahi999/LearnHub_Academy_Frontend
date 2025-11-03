@@ -12,6 +12,7 @@ import {
   BookOpen,
   NotebookText,
   Calendar,
+  KeyRound,
 } from "lucide-react";
 import { Button } from "../ui/button";
 import { NavButton } from "../own/NavButton";
@@ -50,24 +51,23 @@ export default function Header() {
   };
 
   return (
-    <header className="animate-slide-in-down border-b sticky top-0 z-20 h-12 p-2 transition-all duration-300 ease-in-out shadow-sm hover:shadow-lg animate-pulse-glow header-bg header-border">
-      <div className="flex h-8 items-center justify-between container mx-auto px-5">
+    <header className="animate-slide-in-down border-b sticky top-0 z-20 h-12 sm:h-14 p-2 transition-all duration-300 ease-in-out hover:shadow-lg animate-pulse-glow header-bg header-border">
+      <div className="flex h-7 sm:h-9 items-center justify-between container mx-auto px-5 pt-1">
         <div className="flex items-center gap-2">
           <Link
             href="/"
-            className="flex justify-center items-center gap-2 ml-0 group transition-all duration-300 ease-in-out hover:scale-105"
+            className="group transition-all duration-300 ease-in-out hover:scale-105"
             title="Home"
           >
-            <h1 className="text-lg sm:text-xl font-bold m-0 mt-1 transition-colors duration-300 group-hover:text-primary text-foreground dark:text-white">
+            <h1 className="text-lg sm:text-xl lg:text-2xl font-bold transition-colors duration-300 group-hover:text-red-700 dark:group-hover:text-blue-200 text-foreground">
               <span className="sm:hidden">{instituteDetails.name}</span>
               <span className="hidden sm:inline">{instituteDetails.name}</span>
             </h1>
           </Link>
         </div>
 
-        {/*________________ Desktop Menu _______________*/}
+        {/*-------------={ Desktop Menu }=-------------*/}
         <div className="hidden sm:flex items-center gap-2">
-          {/* Courses link - visible to everyone */}
           <Button
             variant="ghost"
             asChild
@@ -79,7 +79,6 @@ export default function Header() {
             </Link>
           </Button>
 
-          {/* Books link - visible to everyone */}
           <Button
             variant="ghost"
             asChild
@@ -161,14 +160,14 @@ export default function Header() {
           )}
         </div>
 
-        {/*________________ Mobile Menu Button ________________*/}
+        {/*-------------={ Mobile Menu Button }=-------------*/}
         <div className="flex sm:hidden items-center gap-2">
           <ThemeToggle />
           <Button
             variant="ghost"
             size="sm"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="p-2 transition-all duration-300 ease-in-out hover:scale-105 hover:bg-primary/10"
+            className="p-2 transition-all duration-300 ease-in-out"
           >
             <div className="transition-transform duration-300 ease-in-out">
               {isMobileMenuOpen ? (
@@ -181,53 +180,53 @@ export default function Header() {
         </div>
       </div>
 
-      {/*________________ Mobile Menu Backdrop ________________*/}
+      {/*-------------={ Mobile Menu Backdrop }=-------------*/}
       <div
-        className={`inset-0 sm:hidden transition-all duration-300 ${isMobileMenuOpen ? "bg-black/50 backdrop-blur-sm z-40 fixed" : ""}`}
+        className={`inset-0 sm:hidden transition-all duration-300 ${isMobileMenuOpen ? "bg-blue-300/20 backdrop-blur-xs z-40 fixed" : ""}`}
         onClick={() => setIsMobileMenuOpen(false)}
         style={{ top: "3rem" }}
-      ></div>
+      />
 
-      {/*________________ Menu Panel ________________*/}
+      {/*-------------={ Mobile Menu Panel }=-------------*/}
       <div
-        className={`fixed top-12 right-0 h-screen bg-background/95 border-l border-border shadow-2xl z-50 sm:hidden dark:bg-slate-900/95 dark:border-slate-800 transition-all duration-300 ${isMobileMenuOpen ? "w-[80%] md:w-1/2 max-w-xs" : "w-[0%] md:w-0 max-w-0"}`}
+        className={`fixed top-12 right-0 h-screen bg-blue-50/90 border-l border-border shadow-2xl z-50 sm:hidden dark:bg-slate-900/95 dark:border-slate-800 transition-all duration-300 ${isMobileMenuOpen ? "w-[80%] md:w-1/2 max-w-xs" : "w-[0%] md:w-0 max-w-0"}`}
       >
-        <div className="px-4 py-6 space-y-3">
+        <div className="px-2 pt-2 space-y-3">
           {loading ? (
             <div className="w-full h-8 animate-pulse bg-muted rounded-lg"></div>
           ) : !user ? (
             <>
               <div className="space-y-2">
-                <h3 className="text-sm font-semibold text-muted-foreground mb-3">
+                <h3 className="text-sm font-semibold text-muted-foreground">
                   Navigation
                 </h3>
                 <Button
                   variant="ghost"
                   asChild
-                  className="w-full justify-start h-12 text-left transition-all duration-300 ease-in-out hover:bg-accent/50 hover:scale-105 hover:translate-x-2"
+                  className="w-full justify-start h-10"
                 >
                   <Link
                     href="/course"
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
-                    <BookOpen className="w-5 h-5 mr-3 transition-transform duration-300 group-hover:scale-110" />
+                    <BookOpen className="w-5 h-5 mr-2" />
                     Courses
                   </Link>
                 </Button>
                 <Button
                   variant="ghost"
                   asChild
-                  className="w-full justify-start h-12 text-left transition-all duration-300 ease-in-out hover:bg-accent/50 hover:scale-105 hover:translate-x-2"
+                  className="w-full justify-start h-10"
                 >
                   <Link
                     href="/books"
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
-                    <NotebookText className="w-5 h-5 mr-3 transition-transform duration-300 group-hover:scale-110" />
+                    <NotebookText className="w-5 h-5 mr-2" />
                     Books
                   </Link>
                 </Button>
-                <h3 className="text-sm font-semibold text-muted-foreground mb-3">
+                <h3 className="text-sm font-semibold text-muted-foreground">
                   Account
                 </h3>
                 <Button
@@ -246,19 +245,19 @@ export default function Header() {
                 <Button
                   variant="ghost"
                   asChild
-                  className="w-full justify-start h-12 text-left transition-all duration-300 ease-in-out hover:bg-accent/50 hover:scale-105 hover:translate-x-2"
+                  className="w-full justify-start h-10"
                 >
                   <Link
                     href="/login"
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
-                    <LogIn className="w-5 h-5 mr-3" />
+                    <LogIn className="w-5 h-5 mr-2" />
                     Login
                   </Link>
                 </Button>
                 <Button
                   variant="ghost"
-                  className="w-full justify-start h-12 text-left transition-all duration-300 ease-in-out hover:bg-accent/50 hover:scale-105 hover:translate-x-2"
+                  className="w-full justify-start h-10"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                   <X className="w-5 h-5 mr-3" />
@@ -269,13 +268,13 @@ export default function Header() {
           ) : (
             <>
               <div className="space-y-2">
-                <div className="flex items-center gap-3 py-3 px-3 bg-muted/30 rounded-lg mb-4">
+                <div className="flex items-center gap-2 py-2 px-2 bg-blue-200/30 dark:bg-blue-200/5 rounded-lg">
                   <Image
                     src={avatarSrc(user.avatarUrl)}
                     alt={`${user.firstName} ${user.lastName || ""}`}
                     width={40}
                     height={40}
-                    className="w-10 h-10 rounded-full object-cover ring-2 ring-primary/20"
+                    className="w-10 h-10 rounded-full object-cover ring-2 ring-blue-300/50"
                     onError={(e) => {
                       const img = e.currentTarget as HTMLImageElement;
                       if (!img.src.includes("/default-user.svg")) {
@@ -286,7 +285,7 @@ export default function Header() {
                   />
                   <div>
                     <div className="flex items-center gap-2 mb-1">
-                      <p className="text-sm font-medium">
+                      <p className="text-sm font-semibold text-primary">
                         {user.firstName}
                         {user.lastName ? ` ${user.lastName}` : ""}
                       </p>
@@ -298,85 +297,99 @@ export default function Header() {
                   </div>
                 </div>
 
-                <h3 className="text-sm font-semibold text-muted-foreground mb-3">
+                <h3 className="text-sm font-semibold text-muted-foreground">
                   Navigation
                 </h3>
                 <Button
                   variant="ghost"
                   asChild
-                  className="w-full justify-start h-12 text-left transition-all duration-300 ease-in-out hover:bg-accent/50 hover:scale-105 hover:translate-x-2"
-                >
-                  <Link
-                    href="/course"
-                    onClick={() => setIsMobileMenuOpen(false)}
-                  >
-                    <BookOpen className="w-5 h-5 mr-3 transition-transform duration-300 group-hover:scale-110" />
-                    Courses
-                  </Link>
-                </Button>
-                <Button
-                  variant="ghost"
-                  asChild
-                  className="w-full justify-start h-12 text-left transition-all duration-300 ease-in-out hover:bg-accent/50 hover:scale-105 hover:translate-x-2"
+                  className="w-full justify-start h-10"
                 >
                   <Link
                     href="/profile"
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
-                    <UsersRound className="w-5 h-5 mr-3 transition-transform duration-300 group-hover:scale-110" />
+                    <UsersRound className="w-5 h-5 mr-2" />
                     Profile
                   </Link>
                 </Button>
                 <Button
                   variant="ghost"
                   asChild
-                  className="w-full justify-start h-12 text-left transition-all duration-300 ease-in-out hover:bg-accent/50 hover:scale-105 hover:translate-x-2"
-                >
-                  <Link
-                    href="/profile/update"
-                    onClick={() => setIsMobileMenuOpen(false)}
-                  >
-                    <UsersRound className="w-5 h-5 mr-3 transition-transform duration-300 group-hover:scale-110" />
-                    Update Profile
-                  </Link>
-                </Button>
-                <Button
-                  variant="ghost"
-                  asChild
-                  className="w-full justify-start h-12 text-left transition-all duration-300 ease-in-out hover:bg-accent/50 hover:scale-105 hover:translate-x-2"
-                >
-                  <Link
-                    href="/forgot-password"
-                    onClick={() => setIsMobileMenuOpen(false)}
-                  >
-                    <UsersRound className="w-5 h-5 mr-3 transition-transform duration-300 group-hover:scale-110" />
-                    Forgot Password
-                  </Link>
-                </Button>
-                <Button
-                  variant="ghost"
-                  asChild
-                  className="w-full justify-start h-12 text-left transition-all duration-300 ease-in-out hover:bg-accent/50 hover:scale-105 hover:translate-x-2"
+                  className="w-full justify-start h-10"
                 >
                   <Link
                     href="/exams"
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
-                    <Calendar className="w-5 h-5 mr-3 transition-transform duration-300 group-hover:scale-110" />
+                    <Calendar className="w-5 h-5 mr-2" />
                     Exams
                   </Link>
                 </Button>
                 <Button
                   variant="ghost"
                   asChild
-                  className="w-full justify-start h-12 text-left transition-all duration-300 ease-in-out hover:bg-accent/50 hover:scale-105 hover:translate-x-2"
+                  className="w-full justify-start h-10"
+                >
+                  <Link
+                    href="/course"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    <BookOpen className="w-5 h-5 mr-2" />
+                    Courses
+                  </Link>
+                </Button>
+                <Button
+                  variant="ghost"
+                  asChild
+                  className="w-full justify-start h-10"
+                >
+                  <Link
+                    href="/books"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    <Calendar className="w-5 h-5 mr-2" />
+                    Books
+                  </Link>
+                </Button>
+                {/* <Button
+                  variant="ghost"
+                  asChild
+                  className="w-full justify-start h-10"
+                >
+                  <Link
+                    href="/profile/update"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    <UsersRound className="w-5 h-5 mr-2" />
+                    Update Profile
+                  </Link>
+                </Button> */}
+                {/* <Button
+                  variant="ghost"
+                  asChild
+                  className="w-full justify-start h-10"
+                >
+                  <Link
+                    href="/forgot-password"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    <UsersRound className="w-5 h-5 mr-2" />
+                    Forgot Password
+                  </Link>
+                </Button> */}
+
+                <Button
+                  variant="ghost"
+                  asChild
+                  className="w-full justify-start h-10"
                 >
                   <Link
                     href="/notices"
                     onClick={() => setIsMobileMenuOpen(false)}
                     className="relative"
                   >
-                    <BellRing className="w-5 h-5 mr-3 transition-transform duration-300 group-hover:scale-110" />
+                    <BellRing className="w-5 h-5 mr-2" />
                     Notices
                     <NotificationBadge
                       count={unreadCount}
@@ -390,38 +403,40 @@ export default function Header() {
                   <Button
                     variant="ghost"
                     asChild
-                    className="w-full justify-start h-12 text-left transition-all duration-300 ease-in-out hover:bg-accent/50 hover:scale-105 hover:translate-x-2"
+                    className="w-full justify-start h-10"
                   >
                     <Link
                       href="/admin"
                       onClick={() => setIsMobileMenuOpen(false)}
                     >
-                      <Shield className="w-5 h-5 mr-3 transition-transform duration-300 group-hover:scale-110" />
+                      <Shield className="w-5 h-5 mr-2" />
                       Admin Panel
                     </Link>
                   </Button>
                 </RoleGuard>
 
-                <div className="pt-4 border-t border-border">
-                  <Button
-                    variant="ghost"
-                    onClick={() => {
-                      handleLogout();
-                      setIsMobileMenuOpen(false);
-                    }}
-                    className="w-full justify-start h-12 text-left transition-all duration-300 ease-in-out hover:bg-destructive/10 hover:text-destructive hover:scale-105 hover:translate-x-2"
-                  >
-                    <LogOut className="w-5 h-5 mr-3 transition-transform duration-300 group-hover:scale-110" />
-                    Logout
-                  </Button>
-                  <Button
+                <div className="fixed bottom-2 w-full border-t-2 border-blue-200 pt-[2px]">
+                  <div className="border-t-2 border-blue-200">
+                    <Button
+                      variant="ghost"
+                      onClick={() => {
+                        handleLogout();
+                        setIsMobileMenuOpen(false);
+                      }}
+                      className="w-full justify-start h-10 mt-1 px-2 bg-blue-200/30 dark:bg-blue-200/5 rounded-lg"
+                    >
+                      <LogOut className="w-5 h-5 mr-2" />
+                      Logout
+                    </Button>
+                  </div>
+                  {/* <Button
                     variant="ghost"
                     className="w-full justify-start h-12 text-left transition-all duration-300 ease-in-out hover:bg-accent/50 hover:scale-105 hover:translate-x-2"
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
                     <X className="w-5 h-5 mr-3" />
                     Back
-                  </Button>
+                  </Button> */}
                 </div>
               </div>
             </>
@@ -429,29 +444,24 @@ export default function Header() {
         </div>
       </div>
 
-      {/*________________ Desktop Profile Backdrop (like mobile) ________________*/}
-
+      {/*---------------={ Desktop Profile Backdrop }=-------------*/}
       <>
-        {/* Backdrop isDesktopProfileOpen - desktop only */}
         <div
-          className={`top-12 left-0 right-0 bottom-0 z-40 hidden sm:block transition-all duration-300 ${isDesktopProfileOpen ? "bg-black/30 backdrop-blur-md fixed" : ""}`}
+          className={`top-14 left-0 right-0 bottom-0 z-40 hidden sm:block transition-all duration-300 ${isDesktopProfileOpen ? "bg-blue-300/20 backdrop-blur-sm fixed" : ""}`}
           onClick={() => setIsDesktopProfileOpen(false)}
         />
-        {/* Right Panel */}
-        <div
-          className={`fixed top-12 right-0 h-screen bg-background/95 border-l border-border shadow-2xl z-50 hidden sm:block dark:bg-slate-900/95 dark:border-slate-800 transition-all duration-300 ${isDesktopProfileOpen ? "w-1/4" : "w-0"}`}
-        >
-          <div className="px-4 py-4">
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center gap-3">
+        <div className={`fixed top-14 right-0 h-screen bg-blue-50/90 border-l border-border shadow-2xl z-50 hidden sm:block dark:bg-slate-900/95 dark:border-slate-800 transition-all duration-300 ${isDesktopProfileOpen ? "w-1/4" : "w-0"}`}>
+          <div className="p-4">
+            <div className="flex items-center justify-between mb-2 p-[10px] bg-blue-200/30 dark:bg-blue-200/5 rounded-lg">
+              <div className="flex items-center gap-2">
                 {user && (
                   <>
                     <Image
                       src={avatarSrc(user.avatarUrl)}
                       alt={`${user.firstName} ${user.lastName || ""}`}
-                      width={40}
-                      height={40}
-                      className="w-10 h-10 rounded-full object-cover ring-2 ring-primary/20"
+                      width={50}
+                      height={50}
+                      className="w-14 h-14 rounded-full object-cover ring-2 ring-blue-300/50 dark:ring-blue-200/50"
                       onError={(e) => {
                         const img = e.currentTarget as HTMLImageElement;
                         if (!img.src.includes("/default-user.svg")) {
@@ -462,7 +472,7 @@ export default function Header() {
                     />
                     <div>
                       <div className="flex items-center gap-2 mb-1">
-                        <p className="text-sm font-medium">
+                        <p className="text-md font-semibold text-primary">
                           {user.firstName}
                           {user.lastName ? ` ${user.lastName}` : ""}
                         </p>
@@ -491,7 +501,7 @@ export default function Header() {
               <Button
                 variant="ghost"
                 asChild
-                className="w-full justify-start h-12 text-left transition-all duration-300 ease-in-out hover:bg-accent/50 hover:translate-x-2"
+                className="w-full justify-start h-12 text-left transition-all duration-300 ease-in-out hover:bg-blue-100/60 hover:translate-x-2"
               >
                 <Link
                   href="/profile"
@@ -504,7 +514,7 @@ export default function Header() {
               <Button
                 variant="ghost"
                 asChild
-                className="w-full justify-start h-12 text-left transition-all duration-300 ease-in-out hover:bg-accent/50 hover:translate-x-2"
+                className="w-full justify-start h-12 text-left transition-all duration-300 ease-in-out hover:bg-blue-100/60 hover:translate-x-2"
               >
                 <Link
                   href="/profile/update"
@@ -517,41 +527,60 @@ export default function Header() {
               <Button
                 variant="ghost"
                 asChild
-                className="w-full justify-start h-12 text-left transition-all duration-300 ease-in-out hover:bg-accent/50 hover:translate-x-2"
+                className="w-full justify-start h-12 text-left transition-all duration-300 ease-in-out hover:bg-blue-100/60 hover:translate-x-2"
               >
                 <Link
                   href="/forgot-password"
                   onClick={() => setIsDesktopProfileOpen(false)}
                 >
-                  <UsersRound className="w-5 h-5 mr-3" />
+                  <KeyRound className="w-5 h-5 mr-3" />
                   Forgot Password
                 </Link>
               </Button>
               <Button
                 variant="ghost"
                 asChild
-                className="w-full justify-start h-12 text-left transition-all duration-300 ease-in-out hover:bg-accent/50 hover:scale-105 hover:translate-x-2"
+                className="w-full justify-start h-12 text-left transition-all duration-300 ease-in-out hover:bg-blue-100/60 hover:translate-x-2"
               >
                 <Link
                   href="/exams"
                   onClick={() => setIsDesktopProfileOpen(false)}
                 >
-                  <Calendar className="w-5 h-5 mr-3 transition-transform duration-300 group-hover:scale-110" />
+                  <Calendar className="w-5 h-5 mr-3" />
                   Exams
                 </Link>
               </Button>
-              <div className="pt-2 border-t border-border">
+              <RoleGuard
+                allowedRoles={[UserRole.ADMIN, UserRole.SUPER_ADMIN]}
+              >
                 <Button
                   variant="ghost"
-                  onClick={() => {
-                    setIsDesktopProfileOpen(false);
-                    handleLogout();
-                  }}
-                  className="w-full justify-start h-12 text-left transition-all duration-300 ease-in-out hover:bg-destructive/10 hover:text-destructive hover:translate-x-2"
+                  asChild
+                  className="w-full justify-start h-12 text-left transition-all duration-300 ease-in-out hover:bg-blue-100/60 hover:translate-x-2"
                 >
-                  <LogOut className="w-5 h-5 mr-3" />
-                  Logout
+                  <Link
+                    href="/admin"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    <Shield className="w-5 h-5 mr-3" />
+                    Admin Panel
+                  </Link>
                 </Button>
+              </RoleGuard>
+              <div className="fixed bottom-4 w-full border-t-2 border-blue-200 pt-[2px]">
+                <div className="border-t-2 border-blue-200">
+                  <Button
+                    variant="ghost"
+                    onClick={() => {
+                      setIsDesktopProfileOpen(false);
+                      handleLogout();
+                    }}
+                    className="w-full justify-start mt-2 px-2 h-12 text-left transition-all duration-300 ease-in-out hover:bg-destructive/10 hover:text-destructive hover:translate-x-2 bg-blue-200/30 dark:bg-blue-200/5"
+                  >
+                    <LogOut className="w-5 h-5 mr-3" />
+                    Logout
+                  </Button>
+                </div>
               </div>
             </div>
           </div>
