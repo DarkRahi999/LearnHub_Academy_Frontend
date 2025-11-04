@@ -71,10 +71,10 @@ export default function Header() {
           <Button
             variant="ghost"
             asChild
-            className="transition-all duration-300 ease-in-out hover:scale-105 hover:bg-primary/10 group relative animate-fade-in-up"
+            className="transition-all duration-300 ease-in-out hover:scale-105 hover:bg-primary/10 dark:hover:bg-blue-100/5 dark:hover:text-blue-200 hover:text-red-700 hover:font-bold tracking-normal hover:[letter-spacing:1px] group relative animate-fade-in-up"
           >
             <Link href="/course" title="Courses">
-              <BookOpen className="w-5 h-5 transition-transform duration-300 group-hover:scale-110" />
+              <BookOpen className="w-5 h-5 transition-transform duration-300 group-hover:scale-110 group-hover:[stroke-width:3]" />
               <span className="hidden md:inline">Courses</span>
             </Link>
           </Button>
@@ -82,10 +82,10 @@ export default function Header() {
           <Button
             variant="ghost"
             asChild
-            className="transition-all duration-300 ease-in-out hover:scale-105 hover:bg-primary/10 group relative animate-fade-in-up"
+            className="transition-all duration-300 ease-in-out hover:scale-105 hover:bg-primary/10 dark:hover:bg-blue-100/5 dark:hover:text-blue-200 hover:text-red-700 hover:font-bold tracking-normal hover:[letter-spacing:1px] group relative animate-fade-in-up"
           >
             <Link href="/books" title="Books">
-              <NotebookText className="w-5 h-5 transition-transform duration-300 group-hover:scale-110" />
+              <NotebookText className="w-5 h-5 transition-transform duration-300 group-hover:scale-110 group-hover:[stroke-width:3]" />
               <span className="hidden md:inline">Books</span>
             </Link>
           </Button>
@@ -98,10 +98,10 @@ export default function Header() {
                 variant="ghost"
                 asChild
                 size="sm"
-                className="text-xs sm:text-sm transition-all duration-300 ease-in-out hover:scale-105 hover:bg-primary/10"
+                className="transition-all duration-300 ease-in-out hover:scale-105 hover:bg-primary/10 dark:hover:bg-blue-100/5 dark:hover:text-blue-200 hover:text-red-700 hover:font-bold tracking-normal hover:[letter-spacing:1px] group relative animate-fade-in-up"
               >
                 <Link href="/signup" title="Sign Up">
-                  <User className="w-4 h-4 mr-1 transition-transform duration-300 group-hover:scale-110" />
+                  <User className="w-5 h-5 transition-transform duration-300 group-hover:scale-110 group-hover:[stroke-width:3]" />
                   Sign Up
                 </Link>
               </Button>
@@ -109,10 +109,10 @@ export default function Header() {
                 variant="ghost"
                 asChild
                 size="sm"
-                className="text-xs sm:text-sm sm:mr-2 transition-all duration-300 ease-in-out hover:scale-105 hover:bg-primary/10"
+                className="transition-all duration-300 ease-in-out hover:scale-105 hover:bg-primary/10 dark:hover:bg-blue-100/5 dark:hover:text-blue-200 hover:text-red-700 hover:font-bold tracking-normal hover:[letter-spacing:1px] group relative animate-fade-in-up"
               >
                 <Link href="/login" title="Login">
-                  <LogIn className="w-4 h-4 mr-1 transition-transform duration-300 group-hover:scale-110" />
+                  <LogIn className="w-5 h-5 transition-transform duration-300 group-hover:scale-110 group-hover:[stroke-width:3]" />
                   Login
                 </Link>
               </Button>
@@ -124,21 +124,29 @@ export default function Header() {
               <Button
                 variant="ghost"
                 asChild
-                className="transition-all duration-300 ease-in-out hover:scale-105 hover:bg-primary/10 group relative animate-fade-in-up"
+                className="transition-all duration-300 ease-in-out hover:scale-105 hover:bg-primary/10 dark:hover:bg-blue-100/5 dark:hover:text-blue-200 hover:text-red-700 hover:font-bold group relative animate-fade-in-up"
               >
                 <Link href="/notices" title="Notices">
-                  <BellRing className="w-5 h-5 transition-transform duration-300 group-hover:scale-110" />
+                  <BellRing className="w-5 h-5 transition-transform duration-300 group-hover:scale-110 group-hover:[stroke-width:3]" />
                   <NotificationBadge count={unreadCount} />
                 </Link>
               </Button>
 
               <RoleGuard allowedRoles={[UserRole.ADMIN, UserRole.SUPER_ADMIN]}>
-                <NavButton href="/admin" label="Admin" icon={Shield} />
+                <Button
+                  variant="ghost"
+                  asChild
+                  className="transition-all duration-300 ease-in-out hover:scale-105 hover:bg-primary/10 dark:hover:bg-blue-100/5 dark:hover:text-blue-200 hover:text-red-700 hover:font-bold group relative animate-fade-in-up"
+                >
+                  <Link href="/admin" title="Admin">
+                    <Shield className="w-5 h-5 transition-transform duration-300 group-hover:scale-110 group-hover:[stroke-width:3]" />
+                  </Link>
+                </Button>
               </RoleGuard>
-              <ThemeToggle />
+              <ThemeToggle className="group-hover:scale-110 " />
               <button
                 onClick={() => setIsDesktopProfileOpen((prev) => !prev)}
-                className="group flex items-center gap-1 sm:gap-2 focus:outline-none focus:ring-2 focus:ring-primary/50 rounded-full px-2 py-1 transition-all duration-300 ease-in-out hover:bg-primary/10 hover:scale-110"
+                className="group flex items-center gap-1 sm:gap-2 focus:outline-none rounded-full px-2 py-1 transition-all duration-300 ease-in-out dark:hover:bg-blue-100/5 hover:bg-primary/10 hover:scale-110"
                 title="Account"
               >
                 <Image
@@ -238,7 +246,7 @@ export default function Header() {
                     href="/signup"
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
-                    <User className="w-5 h-5 mr-3" />
+                    <UsersRound className="w-5 h-5 mr-3" />
                     Sign Up
                   </Link>
                 </Button>
