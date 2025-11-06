@@ -5,14 +5,16 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { 
+import {
   BarChart3,
-  Users, 
-  Download, 
+  Users,
+  Download,
   Filter,
   Home,
   ArrowLeft,
   UserCheck,
+  ArrowRightToLine,
+  ArrowLeftToLine,
 } from "lucide-react";
 
 const reportNavItems = [
@@ -35,33 +37,42 @@ export default function ReportsLayout({
   return (
     <div className="flex">
       {/* Sidebar */}
-      <div className={`bg-gray-50 border-r transition-all duration-300 ${sidebarOpen ? 'w-64' : 'w-16'}`}>
-        <div className="flex flex-col h-full">
-          <div className="p-4 border-b">
+      <div className={`header h-screen rounded-md shadow-lg transition-all duration-300 ${sidebarOpen ? 'w-56' : 'w-16'}`}>
+        <div className="flex flex-col">
+          <div className="px-2 pt-4 w-full">
             <div className="flex items-center justify-between">
               {sidebarOpen && (
-                <h2 className="text-lg font-semibold">Reports</h2>
+                <h2 className="text-lg md:text-xl font-semibold text-blue-700">Reports</h2>
               )}
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setSidebarOpen(!sidebarOpen)}
-              >
-                {sidebarOpen ? '«' : '»'}
-              </Button>
+              {sidebarOpen ?
+                <Button
+                  size="sm"
+                  onClick={() => setSidebarOpen(!sidebarOpen)}
+                  className="border bg-white text-blue-800 py-6 [11px] dark:bg-transparent dark:text-blue-200 border-blue-200 hover:bg-blue-200 hover:text-black"
+                >
+                  <ArrowLeftToLine />
+                </Button>
+                :
+                <Button
+                  size="sm"
+                  onClick={() => setSidebarOpen(!sidebarOpen)}
+                  className="border bg-white text-blue-600 py-6 w-full dark:bg-transparent dark:text-blue-200 shadow-md hover:shadow-lg hover:bg-blue-50 hover:dark:bg-blue-300/5 hover:border-blue-300"
+                >
+                  <ArrowRightToLine className="w-[15px]" />
+                </Button>}
             </div>
           </div>
-          
+
           <nav className="flex-1 p-2">
             <ul className="space-y-1">
               {reportNavItems.map((item) => {
                 const Icon = item.icon;
                 const isActive = pathname === item.href;
-                
+
                 return (
                   <li key={item.name}>
                     <Link href={item.href}>
-                      <Card className={`p-3 hover:shadow-md transition-shadow cursor-pointer ${isActive ? 'bg-blue-100 border-blue-500' : 'bg-white'}`}>
+                      <Card className={`p-3 transition-shadow cursor-pointer bg-white text-blue-600 dark:bg-transparent dark:text-blue-200 shadow-md hover:shadow-lg hover:bg-blue-50 hover:dark:bg-blue-300/5 hover:border-blue-300 ${isActive ? 'bg-blue-100 border-blue-300' : 'bg-white'}`}>
                         <div className="flex items-center">
                           <Icon className="h-5 w-5" />
                           {sidebarOpen && (
@@ -75,22 +86,29 @@ export default function ReportsLayout({
               })}
             </ul>
           </nav>
-          
-          <div className="p-4 border-t">
+
+          <div className="p-2 pt-0">
             <Link href="/admin">
-              <Button variant="outline" className="w-full">
-                <ArrowLeft className="h-4 w-4 mr-2" />
-                {sidebarOpen ? 'Back to Admin' : 'Admin'}
-              </Button>
+              {sidebarOpen ?
+                <Button
+                  className="border bg-white text-blue-600 py-6 w-full dark:bg-transparent dark:text-blue-200 shadow-md hover:shadow-lg hover:bg-blue-50 hover:dark:bg-blue-300/5 hover:border-blue-300 ">
+                  <ArrowLeft className="h-4 w-4 mr-2" />
+                  Back to Admin
+                </Button>
+                :
+                <Button
+                  className="border bg-white shadow-md text-blue-600 py-6 w-full dark:bg-transparent dark:text-blue-200 hover:shadow-lg hover:bg-blue-50 hover:dark:bg-blue-300/5 hover:border-blue-300 ">
+                  <ArrowLeft className="" />
+                </Button>}
             </Link>
           </div>
         </div>
-      </div>
+      </div >
 
       {/* Main Content */}
-      <div className="flex-1">
+      <div className="flex-1 pl-6" >
         {children}
-      </div>
-    </div>
+      </div >
+    </div >
   );
 }

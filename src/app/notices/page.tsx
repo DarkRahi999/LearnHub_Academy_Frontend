@@ -2,15 +2,16 @@
 
 import { useEffect, useState, useCallback, useMemo } from "react";
 import { Card, CardContent } from "@/components/ui/card";
-import { Calendar, Search, Filter, Plus } from "lucide-react";
+import { Calendar, Search, Filter, ArrowLeft } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { noticeService, Notice } from "@/services/notice.service";
 import { useNotificationBadge } from "@/hooks/useNotificationBadge";
 import { NoticeCard } from "@/components/ui/notice-card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { UserRole } from "@/interface/user";
 import Link from "next/link";
+import Loading from "@/components/layouts/Loading";
+import AccessDenied from "@/components/layouts/Access";
 
 // Custom hook for debounced values
 function useDebounce<T>(value: T, delay: number): T {
@@ -86,16 +87,13 @@ export default function NoticesPage() {
     );
   }, [notices, showActiveOnly]);
 
-  const canCreateNotice =
-    user?.role === UserRole.ADMIN || user?.role === UserRole.SUPER_ADMIN;
-
   const handleNoticeClick = async (notice: Notice) => {
     if (!notice.isRead) {
       // Optimistically update the UI
       setNotices((prev) =>
         prev.map((n) => (n.id === notice.id ? { ...n, isRead: true } : n))
       );
-      
+
       try {
         await markAsRead(notice.id);
         // Add a small delay to ensure the UI updates properly
@@ -122,36 +120,13 @@ export default function NoticesPage() {
     setSearchTerm("");
   };
 
-  // Show loading only during auth or when fetching notices
   if (authLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600 dark:text-gray-400">Loading...</p>
-        </div>
-      </div>
-    );
+    return <Loading title="Notice" />
   }
 
   if (!user) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-red-50 to-pink-100 dark:from-gray-900 dark:to-gray-800">
-        <Card className="max-w-md mx-4">
-          <CardContent className="text-center py-12">
-            <div className="text-red-600 dark:text-red-400 mb-4">
-              <Calendar className="w-16 h-16 mx-auto mb-4" />
-            </div>
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
-              Access Denied
-            </h1>
-            <p className="text-gray-600 dark:text-gray-400">
-              Please log in to view notices.
-            </p>
-          </CardContent>
-        </Card>
-      </div>
-    );
+    return <AccessDenied title="Please log in to view notices..." />
+
   }
 
   if (error) {
@@ -182,23 +157,21 @@ export default function NoticesPage() {
       <div className="mb-8">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-gray-400  to-gray-900 bg-clip-text text-transparent mb-2">
+            <h1 className="text-4xl font-bold text-primary mb-2">
               📢 Notices
             </h1>
-            <p className="text-gray-600 dark:text-gray-400 text-lg">
+            <p className="text-muted-foreground text-lg">
               Stay updated with the latest announcements and important
               information.
             </p>
           </div>
 
-          {canCreateNotice && (
-            <Link href="/admin/notices">
-              <Button className="bg-black hover:to-gray-700 text-white">
-                <Plus className="w-4 h-4 mr-2" />
-                Create Notice
+            <Link href="/">
+              <Button className="bg-primary py-5 hover:to-gray-700 text-white">
+                <ArrowLeft className="w-4 h-4" />
+                back Home
               </Button>
             </Link>
-          )}
         </div>
 
         {/* Search and Filter Bar */}

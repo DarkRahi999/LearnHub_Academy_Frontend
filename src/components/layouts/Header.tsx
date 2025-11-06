@@ -3,7 +3,6 @@
 import {
   LogOut,
   UsersRound,
-  User,
   LogIn,
   Menu,
   X,
@@ -15,7 +14,6 @@ import {
   KeyRound,
 } from "lucide-react";
 import { Button } from "../ui/button";
-import { NavButton } from "../own/NavButton";
 import RoleGuard from "../auth/RoleGuard";
 import RoleBadge from "../auth/RoleBadge";
 import { UserRole } from "@/interface/user";
@@ -71,10 +69,12 @@ export default function Header() {
           <Button
             variant="ghost"
             asChild
-            className="transition-all duration-300 ease-in-out hover:scale-105 hover:bg-primary/10 dark:hover:bg-blue-100/5 dark:hover:text-blue-200 hover:text-red-700 hover:font-bold tracking-normal hover:[letter-spacing:1px] group relative animate-fade-in-up"
+            className="transition-all duration-300 ease-in-out hover:scale-105 hover:bg-primary/10 dark:hover:bg-blue-100/5 dark:hover:text-blue-200 hover:text-red-700 hover:font-bold tracking-normal hover:[letter-spacing:1px] group relative animate-fade-in-up will-change-transform"
           >
             <Link href="/course" title="Courses">
-              <BookOpen className="w-5 h-5 transition-transform duration-300 group-hover:scale-110 group-hover:[stroke-width:3]" />
+              <div className="relative">
+                <BookOpen className="w-5 h-5 transition-transform duration-300 group-hover:scale-110 group-hover:[stroke-width:3]" />
+              </div>
               <span className="hidden md:inline">Courses</span>
             </Link>
           </Button>
@@ -82,10 +82,12 @@ export default function Header() {
           <Button
             variant="ghost"
             asChild
-            className="transition-all duration-300 ease-in-out hover:scale-105 hover:bg-primary/10 dark:hover:bg-blue-100/5 dark:hover:text-blue-200 hover:text-red-700 hover:font-bold tracking-normal hover:[letter-spacing:1px] group relative animate-fade-in-up"
+            className="transition-all duration-300 ease-in-out hover:scale-105 hover:bg-primary/10 dark:hover:bg-blue-100/5 dark:hover:text-blue-200 hover:text-red-700 hover:font-bold tracking-normal hover:[letter-spacing:1px] group relative animate-fade-in-up will-change-transform"
           >
             <Link href="/books" title="Books">
-              <NotebookText className="w-5 h-5 transition-transform duration-300 group-hover:scale-110 group-hover:[stroke-width:3]" />
+              <div className="relative">
+                <NotebookText className="w-5 h-5 transition-transform duration-300 group-hover:scale-110 group-hover:[stroke-width:3]" />
+              </div>
               <span className="hidden md:inline">Books</span>
             </Link>
           </Button>
@@ -98,10 +100,12 @@ export default function Header() {
                 variant="ghost"
                 asChild
                 size="sm"
-                className="transition-all duration-300 ease-in-out hover:scale-105 hover:bg-primary/10 dark:hover:bg-blue-100/5 dark:hover:text-blue-200 hover:text-red-700 hover:font-bold tracking-normal hover:[letter-spacing:1px] group relative animate-fade-in-up"
+                className="transition-all duration-300 ease-in-out hover:scale-105 hover:bg-primary/10 dark:hover:bg-blue-100/5 dark:hover:text-blue-200 hover:text-red-700 hover:font-bold tracking-normal hover:[letter-spacing:1px] group relative animate-fade-in-up will-change-transform"
               >
                 <Link href="/signup" title="Sign Up">
-                  <User className="w-5 h-5 transition-transform duration-300 group-hover:scale-110 group-hover:[stroke-width:3]" />
+                  <div className="relative">
+                    <UsersRound className="w-5 h-5 transition-transform duration-300 group-hover:scale-110 group-hover:[stroke-width:3]" />
+                  </div>
                   Sign Up
                 </Link>
               </Button>
@@ -109,10 +113,12 @@ export default function Header() {
                 variant="ghost"
                 asChild
                 size="sm"
-                className="transition-all duration-300 ease-in-out hover:scale-105 hover:bg-primary/10 dark:hover:bg-blue-100/5 dark:hover:text-blue-200 hover:text-red-700 hover:font-bold tracking-normal hover:[letter-spacing:1px] group relative animate-fade-in-up"
+                className="transition-all duration-300 ease-in-out hover:scale-105 hover:bg-primary/10 dark:hover:bg-blue-100/5 dark:hover:text-blue-200 hover:text-red-700 hover:font-bold tracking-normal hover:[letter-spacing:1px] group relative animate-fade-in-up will-change-transform"
               >
                 <Link href="/login" title="Login">
-                  <LogIn className="w-5 h-5 transition-transform duration-300 group-hover:scale-110 group-hover:[stroke-width:3]" />
+                  <div className="relative">
+                    <LogIn className="w-5 h-5 transition-transform duration-300 group-hover:scale-110 group-hover:[stroke-width:3]" />
+                  </div>
                   Login
                 </Link>
               </Button>
@@ -124,10 +130,12 @@ export default function Header() {
               <Button
                 variant="ghost"
                 asChild
-                className="transition-all duration-300 ease-in-out hover:scale-105 hover:bg-primary/10 dark:hover:bg-blue-100/5 dark:hover:text-blue-200 hover:text-red-700 hover:font-bold group relative animate-fade-in-up"
+                className="transition-all duration-300 ease-in-out hover:scale-105 hover:bg-primary/10 dark:hover:bg-blue-100/5 dark:hover:text-blue-200 hover:text-red-700 hover:font-bold tracking-normal hover:[letter-spacing:1px] group relative animate-fade-in-up will-change-transform"
               >
                 <Link href="/notices" title="Notices">
-                  <BellRing className="w-5 h-5 transition-transform duration-300 group-hover:scale-110 group-hover:[stroke-width:3]" />
+                  <div className="relative">
+                    <BellRing className="w-5 h-5 transition-transform duration-300 group-hover:scale-110 group-hover:[stroke-width:3]" />
+                  </div>
                   <NotificationBadge count={unreadCount} />
                 </Link>
               </Button>
@@ -136,33 +144,39 @@ export default function Header() {
                 <Button
                   variant="ghost"
                   asChild
-                  className="transition-all duration-300 ease-in-out hover:scale-105 hover:bg-primary/10 dark:hover:bg-blue-100/5 dark:hover:text-blue-200 hover:text-red-700 hover:font-bold group relative animate-fade-in-up"
+                  className="transition-all duration-300 ease-in-out hover:scale-105 hover:bg-primary/10 dark:hover:bg-blue-100/5 dark:hover:text-blue-200 hover:text-red-700 group relative animate-fade-in-up will-change-transform"
                 >
                   <Link href="/admin" title="Admin">
-                    <Shield className="w-5 h-5 transition-transform duration-300 group-hover:scale-110 group-hover:[stroke-width:3]" />
+                    <div className="relative">
+                      <Shield className="w-5 h-5 transition-transform duration-300 group-hover:scale-110 group-hover:[stroke-width:3]" />
+                    </div>
                   </Link>
                 </Button>
               </RoleGuard>
-              <ThemeToggle className="group-hover:scale-110 " />
+              <div className="relative will-change-transform">
+                <ThemeToggle className="group-hover:scale-110" />
+              </div>
               <button
                 onClick={() => setIsDesktopProfileOpen((prev) => !prev)}
-                className="group flex items-center gap-1 sm:gap-2 focus:outline-none rounded-full px-2 py-1 transition-all duration-300 ease-in-out dark:hover:bg-blue-100/5 hover:bg-primary/10 hover:scale-110"
+                className="group flex items-center gap-1 sm:gap-2 focus:outline-none rounded-full px-2 py-1 transition-all duration-300 ease-in-out dark:hover:bg-blue-100/5 hover:bg-primary/10 hover:scale-105"
                 title="Account"
               >
-                <Image
-                  src={avatarSrc(user.avatarUrl)}
-                  alt={`${user.firstName} ${user.lastName || ""}`}
-                  width={32}
-                  height={32}
-                  className="w-6 h-6 sm:w-8 sm:h-8 rounded-full object-cover transition-transform duration-300 group-hover:scale-110"
-                  onError={(e) => {
-                    const img = e.currentTarget as HTMLImageElement;
-                    if (!img.src.includes("/default-user.svg")) {
-                      img.src = "/default-user.svg";
-                    }
-                  }}
-                  unoptimized
-                />
+                <div className="relative">
+                  <Image
+                    src={avatarSrc(user.avatarUrl)}
+                    alt={`${user.firstName} ${user.lastName || ""}`}
+                    width={32}
+                    height={32}
+                    className="w-6 h-6 sm:w-8 sm:h-8 rounded-full object-cover transition-transform duration-300 group-hover:scale-110"
+                    onError={(e) => {
+                      const img = e.currentTarget as HTMLImageElement;
+                      if (!img.src.includes("/default-user.svg")) {
+                        img.src = "/default-user.svg";
+                      }
+                    }}
+                    unoptimized
+                  />
+                </div>
               </button>
             </>
           )}

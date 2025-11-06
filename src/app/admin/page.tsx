@@ -174,7 +174,7 @@ export default function AdminDashboard() {
                 View exam statistics and performance metrics
               </p>
               <Button asChild>
-                <a href="/admin/reports/dashboard">View Reports</a>
+                <a href="/admin/reports/dashboard">Generate Reports</a>
               </Button>
             </div>
           </RoleGuard>
@@ -256,7 +256,7 @@ export default function AdminDashboard() {
                   Create and export detailed exam performance reports
                 </p>
                 <Button asChild>
-                  <a href="/admin/reports/dashboard">Generate Report</a>
+                  <a href="/admin/reports/dashboard">View Reports</a>
                 </Button>
               </div>
             </RoleGuard>
