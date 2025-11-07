@@ -35,10 +35,10 @@ export default function ReportsLayout({
   const [sidebarOpen, setSidebarOpen] = useState(true);
 
   return (
-    <div className="flex">
+    <div className="flex h-[86vh]">
       {/* Sidebar */}
-      <div className={`header h-screen rounded-md shadow-lg transition-all duration-300 ${sidebarOpen ? 'w-56' : 'w-16'}`}>
-        <div className="flex flex-col">
+      <div className={`header rounded-md shadow-lg transition-all duration-300 ${sidebarOpen ? 'w-56' : 'w-16'} flex flex-col`}>
+        <div className="flex flex-col flex-1">
           <div className="px-2 pt-4 w-full">
             <div className="flex items-center justify-between">
               {sidebarOpen && (
@@ -63,7 +63,7 @@ export default function ReportsLayout({
             </div>
           </div>
 
-          <nav className="flex-1 p-2">
+          <nav className="flex-1 p-2 overflow-y-auto">
             <ul className="space-y-1">
               {reportNavItems.map((item) => {
                 const Icon = item.icon;
@@ -87,26 +87,27 @@ export default function ReportsLayout({
             </ul>
           </nav>
 
-          <div className="p-2 pt-0">
+          {/* Moved the back button to the bottom */}
+          <div className="p-2 pt-0 mt-auto">
             <Link href="/admin">
               {sidebarOpen ?
                 <Button
-                  className="border bg-white text-blue-600 py-6 w-full dark:bg-transparent dark:text-blue-200 shadow-md hover:shadow-lg hover:bg-blue-50 hover:dark:bg-blue-300/5 hover:border-blue-300 ">
+                  className="border bg-white text-blue-600 py-6 w-full dark:bg-transparent dark:text-blue-200 shadow-md hover:shadow-lg hover:bg-blue-50 hover:dark:bg-blue-300/5 hover:border-blue-300">
                   <ArrowLeft className="h-4 w-4 mr-2" />
                   Back to Admin
                 </Button>
                 :
                 <Button
-                  className="border bg-white shadow-md text-blue-600 py-6 w-full dark:bg-transparent dark:text-blue-200 hover:shadow-lg hover:bg-blue-50 hover:dark:bg-blue-300/5 hover:border-blue-300 ">
+                  className="border bg-white shadow-md text-blue-600 py-6 w-full dark:bg-transparent dark:text-blue-200 hover:shadow-lg hover:bg-blue-50 hover:dark:bg-blue-300/5 hover:border-blue-300">
                   <ArrowLeft className="" />
                 </Button>}
             </Link>
           </div>
         </div>
-      </div >
+      </div>
 
-      {/* Main Content */}
-      <div className="flex-1 pl-6" >
+      {/* Main Content - Made scrollable */}
+      <div className="flex-1 pl-6 pr-4 overflow-y-auto" >
         {children}
       </div >
     </div >

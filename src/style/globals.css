@@ -44,6 +44,9 @@
   --header-border: var(--header-border);
   --scrollbar-track: var(--scrollbar-track);
   --scrollbar-thumb: var(--scrollbar-thumb);
+  --mini-scrollbar-track: var(--mini-scrollbar-track);
+  --mini-scrollbar-thumb:var(--mini-scrollbar-thumb);
+  --mini-scrollbar-thumb-hover: var(--mini-scrollbar-thumb-hover);
 }
 
 :root {
@@ -83,7 +86,10 @@
   --header-bg: rgba(239, 246, 255, 0.6);
   --header-border: #bfdbfe; 
   --scrollbar-track: rgba(234, 238, 243, 0.842);
-  --scrollbar-thumb: #bfdbfe ;
+  --scrollbar-thumb: #bfdbfe;
+  --mini-scrollbar-track: rgba(234, 238, 243, 0.842);
+  --mini-scrollbar-thumb: #bfdbfe;
+  --mini-scrollbar-thumb-hover: rgba(4, 14, 36, 0.9);
 
   /*W----------{  Website Font Variables  }----------_*/
   --font-1: "Salsa", cursive;
@@ -127,6 +133,10 @@
   --header-border: #1e293b;
   --scrollbar-track: oklch(0.15 0.034 264.665);
   --scrollbar-thumb: rgba(17, 32, 68, 0.9);
+  --mini-scrollbar-track: oklch(0.15 0.034 264.665);
+  --mini-scrollbar-thumb:rgba(17, 32, 68, 0.9);
+  --mini-scrollbar-thumb-hover: #a0beff;
+
 }
 
 @layer base {
@@ -388,4 +398,14 @@ html {
 
 .header-border {
   border-color: var(--header-border);
+}
+/* 🔹 Custom Scrollbar Style */
+.custom-scrollbar {
+  --custom-scrollbar-track:  var(--mini-scrollbar-track);
+  --custom-scrollbar-thumb: var(--mini-scrollbar-thumb);
+  --custom-scrollbar-thumb-hover: var(--mini-scrollbar-thumb-hover);
+  --custom-scrollbar-width: 8px;
+
+  scrollbar-width: thin;
+  scrollbar-color: var(--custom-scrollbar-thumb) var(--custom-scrollbar-track);
 }

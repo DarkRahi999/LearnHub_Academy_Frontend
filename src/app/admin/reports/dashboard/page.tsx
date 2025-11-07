@@ -50,7 +50,7 @@ export default function ReportsDashboardPage() {
   // Prepare data for charts
   const getExamParticipationData = () => {
     if (!reportData) return [];
-    
+
     return reportData.examStats
       .sort((a, b) => b.totalParticipants - a.totalParticipants)
       .slice(0, 10)
@@ -63,7 +63,7 @@ export default function ReportsDashboardPage() {
 
   const getExamPerformanceData = () => {
     if (!reportData) return [];
-    
+
     return reportData.examStats
       .sort((a, b) => b.averageScore - a.averageScore)
       .slice(0, 10)
@@ -76,10 +76,10 @@ export default function ReportsDashboardPage() {
 
   const getPassFailData = () => {
     if (!reportData) return [];
-    
+
     const passed = reportData.recentResults.filter(r => r.passed).length;
     const failed = reportData.recentResults.filter(r => !r.passed).length;
-    
+
     return [
       { name: 'Passed', value: passed },
       { name: 'Failed', value: failed }
@@ -89,26 +89,26 @@ export default function ReportsDashboardPage() {
   // Export report data to CSV
   const exportToCSV = () => {
     if (!reportData) return;
-    
+
     // Create CSV content
     let csvContent = "data:text/csv;charset=utf-8,";
-    
+
     // Add summary data
     csvContent += "Report Summary\\n";
     csvContent += "Metric,Value\\n";
     csvContent += `Total Exams,${reportData.totalExams}\\n`;
     csvContent += `Total Results,${reportData.totalResults}\\n`;
     csvContent += `Total Users,${reportData.totalUsers}\\n\\n`;
-    
+
     // Add exam statistics
     csvContent += "Exam Statistics\\n";
     csvContent += "Exam Name,Participants,Average Score,Pass Rate,Highest Score,Lowest Score\\n";
     reportData.examStats.forEach(stat => {
       csvContent += `"${stat.examName || 'Unknown Exam'}",${stat.totalParticipants},${stat.averageScore},${stat.passRate},${stat.highestScore},${stat.lowestScore}\\n`;
     });
-    
+
     csvContent += "\\n";
-    
+
     // Add recent results
     csvContent += "Recent Exam Results\\n";
     csvContent += "User,Exam,Score,Percentage,Status,Submitted At\\n";
@@ -117,7 +117,7 @@ export default function ReportsDashboardPage() {
       const submittedAt = result.submittedAt ? new Date(result.submittedAt).toLocaleString() : 'N/A';
       csvContent += `"${result.userName || 'Unknown User'}","${result.examName || 'Unknown Exam'}",${result.score},${result.percentage},${status},"${submittedAt}"\\n`;
     });
-    
+
     // Create download link
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement("a");
@@ -131,21 +131,21 @@ export default function ReportsDashboardPage() {
   // Export report data to PDF
   const exportToPDF = () => {
     if (!reportData) return;
-    
+
     const doc = new jsPDF() as jsPDFWithAutoTable;
-    
+
     // Add title
     doc.setFontSize(20);
     doc.text("Admin Report Dashboard", 105, 20, { align: "center" });
-    
+
     // Add date
     doc.setFontSize(12);
     doc.text(`Generated on: ${new Date().toLocaleDateString()}`, 105, 30, { align: "center" });
-    
+
     // Add summary data
     doc.setFontSize(16);
     doc.text("Report Summary", 20, 45);
-    
+
     doc.setFontSize(12);
     doc.autoTable({
       startY: 50,
@@ -157,11 +157,11 @@ export default function ReportsDashboardPage() {
       ],
       theme: 'striped'
     });
-    
+
     // Add exam statistics
     doc.setFontSize(16);
     doc.text("Exam Statistics", 20, (doc.lastAutoTable?.finalY || 70) + 10);
-    
+
     doc.setFontSize(12);
     doc.autoTable({
       startY: (doc.lastAutoTable?.finalY || 70) + 15,
@@ -176,11 +176,11 @@ export default function ReportsDashboardPage() {
       ]),
       theme: 'striped'
     });
-    
+
     // Add recent results
     doc.setFontSize(16);
     doc.text("Recent Exam Results", 20, (doc.lastAutoTable?.finalY || 120) + 10);
-    
+
     doc.setFontSize(12);
     doc.autoTable({
       startY: (doc.lastAutoTable?.finalY || 120) + 15,
@@ -199,7 +199,7 @@ export default function ReportsDashboardPage() {
       }),
       theme: 'striped'
     });
-    
+
     // Save the PDF
     doc.save("admin_report_dashboard.pdf");
   };
@@ -231,7 +231,7 @@ export default function ReportsDashboardPage() {
   const passFailData = getPassFailData();
 
   return (
-    <RoleGuard 
+    <RoleGuard
       allowedRoles={[UserRole.ADMIN, UserRole.SUPER_ADMIN]}
       fallback={
         <div className="container mx-auto py-8">
@@ -249,7 +249,7 @@ export default function ReportsDashboardPage() {
           <div className="flex justify-between items-center">
             <div>
               <h1 className="text-3xl font-bold">Reports Dashboard</h1>
-              <p className="text-gray-600">Comprehensive overview of system activity and exam performance</p>
+              <p className="text-gray-600 dark:text-gray-400">Comprehensive overview of system activity and exam performance</p>
             </div>
             <div className="flex gap-2">
               <Button onClick={loadReport} variant="outline">
@@ -270,31 +270,31 @@ export default function ReportsDashboardPage() {
 
         {/* Summary Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <Card>
+          <Card className="dark:bg-slate-900">
             <CardContent className="py-6 text-center">
-              <p className="text-3xl font-bold text-blue-600">{reportData.totalExams}</p>
-              <p className="text-gray-500">Total Exams</p>
+              <p className="text-3xl font-bold text-blue-600 dark:text-blue-700">{reportData.totalExams}</p>
+              <p className="text-gray-500 dark:text-blue-100/60">Total Exams</p>
             </CardContent>
           </Card>
-          
-          <Card>
+
+          <Card className="dark:bg-slate-900">
             <CardContent className="py-6 text-center">
-              <p className="text-3xl font-bold text-green-600">{reportData.totalResults}</p>
-              <p className="text-gray-500">Total Exam Results</p>
+              <p className="text-3xl font-bold text-green-600 dark:text-green-700">{reportData.totalResults}</p>
+              <p className="text-gray-500 dark:text-blue-100/60">Total Exam Results</p>
             </CardContent>
           </Card>
-          
-          <Card>
+
+          <Card className="dark:bg-slate-900">
             <CardContent className="py-6 text-center">
-              <p className="text-3xl font-bold text-purple-600">{reportData.totalUsers}</p>
-              <p className="text-gray-500">Total Users</p>
+              <p className="text-3xl font-bold text-purple-600 dark:text-purple-700">{reportData.totalUsers}</p>
+              <p className="text-gray-500 dark:text-blue-100/60">Total Users</p>
             </CardContent>
           </Card>
-          
-          <Card>
+
+          <Card className="dark:bg-slate-900">
             <CardContent className="py-6 text-center">
-              <p className="text-3xl font-bold text-orange-600">{reportData.recentResults.length}</p>
-              <p className="text-gray-500">Recent Attempts</p>
+              <p className="text-3xl font-bold text-orange-600 dark:text-orange-700">{reportData.recentResults.length}</p>
+              <p className="text-gray-500 dark:text-blue-100/60">Recent Attempts</p>
             </CardContent>
           </Card>
         </div>
@@ -314,10 +314,9 @@ export default function ReportsDashboardPage() {
                     margin={{ top: 20, right: 30, left: 20, bottom: 60 }}
                   >
                     <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="name" angle={-45} textAnchor="end" height={60} />
+                    <XAxis dataKey="name" angle={-60} textAnchor="end" height={60} />
                     <YAxis />
                     <Tooltip />
-                    <Legend />
                     <Bar dataKey="participants" name="Participants" fill="#8884d8" />
                   </BarChart>
                 </ResponsiveContainer>
@@ -338,10 +337,9 @@ export default function ReportsDashboardPage() {
                     margin={{ top: 20, right: 30, left: 20, bottom: 60 }}
                   >
                     <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="name" angle={-45} textAnchor="end" height={60} />
+                    <XAxis dataKey="name" angle={-80} textAnchor="end" height={60} />
                     <YAxis domain={[0, 100]} />
                     <Tooltip />
-                    <Legend />
                     <Bar dataKey="averageScore" name="Average Score (%)" fill="#82ca9d" />
                   </BarChart>
                 </ResponsiveContainer>
@@ -396,19 +394,18 @@ export default function ReportsDashboardPage() {
                     <XAxis dataKey="name" angle={-45} textAnchor="end" height={60} />
                     <YAxis domain={[0, 100]} />
                     <Tooltip />
-                    <Legend />
-                    <Line 
-                      type="monotone" 
-                      dataKey="averageScore" 
-                      name="Average Score (%)" 
-                      stroke="#8884d8" 
-                      activeDot={{ r: 8 }} 
+                    <Line
+                      type="monotone"
+                      dataKey="averageScore"
+                      name="Average Score (%)"
+                      stroke="#8884d8"
+                      activeDot={{ r: 8 }}
                     />
-                    <Line 
-                      type="monotone" 
-                      dataKey="passRate" 
-                      name="Pass Rate (%)" 
-                      stroke="#82ca9d" 
+                    <Line
+                      type="monotone"
+                      dataKey="passRate"
+                      name="Pass Rate (%)"
+                      stroke="#82ca9d"
                     />
                   </LineChart>
                 </ResponsiveContainer>
@@ -418,8 +415,8 @@ export default function ReportsDashboardPage() {
         </div>
 
         {/* Recent Exam Results */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-          <Card>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <Card className="dark:bg-slate-900">
             <CardHeader>
               <CardTitle>Recent Exam Attempts</CardTitle>
             </CardHeader>
@@ -427,9 +424,9 @@ export default function ReportsDashboardPage() {
               {reportData.recentResults.length === 0 ? (
                 <p className="text-gray-500 text-center py-4">No recent exam attempts</p>
               ) : (
-                <div className="space-y-4 max-h-96 overflow-y-auto">
+                <div className="space-y-4 max-h-96 overflow-y-auto custom-scrollbar pr-2">
                   {reportData.recentResults.map((result) => (
-                    <div key={result.id} className="flex justify-between items-center p-4 border rounded-lg hover:bg-gray-50">
+                    <div key={result.id} className="flex justify-between items-center p-4 border rounded-lg transition-colors duration-200 hover:bg-blue-50 dark:hover:bg-blue-300/5 hover:border-blue-300">
                       <div>
                         <p className="font-medium">{result.userName || 'Unknown User'}</p>
                         <p className="text-sm text-gray-500">{result.examName || 'Unknown Exam'}</p>
@@ -453,7 +450,7 @@ export default function ReportsDashboardPage() {
           </Card>
 
           {/* Exam Statistics Summary */}
-          <Card>
+          <Card className="dark:bg-slate-900">
             <CardHeader>
               <CardTitle>Exam Performance Overview</CardTitle>
             </CardHeader>
@@ -461,9 +458,9 @@ export default function ReportsDashboardPage() {
               {reportData.examStats.length === 0 ? (
                 <p className="text-gray-500 text-center py-4">No exam statistics available</p>
               ) : (
-                <div className="space-y-4 max-h-96 overflow-y-auto">
+                <div className="space-y-4 max-h-96 overflow-y-auto custom-scrollbar pr-2">
                   {reportData.examStats.slice(0, 10).map((stat, index) => (
-                    <div key={index} className="flex justify-between items-center p-4 border rounded-lg hover:bg-gray-50">
+                    <div key={index} className="flex justify-between items-center p-4 border rounded-lg transition-colors duration-200 hover:bg-blue-50 dark:hover:bg-blue-300/5 hover:border-blue-300">
                       <div>
                         <p className="font-medium">{stat.examName || 'Unknown Exam'}</p>
                         <p className="text-sm text-gray-500">{stat.totalParticipants} participants</p>
