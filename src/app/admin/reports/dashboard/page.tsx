@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Link from "next/link";
 import { motion } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -11,7 +10,7 @@ import { ExamResult, ExamStatistics } from "@/services/exam/exam.service";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line } from "recharts";
 import RoleGuard from "@/components/auth/RoleGuard";
 import { UserRole } from "@/interface/user";
-import { RefreshCw, Download, FileText, ArrowLeft } from "lucide-react";
+import { RefreshCw, Download, FileText } from "lucide-react";
 import { viewportAnimation } from "@/lib/utils";
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
