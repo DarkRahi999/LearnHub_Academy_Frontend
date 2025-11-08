@@ -33,23 +33,36 @@ export default function ReportsLayout({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
-    <div className="flex gap-2 h-[86vh]">
-      {/* Sidebar */}
-      <motion.div 
-        className={`header rounded-md border border-gray-200 dark:border-blue-200/40 shadow-lg transition-all duration-300 ${sidebarOpen ? 'w-56' : 'w-16'} flex flex-col`}
+    <div className="flex flex-col md:ml-2 md:flex-row gap-2 h-90vh md:h-[calc(100vh-6rem)]">
+      {/* Sidebar Backdrop - Visible when sidebar is open on mobile */}
+      <div
+        className={`fixed inset-0 z-40 bg-black/30 backdrop-blur-sm transition-all duration-300 md:hidden ${sidebarOpen ? 'opacity-100 visible' : 'opacity-0 invisible'
+          }`}
+        onClick={() => setSidebarOpen(false)}
+      />
+      
+      {/* Sidebar - Mobile responsive */}
+      <motion.div
+        className={`header rounded-md border border-gray-200 dark:border-blue-200/40 shadow-lg transition-all duration-300 flex flex-col md:static fixed z-50 md:z-auto ${sidebarOpen ? 'w-[90%] sm:w-[42%] md:w-56' : 'w-16'
+          } ${sidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'} md:translate-x-0`}
         initial={{ opacity: 0, x: -20 }}
-        animate={{ opacity: 1, x: 0 }}
+        animate={{ opacity: 1, x: sidebarOpen ? 0 : -20 }}
         transition={{ duration: 0.3 }}
+        style={{
+          top: '3rem',
+          height: 'calc(100vh - 6rem)',
+          maxHeight: 'calc(100vh - 4rem)'
+        }}
       >
         <div className="flex flex-col flex-1">
           <div className="px-2 pt-4 w-full">
             <div className="flex items-center justify-between">
               {sidebarOpen && (
-                <motion.h2 
-                  className="text-lg md:text-xl font-semibold text-blue-700"
+                <motion.h2
+                  className="text-3xl pl-2 text-blue-200 md:text-2xl font-semibold md:text-blue-300"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ duration: 0.3, delay: 0.1 }}
@@ -82,14 +95,14 @@ export default function ReportsLayout({
             </div>
           </div>
 
-          <nav className="flex-1 p-2 overflow-y-auto">
+          <nav className="flex-1 p-2 md:overflow-y-auto overflow-hidden">
             <ul className="space-y-1">
               {reportNavItems.map((item, index) => {
                 const Icon = item.icon;
                 const isActive = pathname === item.href;
 
                 return (
-                  <motion.li 
+                  <motion.li
                     key={item.name}
                     initial={{ opacity: 0, x: -10 }}
                     animate={{ opacity: 1, x: 0 }}
@@ -101,10 +114,11 @@ export default function ReportsLayout({
                         <div className="flex items-center">
                           <Icon className="h-5 w-5" />
                           {sidebarOpen && (
-                            <motion.span 
+                            <motion.span
                               initial={{ opacity: 0 }}
                               animate={{ opacity: 1 }}
                               transition={{ duration: 0.3, delay: 0.1 * index + 0.1 }}
+                              className="ml-2"
                             >
                               {item.name}
                             </motion.span>
@@ -119,7 +133,7 @@ export default function ReportsLayout({
           </nav>
 
           {/* Moved the back button to the bottom */}
-          <motion.div 
+          <motion.div
             className="p-2 pt-0 mt-auto"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -142,14 +156,30 @@ export default function ReportsLayout({
         </div>
       </motion.div>
 
-      {/* Main Content - Made scrollable */}
-      <motion.div 
-        className="flex-1 pl-6 pr-4 overflow-y-auto border border-gray-200 shadow-lg dark:border-blue-200/40 rounded-md"
+      {/* Mobile sidebar toggle button */}
+      {sidebarOpen ? <></>
+        : 
+        <div className="md:hidden fixed top-12 left-[-12px] z-10">
+          <Button
+            onClick={() => setSidebarOpen(!sidebarOpen)}
+            variant="outline"
+            className="w-[35px] flex justify-between rounded-lg shadow-lg text-blue-300 bg-blue-150 dark:bg-slate-900 dark:border-blue-200/40"
+          >
+            <ArrowRightToLine />
+          </Button>
+        </div>
+      }
+
+      {/* Main Content - Made scrollable with proper overflow handling */}
+      <motion.div
+        className="flex-1 md:h-[calc(100vh-6rem)] md:pl-4 md:border md:border-gray-200 md:shadow-lg md:dark:border-blue-200/40 md:rounded-md overflow-hidden"
         initial={{ opacity: 0, x: 20 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.3, delay: 0.2 }}
       >
-        {children}
+        <div className="h-full md:overflow-y-auto overflow-hidden">
+          {children}
+        </div>
       </motion.div>
     </div>
   );

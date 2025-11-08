@@ -15,6 +15,7 @@ import { viewportAnimation } from "@/lib/utils";
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 import { jsPDFWithAutoTable } from '@/lib/jspdf-autotable';
+import Loading from "@/components/layouts/Loading";
 
 // Define interfaces for the report data
 interface AdminReportData {
@@ -207,13 +208,7 @@ export default function ReportsDashboardPage() {
   };
 
   if (loading) {
-    return (
-      <div className="container mx-auto py-8">
-        <div className="flex justify-center items-center h-64">
-          <p className="text-lg">Loading reports dashboard...</p>
-        </div>
-      </div>
-    );
+    return <Loading title="Dashboard"/>
   }
 
   if (!reportData) {
@@ -245,19 +240,60 @@ export default function ReportsDashboardPage() {
         </div>
       }
     >
-      <div className="container mx-auto py-8">
+      <div className="md:pb-4 pt-2 md:pr-4">
         {/* Page Header */}
         <motion.div 
           className="mb-8"
           {...viewportAnimation(0, 20)}
         >
-          <div className="flex justify-between items-center">
+          {/* Mobile Layout */}
+          <div className="flex flex-col gap-4 lg:hidden">
+            <div>
+              <h1 className="text-2xl font-bold">Reports Dashboard</h1>
+              <p className="text-sm text-gray-600 dark:text-gray-400">Comprehensive overview of system activity and exam performance</p>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              <Button 
+                onClick={loadReport} 
+                variant="outline" 
+                size="sm"
+                className="flex-1 dark:bg-blue-50/5 border-blue-200 dark:hover:text-blue-300 dark:hover:bg-blue-50/5"
+              >
+                <RefreshCw className="mr-2 h-4 w-4" />
+                Refresh
+              </Button>
+              <Button 
+                onClick={exportToCSV} 
+                size="sm"
+                className="flex-1"
+              >
+                <Download className="mr-2 h-4 w-4" />
+                CSV
+              </Button>
+              <Button 
+                onClick={exportToPDF} 
+                variant="secondary" 
+                size="sm"
+                className="flex-1 dark:bg-black"
+              >
+                <FileText className="mr-2 h-4 w-4" />
+                PDF
+              </Button>
+            </div>
+          </div>
+          
+          {/* Large and larger screens Layout */}
+          <div className="hidden lg:flex justify-between items-center">
             <div>
               <h1 className="text-3xl font-bold">Reports Dashboard</h1>
               <p className="text-gray-600 dark:text-gray-400">Comprehensive overview of system activity and exam performance</p>
             </div>
             <div className="flex gap-2">
-              <Button onClick={loadReport} variant="outline" className="dark:bg-blue-50/5 border-blue-200 dark:hover:text-blue-300 dark:hover:bg-blue-50/5">
+              <Button 
+                onClick={loadReport} 
+                variant="outline" 
+                className="dark:bg-blue-50/5 border-blue-200 dark:hover:text-blue-300 dark:hover:bg-blue-50/5"
+              >
                 <RefreshCw className="mr-2 h-4 w-4" />
                 Refresh
               </Button>
@@ -265,7 +301,11 @@ export default function ReportsDashboardPage() {
                 <Download className="mr-2 h-4 w-4" />
                 Export CSV
               </Button>
-              <Button onClick={exportToPDF} variant="secondary" className="dark:bg-black">
+              <Button 
+                onClick={exportToPDF} 
+                variant="secondary" 
+                className="dark:bg-black"
+              >
                 <FileText className="mr-2 h-4 w-4" />
                 Export PDF
               </Button>
