@@ -33,3 +33,11 @@ export const fadeUp = {
     transition: { duration: 0.8, delay },
   }),
 };
+
+//W---------={ Viewport Animation }=----------</br>
+export const viewportAnimation = (delay = 0, y = 20) => ({
+  initial: { opacity: 0, y },
+  whileInView: { opacity: 1, y: 0 },
+  viewport: { once: false, amount: 0.2 },
+  transition: { duration: 0.5, delay },
+});
