@@ -23,7 +23,7 @@ export const viewport = siteViewport;
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${salsa.variable} ${roboto.variable} antialiased`}>
+      <body className={`${salsa.variable} ${roboto.variable} antialiased transition-colors duration-700 ease-in-out`}>
         <LayoutClient>
           <div className="container mx-auto p-5">
             {children}

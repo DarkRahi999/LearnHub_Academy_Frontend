@@ -240,7 +240,7 @@ export default function ReportsDashboardPage() {
         </div>
       }
     >
-      <div className="md:pb-4 pt-2 md:pr-4">
+      <div className="">
         {/* Page Header */}
         <motion.div 
           className="mb-8"

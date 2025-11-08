@@ -26,6 +26,7 @@ import { NotificationBadge } from "@/components/ui/notification-badge";
 import { useRouter } from "next/navigation";
 import { ThemeToggle } from "../ui/theme-toggle";
 import instituteDetails from "@/app/db/institute";
+import { motion } from "framer-motion";
 
 export default function Header() {
   const { user, isLoading: loading, logout } = useAuth();
@@ -49,116 +50,162 @@ export default function Header() {
   };
 
   return (
-    <header className="animate-slide-in-down border-b sticky top-0 z-20 h-12 sm:h-14 p-2 transition-all duration-300 ease-in-out hover:shadow-lg animate-pulse-glow header-bg header-border">
+    <header className="animate-pulse-glow border-b sticky top-0 z-20 h-12 sm:h-14 p-2 transition-all duration-300 ease-in-out header-bg header-border">
       <div className="flex h-7 sm:h-9 items-center justify-between container mx-auto px-5 pt-1">
         <div className="flex items-center gap-2">
-          <Link
-            href="/"
-            className="group transition-all duration-300 ease-in-out hover:scale-105"
-            title="Home"
+          <motion.div
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
           >
-            <h1 className="text-lg sm:text-xl lg:text-2xl font-bold transition-colors duration-300 group-hover:text-red-700 dark:group-hover:text-blue-200 text-foreground">
-              <span className="sm:hidden">{instituteDetails.name}</span>
-              <span className="hidden sm:inline">{instituteDetails.name}</span>
-            </h1>
-          </Link>
+            <Link
+              href="/"
+              className="group transition-all duration-300 ease-in-out"
+              title="Home"
+            >
+              <h1 className="text-lg sm:text-xl lg:text-2xl font-bold transition-colors duration-300 group-hover:text-red-700 dark:group-hover:text-blue-200 text-foreground">
+                <span className="sm:hidden">{instituteDetails.name}</span>
+                <span className="hidden sm:inline">{instituteDetails.name}</span>
+              </h1>
+            </Link>
+          </motion.div>
         </div>
 
         {/*-------------={ Desktop Menu }=-------------*/}
         <div className="hidden sm:flex items-center gap-2">
-          <Button
-            variant="ghost"
-            asChild
-            className="transition-all duration-300 ease-in-out hover:scale-105 hover:bg-primary/10 dark:hover:bg-blue-100/5 dark:hover:text-blue-200 hover:text-red-700 hover:font-bold tracking-normal hover:[letter-spacing:1px] group relative animate-fade-in-up will-change-transform"
+          <motion.div
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
           >
-            <Link href="/course" title="Courses">
-              <div className="relative">
-                <BookOpen className="w-5 h-5 transition-transform duration-300 group-hover:scale-110 group-hover:[stroke-width:3]" />
-              </div>
-              <span className="hidden md:inline">Courses</span>
-            </Link>
-          </Button>
+            <Button
+              variant="ghost"
+              asChild
+              className="transition-all duration-300 ease-in-out hover:bg-primary/10 dark:hover:bg-blue-100/5 dark:hover:text-blue-200 hover:text-red-700 hover:font-bold tracking-normal hover:[letter-spacing:1px] group relative"
+            >
+              <Link href="/course" title="Courses">
+                <div className="relative">
+                  <BookOpen className="w-5 h-5 transition-transform duration-300 group-hover:scale-110 group-hover:[stroke-width:3]" />
+                </div>
+                <span className="hidden md:inline">Courses</span>
+              </Link>
+            </Button>
+          </motion.div>
 
-          <Button
-            variant="ghost"
-            asChild
-            className="transition-all duration-300 ease-in-out hover:scale-105 hover:bg-primary/10 dark:hover:bg-blue-100/5 dark:hover:text-blue-200 hover:text-red-700 hover:font-bold tracking-normal hover:[letter-spacing:1px] group relative animate-fade-in-up will-change-transform"
+          <motion.div
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
           >
-            <Link href="/books" title="Books">
-              <div className="relative">
-                <NotebookText className="w-5 h-5 transition-transform duration-300 group-hover:scale-110 group-hover:[stroke-width:3]" />
-              </div>
-              <span className="hidden md:inline">Books</span>
-            </Link>
-          </Button>
+            <Button
+              variant="ghost"
+              asChild
+              className="transition-all duration-300 ease-in-out hover:bg-primary/10 dark:hover:bg-blue-100/5 dark:hover:text-blue-200 hover:text-red-700 hover:font-bold tracking-normal hover:[letter-spacing:1px] group relative"
+            >
+              <Link href="/books" title="Books">
+                <div className="relative">
+                  <NotebookText className="w-5 h-5 transition-transform duration-300 group-hover:scale-110 group-hover:[stroke-width:3]" />
+                </div>
+                <span className="hidden md:inline">Books</span>
+              </Link>
+            </Button>
+          </motion.div>
 
           {loading ? (
             <div className="w-8 h-8 animate-pulse bg-gray-200 rounded-full"></div>
           ) : !user ? (
             <>
-              <Button
-                variant="ghost"
-                asChild
-                size="sm"
-                className="transition-all duration-300 ease-in-out hover:scale-105 hover:bg-primary/10 dark:hover:bg-blue-100/5 dark:hover:text-blue-200 hover:text-red-700 hover:font-bold tracking-normal hover:[letter-spacing:1px] group relative animate-fade-in-up will-change-transform"
+              <motion.div
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
               >
-                <Link href="/signup" title="Sign Up">
-                  <div className="relative">
-                    <UsersRound className="w-5 h-5 transition-transform duration-300 group-hover:scale-110 group-hover:[stroke-width:3]" />
-                  </div>
-                  Sign Up
-                </Link>
-              </Button>
-              <Button
-                variant="ghost"
-                asChild
-                size="sm"
-                className="transition-all duration-300 ease-in-out hover:scale-105 hover:bg-primary/10 dark:hover:bg-blue-100/5 dark:hover:text-blue-200 hover:text-red-700 hover:font-bold tracking-normal hover:[letter-spacing:1px] group relative animate-fade-in-up will-change-transform"
+                <Button
+                  variant="ghost"
+                  asChild
+                  size="sm"
+                  className="transition-all duration-300 ease-in-out hover:bg-primary/10 dark:hover:bg-blue-100/5 dark:hover:text-blue-200 hover:text-red-700 hover:font-bold tracking-normal hover:[letter-spacing:1px] group relative"
+                >
+                  <Link href="/signup" title="Sign Up">
+                    <div className="relative">
+                      <UsersRound className="w-5 h-5 transition-transform duration-300 group-hover:scale-110 group-hover:[stroke-width:3]" />
+                    </div>
+                    Sign Up
+                  </Link>
+                </Button>
+              </motion.div>
+              <motion.div
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
               >
-                <Link href="/login" title="Login">
-                  <div className="relative">
-                    <LogIn className="w-5 h-5 transition-transform duration-300 group-hover:scale-110 group-hover:[stroke-width:3]" />
-                  </div>
-                  Login
-                </Link>
-              </Button>
-              <ThemeToggle />
+                <Button
+                  variant="ghost"
+                  asChild
+                  size="sm"
+                  className="transition-all duration-300 ease-in-out hover:bg-primary/10 dark:hover:bg-blue-100/5 dark:hover:text-blue-200 hover:text-red-700 hover:font-bold tracking-normal hover:[letter-spacing:1px] group relative"
+                >
+                  <Link href="/login" title="Login">
+                    <div className="relative">
+                      <LogIn className="w-5 h-5 transition-transform duration-300 group-hover:scale-110 group-hover:[stroke-width:3]" />
+                    </div>
+                    Login
+                  </Link>
+                </Button>
+              </motion.div>
+              <motion.div
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <ThemeToggle />
+              </motion.div>
             </>
           ) : (
             <>
               {/*______________ For md Screen ______________ */}
-              <Button
-                variant="ghost"
-                asChild
-                className="transition-all duration-300 ease-in-out hover:scale-105 hover:bg-primary/10 dark:hover:bg-blue-100/5 dark:hover:text-blue-200 hover:text-red-700 hover:font-bold tracking-normal hover:[letter-spacing:1px] group relative animate-fade-in-up will-change-transform"
+              <motion.div
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
               >
-                <Link href="/notices" title="Notices">
-                  <div className="relative">
-                    <BellRing className="w-5 h-5 transition-transform duration-300 group-hover:scale-110 group-hover:[stroke-width:3]" />
-                  </div>
-                  <NotificationBadge count={unreadCount} />
-                </Link>
-              </Button>
-
-              <RoleGuard allowedRoles={[UserRole.ADMIN, UserRole.SUPER_ADMIN]}>
                 <Button
                   variant="ghost"
                   asChild
-                  className="transition-all duration-300 ease-in-out hover:scale-105 hover:bg-primary/10 dark:hover:bg-blue-100/5 dark:hover:text-blue-200 hover:text-red-700 group relative animate-fade-in-up will-change-transform"
+                  className="transition-all duration-300 ease-in-out hover:bg-primary/10 dark:hover:bg-blue-100/5 dark:hover:text-blue-200 hover:text-red-700 group relative"
                 >
-                  <Link href="/admin" title="Admin">
+                  <Link href="/notices" title="Notices">
                     <div className="relative">
-                      <Shield className="w-5 h-5 transition-transform duration-300 group-hover:scale-110 group-hover:[stroke-width:3]" />
+                      <BellRing className="w-5 h-5 transition-transform duration-300 group-hover:scale-110 group-hover:[stroke-width:3]" />
                     </div>
+                    <NotificationBadge count={unreadCount} />
                   </Link>
                 </Button>
+              </motion.div>
+
+              <RoleGuard allowedRoles={[UserRole.ADMIN, UserRole.SUPER_ADMIN]}>
+                <motion.div
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <Button
+                    variant="ghost"
+                    asChild
+                    className="transition-all duration-300 ease-in-out hover:bg-primary/10 dark:hover:bg-blue-100/5 dark:hover:text-blue-200 hover:text-red-700 group relative"
+                  >
+                    <Link href="/admin" title="Admin">
+                      <div className="relative">
+                        <Shield className="w-5 h-5 transition-transform duration-300 group-hover:scale-110 group-hover:[stroke-width:3]" />
+                      </div>
+                    </Link>
+                  </Button>
+                </motion.div>
               </RoleGuard>
-              <div className="relative will-change-transform">
+              <motion.div
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="relative"
+              >
                 <ThemeToggle className="group-hover:scale-110" />
-              </div>
-              <button
+              </motion.div>
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
                 onClick={() => setIsDesktopProfileOpen((prev) => !prev)}
-                className="group flex items-center gap-1 sm:gap-2 focus:outline-none rounded-full px-2 py-1 transition-all duration-300 ease-in-out dark:hover:bg-blue-100/5 hover:bg-primary/10 hover:scale-105"
+                className="group flex items-center gap-1 sm:gap-2 focus:outline-none rounded-full px-2 py-1 transition-all duration-300 ease-in-out dark:hover:bg-blue-100/5 hover:bg-primary/10"
                 title="Account"
               >
                 <div className="relative">
@@ -177,28 +224,38 @@ export default function Header() {
                     unoptimized
                   />
                 </div>
-              </button>
+              </motion.button>
             </>
           )}
         </div>
 
         {/*-------------={ Mobile Menu Button }=-------------*/}
         <div className="flex sm:hidden items-center gap-2">
-          <ThemeToggle />
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="p-2 transition-all duration-300 ease-in-out"
+          <motion.div
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
           >
-            <div className="transition-transform duration-300 ease-in-out">
-              {isMobileMenuOpen ? (
-                <X className="w-5 h-5 rotate-180" />
-              ) : (
-                <Menu className="w-5 h-5" />
-              )}
-            </div>
-          </Button>
+            <ThemeToggle />
+          </motion.div>
+          <motion.div
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              className="p-2 transition-all duration-300 ease-in-out"
+            >
+              <div className="transition-transform duration-300 ease-in-out">
+                {isMobileMenuOpen ? (
+                  <X className="w-5 h-5 rotate-180" />
+                ) : (
+                  <Menu className="w-5 h-5" />
+                )}
+              </div>
+            </Button>
+          </motion.div>
         </div>
       </div>
 
@@ -222,69 +279,94 @@ export default function Header() {
                 <h3 className="text-sm font-semibold text-muted-foreground">
                   Navigation
                 </h3>
-                <Button
-                  variant="ghost"
-                  asChild
-                  className="w-full justify-start h-10"
+                <motion.div
+                  whileHover={{ x: 5 }}
+                  whileTap={{ scale: 0.95 }}
                 >
-                  <Link
-                    href="/course"
-                    onClick={() => setIsMobileMenuOpen(false)}
+                  <Button
+                    variant="ghost"
+                    asChild
+                    className="w-full justify-start h-10"
                   >
-                    <BookOpen className="w-5 h-5 mr-2" />
-                    Courses
-                  </Link>
-                </Button>
-                <Button
-                  variant="ghost"
-                  asChild
-                  className="w-full justify-start h-10"
+                    <Link
+                      href="/course"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                      <BookOpen className="w-5 h-5 mr-2" />
+                      Courses
+                    </Link>
+                  </Button>
+                </motion.div>
+                <motion.div
+                  whileHover={{ x: 5 }}
+                  whileTap={{ scale: 0.95 }}
                 >
-                  <Link
-                    href="/books"
-                    onClick={() => setIsMobileMenuOpen(false)}
+                  <Button
+                    variant="ghost"
+                    asChild
+                    className="w-full justify-start h-10"
                   >
-                    <NotebookText className="w-5 h-5 mr-2" />
-                    Books
-                  </Link>
-                </Button>
+                    <Link
+                      href="/books"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                      <NotebookText className="w-5 h-5 mr-2" />
+                      Books
+                    </Link>
+                  </Button>
+                </motion.div>
                 <h3 className="text-sm font-semibold text-muted-foreground">
                   Account
                 </h3>
-                <Button
-                  variant="ghost"
-                  asChild
-                  className="w-full justify-start h-12 text-left transition-all duration-300 ease-in-out hover:bg-accent/50 hover:scale-105 hover:translate-x-2"
+                <motion.div
+                  whileHover={{ x: 5 }}
+                  whileTap={{ scale: 0.95 }}
                 >
-                  <Link
-                    href="/signup"
+                  <Button
+                    variant="ghost"
+                    asChild
+                    className="w-full justify-start h-12 text-left transition-all duration-300 ease-in-out hover:bg-accent/50"
+                  >
+                    <Link
+                      href="/signup"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                      <UsersRound className="w-5 h-5 mr-3" />
+                      Sign Up
+                    </Link>
+                  </Button>
+                </motion.div>
+                <motion.div
+                  whileHover={{ x: 5 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <Button
+                    variant="ghost"
+                    asChild
+                    className="w-full justify-start h-10"
+                  >
+                    <Link
+                      href="/login"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                      <LogIn className="w-5 h-5 mr-2" />
+                      Login
+                    </Link>
+                  </Button>
+                </motion.div>
+                <motion.div
+                  whileHover={{ x: 5 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <Button
+                    variant="ghost"
+                    className="w-full justify-start h-10"
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
-                    <UsersRound className="w-5 h-5 mr-3" />
-                    Sign Up
-                  </Link>
-                </Button>
-                <Button
-                  variant="ghost"
-                  asChild
-                  className="w-full justify-start h-10"
-                >
-                  <Link
-                    href="/login"
-                    onClick={() => setIsMobileMenuOpen(false)}
-                  >
-                    <LogIn className="w-5 h-5 mr-2" />
-                    Login
-                  </Link>
-                </Button>
-                <Button
-                  variant="ghost"
-                  className="w-full justify-start h-10"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  <X className="w-5 h-5 mr-3" />
-                  Back
-                </Button>
+                    <X className="w-5 h-5 mr-3" />
+                    Back
+                  </Button>
+                </motion.div>
               </div>
             </>
           ) : (
@@ -322,105 +404,9 @@ export default function Header() {
                 <h3 className="text-sm font-semibold text-muted-foreground">
                   Navigation
                 </h3>
-                <Button
-                  variant="ghost"
-                  asChild
-                  className="w-full justify-start h-10"
-                >
-                  <Link
-                    href="/profile"
-                    onClick={() => setIsMobileMenuOpen(false)}
-                  >
-                    <UsersRound className="w-5 h-5 mr-2" />
-                    Profile
-                  </Link>
-                </Button>
-                <Button
-                  variant="ghost"
-                  asChild
-                  className="w-full justify-start h-10"
-                >
-                  <Link
-                    href="/exams"
-                    onClick={() => setIsMobileMenuOpen(false)}
-                  >
-                    <Calendar className="w-5 h-5 mr-2" />
-                    Exams
-                  </Link>
-                </Button>
-                <Button
-                  variant="ghost"
-                  asChild
-                  className="w-full justify-start h-10"
-                >
-                  <Link
-                    href="/course"
-                    onClick={() => setIsMobileMenuOpen(false)}
-                  >
-                    <BookOpen className="w-5 h-5 mr-2" />
-                    Courses
-                  </Link>
-                </Button>
-                <Button
-                  variant="ghost"
-                  asChild
-                  className="w-full justify-start h-10"
-                >
-                  <Link
-                    href="/books"
-                    onClick={() => setIsMobileMenuOpen(false)}
-                  >
-                    <Calendar className="w-5 h-5 mr-2" />
-                    Books
-                  </Link>
-                </Button>
-                {/* <Button
-                  variant="ghost"
-                  asChild
-                  className="w-full justify-start h-10"
-                >
-                  <Link
-                    href="/profile/update"
-                    onClick={() => setIsMobileMenuOpen(false)}
-                  >
-                    <UsersRound className="w-5 h-5 mr-2" />
-                    Update Profile
-                  </Link>
-                </Button> */}
-                {/* <Button
-                  variant="ghost"
-                  asChild
-                  className="w-full justify-start h-10"
-                >
-                  <Link
-                    href="/forgot-password"
-                    onClick={() => setIsMobileMenuOpen(false)}
-                  >
-                    <UsersRound className="w-5 h-5 mr-2" />
-                    Forgot Password
-                  </Link>
-                </Button> */}
-
-                <Button
-                  variant="ghost"
-                  asChild
-                  className="w-full justify-start h-10"
-                >
-                  <Link
-                    href="/notices"
-                    onClick={() => setIsMobileMenuOpen(false)}
-                    className="relative"
-                  >
-                    <BellRing className="w-5 h-5 mr-2" />
-                    Notices
-                    <NotificationBadge
-                      count={unreadCount}
-                      className="absolute top-1 right-1"
-                    />
-                  </Link>
-                </Button>
-                <RoleGuard
-                  allowedRoles={[UserRole.ADMIN, UserRole.SUPER_ADMIN]}
+                <motion.div
+                  whileHover={{ x: 5 }}
+                  whileTap={{ scale: 0.95 }}
                 >
                   <Button
                     variant="ghost"
@@ -428,37 +414,134 @@ export default function Header() {
                     className="w-full justify-start h-10"
                   >
                     <Link
-                      href="/admin"
+                      href="/profile"
                       onClick={() => setIsMobileMenuOpen(false)}
                     >
-                      <Shield className="w-5 h-5 mr-2" />
-                      Admin Panel
+                      <UsersRound className="w-5 h-5 mr-2" />
+                      Profile
                     </Link>
                   </Button>
+                </motion.div>
+                <motion.div
+                  whileHover={{ x: 5 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <Button
+                    variant="ghost"
+                    asChild
+                    className="w-full justify-start h-10"
+                  >
+                    <Link
+                      href="/exams"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                      <Calendar className="w-5 h-5 mr-2" />
+                      Exams
+                    </Link>
+                  </Button>
+                </motion.div>
+                <motion.div
+                  whileHover={{ x: 5 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <Button
+                    variant="ghost"
+                    asChild
+                    className="w-full justify-start h-10"
+                  >
+                    <Link
+                      href="/course"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                      <BookOpen className="w-5 h-5 mr-2" />
+                      Courses
+                    </Link>
+                  </Button>
+                </motion.div>
+                <motion.div
+                  whileHover={{ x: 5 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <Button
+                    variant="ghost"
+                    asChild
+                    className="w-full justify-start h-10"
+                  >
+                    <Link
+                      href="/books"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                      <Calendar className="w-5 h-5 mr-2" />
+                      Books
+                    </Link>
+                  </Button>
+                </motion.div>
+
+                <motion.div
+                  whileHover={{ x: 5 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <Button
+                    variant="ghost"
+                    asChild
+                    className="w-full justify-start h-10"
+                  >
+                    <Link
+                      href="/notices"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className="relative"
+                    >
+                      <BellRing className="w-5 h-5 mr-2" />
+                      Notices
+                      <NotificationBadge
+                        count={unreadCount}
+                        className="absolute top-1 right-1"
+                      />
+                    </Link>
+                  </Button>
+                </motion.div>
+                <RoleGuard
+                  allowedRoles={[UserRole.ADMIN, UserRole.SUPER_ADMIN]}
+                >
+                  <motion.div
+                    whileHover={{ x: 5 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    <Button
+                      variant="ghost"
+                      asChild
+                      className="w-full justify-start h-10"
+                    >
+                      <Link
+                        href="/admin"
+                        onClick={() => setIsMobileMenuOpen(false)}
+                      >
+                        <Shield className="w-5 h-5 mr-2" />
+                        Admin Panel
+                      </Link>
+                    </Button>
+                  </motion.div>
                 </RoleGuard>
 
                 <div className="fixed bottom-2 w-full border-t-2 border-blue-200 pt-[2px]">
                   <div className="border-t-2 border-blue-200">
-                    <Button
-                      variant="ghost"
-                      onClick={() => {
-                        handleLogout();
-                        setIsMobileMenuOpen(false);
-                      }}
-                      className="w-full justify-start h-10 mt-1 px-2 bg-blue-200/30 dark:bg-blue-200/5 rounded-lg"
+                    <motion.div
+                      whileHover={{ x: 5 }}
+                      whileTap={{ scale: 0.95 }}
                     >
-                      <LogOut className="w-5 h-5 mr-2" />
-                      Logout
-                    </Button>
+                      <Button
+                        variant="ghost"
+                        onClick={() => {
+                          handleLogout();
+                          setIsMobileMenuOpen(false);
+                        }}
+                        className="w-full justify-start h-10 mt-1 px-2 bg-blue-200/30 dark:bg-blue-200/5 rounded-lg"
+                      >
+                        <LogOut className="w-5 h-5 mr-2" />
+                        Logout
+                      </Button>
+                    </motion.div>
                   </div>
-                  {/* <Button
-                    variant="ghost"
-                    className="w-full justify-start h-12 text-left transition-all duration-300 ease-in-out hover:bg-accent/50 hover:scale-105 hover:translate-x-2"
-                    onClick={() => setIsMobileMenuOpen(false)}
-                  >
-                    <X className="w-5 h-5 mr-3" />
-                    Back
-                  </Button> */}
                 </div>
               </div>
             </>
@@ -507,101 +590,133 @@ export default function Header() {
                   </>
                 )}
               </div>
-              <button
+              <motion.button
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
                 className="p-2 rounded-md hover:bg-accent/50 transition-colors"
                 aria-label="Close"
                 onClick={() => setIsDesktopProfileOpen(false)}
               >
                 <X className="w-5 h-5" />
-              </button>
+              </motion.button>
             </div>
 
             <div className="space-y-2">
               <h3 className="text-sm font-semibold text-muted-foreground">
                 Settings
               </h3>
-              <Button
-                variant="ghost"
-                asChild
-                className="w-full justify-start h-12 text-left transition-all duration-300 ease-in-out hover:bg-blue-100/60 hover:translate-x-2"
-              >
-                <Link
-                  href="/profile"
-                  onClick={() => setIsDesktopProfileOpen(false)}
-                >
-                  <UsersRound className="w-5 h-5 mr-3" />
-                  Profile
-                </Link>
-              </Button>
-              <Button
-                variant="ghost"
-                asChild
-                className="w-full justify-start h-12 text-left transition-all duration-300 ease-in-out hover:bg-blue-100/60 hover:translate-x-2"
-              >
-                <Link
-                  href="/profile/update"
-                  onClick={() => setIsDesktopProfileOpen(false)}
-                >
-                  <UsersRound className="w-5 h-5 mr-3" />
-                  Update Profile
-                </Link>
-              </Button>
-              <Button
-                variant="ghost"
-                asChild
-                className="w-full justify-start h-12 text-left transition-all duration-300 ease-in-out hover:bg-blue-100/60 hover:translate-x-2"
-              >
-                <Link
-                  href="/forgot-password"
-                  onClick={() => setIsDesktopProfileOpen(false)}
-                >
-                  <KeyRound className="w-5 h-5 mr-3" />
-                  Forgot Password
-                </Link>
-              </Button>
-              <Button
-                variant="ghost"
-                asChild
-                className="w-full justify-start h-12 text-left transition-all duration-300 ease-in-out hover:bg-blue-100/60 hover:translate-x-2"
-              >
-                <Link
-                  href="/exams"
-                  onClick={() => setIsDesktopProfileOpen(false)}
-                >
-                  <Calendar className="w-5 h-5 mr-3" />
-                  Exams
-                </Link>
-              </Button>
-              <RoleGuard
-                allowedRoles={[UserRole.ADMIN, UserRole.SUPER_ADMIN]}
+              <motion.div
+                whileHover={{ x: 5 }}
+                whileTap={{ scale: 0.95 }}
               >
                 <Button
                   variant="ghost"
                   asChild
-                  className="w-full justify-start h-12 text-left transition-all duration-300 ease-in-out hover:bg-blue-100/60 hover:translate-x-2"
+                  className="w-full justify-start h-12 text-left transition-all duration-300 ease-in-out hover:bg-blue-100/60"
                 >
                   <Link
-                    href="/admin"
-                    onClick={() => setIsMobileMenuOpen(false)}
+                    href="/profile"
+                    onClick={() => setIsDesktopProfileOpen(false)}
                   >
-                    <Shield className="w-5 h-5 mr-3" />
-                    Admin Panel
+                    <UsersRound className="w-5 h-5 mr-3" />
+                    Profile
                   </Link>
                 </Button>
+              </motion.div>
+              <motion.div
+                whileHover={{ x: 5 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <Button
+                  variant="ghost"
+                  asChild
+                  className="w-full justify-start h-12 text-left transition-all duration-300 ease-in-out hover:bg-blue-100/60"
+                >
+                  <Link
+                    href="/profile/update"
+                    onClick={() => setIsDesktopProfileOpen(false)}
+                  >
+                    <UsersRound className="w-5 h-5 mr-3" />
+                    Update Profile
+                  </Link>
+                </Button>
+              </motion.div>
+              <motion.div
+                whileHover={{ x: 5 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <Button
+                  variant="ghost"
+                  asChild
+                  className="w-full justify-start h-12 text-left transition-all duration-300 ease-in-out hover:bg-blue-100/60"
+                >
+                  <Link
+                    href="/forgot-password"
+                    onClick={() => setIsDesktopProfileOpen(false)}
+                  >
+                    <KeyRound className="w-5 h-5 mr-3" />
+                    Forgot Password
+                  </Link>
+                </Button>
+              </motion.div>
+              <motion.div
+                whileHover={{ x: 5 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <Button
+                  variant="ghost"
+                  asChild
+                  className="w-full justify-start h-12 text-left transition-all duration-300 ease-in-out hover:bg-blue-100/60"
+                >
+                  <Link
+                    href="/exams"
+                    onClick={() => setIsDesktopProfileOpen(false)}
+                  >
+                    <Calendar className="w-5 h-5 mr-3" />
+                    Exams
+                  </Link>
+                </Button>
+              </motion.div>
+              <RoleGuard
+                allowedRoles={[UserRole.ADMIN, UserRole.SUPER_ADMIN]}
+              >
+                <motion.div
+                  whileHover={{ x: 5 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <Button
+                    variant="ghost"
+                    asChild
+                    className="w-full justify-start h-12 text-left transition-all duration-300 ease-in-out hover:bg-blue-100/60"
+                  >
+                    <Link
+                      href="/admin"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                      <Shield className="w-5 h-5 mr-3" />
+                      Admin Panel
+                    </Link>
+                  </Button>
+                </motion.div>
               </RoleGuard>
               <div className="fixed bottom-4 w-full border-t-2 border-blue-200 pt-[2px]">
                 <div className="border-t-2 border-blue-200">
-                  <Button
-                    variant="ghost"
-                    onClick={() => {
-                      setIsDesktopProfileOpen(false);
-                      handleLogout();
-                    }}
-                    className="w-full justify-start mt-2 px-2 h-12 text-left transition-all duration-300 ease-in-out hover:bg-destructive/10 hover:text-destructive hover:translate-x-2 bg-blue-200/30 dark:bg-blue-200/5"
+                  <motion.div
+                    whileHover={{ x: 5 }}
+                    whileTap={{ scale: 0.95 }}
                   >
-                    <LogOut className="w-5 h-5 mr-3" />
-                    Logout
-                  </Button>
+                    <Button
+                      variant="ghost"
+                      onClick={() => {
+                        setIsDesktopProfileOpen(false);
+                        handleLogout();
+                      }}
+                      className="w-full justify-start mt-2 px-2 h-12 text-left transition-all duration-300 ease-in-out hover:bg-destructive/10 hover:text-destructive bg-blue-200/30 dark:bg-blue-200/5"
+                    >
+                      <LogOut className="w-5 h-5 mr-3" />
+                      Logout
+                    </Button>
+                  </motion.div>
                 </div>
               </div>
             </div>

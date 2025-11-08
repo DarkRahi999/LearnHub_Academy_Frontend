@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { viewportAnimation } from "@/lib/utils";
 import {
   BarChart3,
   Users,
@@ -48,9 +49,7 @@ export default function ReportsLayout({
       <motion.div
         className={`header rounded-md border border-gray-200 dark:border-blue-200/40 shadow-lg transition-all duration-300 flex flex-col md:static fixed z-50 md:z-auto ${sidebarOpen ? 'w-[90%] sm:w-[42%] md:w-56' : 'w-16'
           } ${sidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'} md:translate-x-0`}
-        initial={{ opacity: 0, x: -20 }}
-        animate={{ opacity: 1, x: sidebarOpen ? 0 : -20 }}
-        transition={{ duration: 0.3 }}
+        {...viewportAnimation(0.1, 20)}
         style={{
           top: '3rem',
           height: 'calc(100vh - 6rem)',
@@ -104,9 +103,7 @@ export default function ReportsLayout({
                 return (
                   <motion.li
                     key={item.name}
-                    initial={{ opacity: 0, x: -10 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ duration: 0.3, delay: 0.1 * index }}
+                    {...viewportAnimation(0.1 * index, 10)}
                     whileHover={{ x: 5 }}
                   >
                     <Link href={item.href}>
@@ -115,9 +112,7 @@ export default function ReportsLayout({
                           <Icon className="h-5 w-5" />
                           {sidebarOpen && (
                             <motion.span
-                              initial={{ opacity: 0 }}
-                              animate={{ opacity: 1 }}
-                              transition={{ duration: 0.3, delay: 0.1 * index + 0.1 }}
+                              {...viewportAnimation(0.1 * index + 0.1, 5)}
                               className="ml-2"
                             >
                               {item.name}
@@ -134,10 +129,8 @@ export default function ReportsLayout({
 
           {/* Moved the back button to the bottom */}
           <motion.div
+            {...viewportAnimation(0.3, 10)}
             className="p-2 pt-0 mt-auto"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.3, delay: 0.3 }}
           >
             <Link href="/admin">
               {sidebarOpen ?
@@ -172,12 +165,10 @@ export default function ReportsLayout({
 
       {/* Main Content - Made scrollable with proper overflow handling */}
       <motion.div
-        className="flex-1 md:h-[calc(100vh-6rem)] md:pl-4 md:border md:border-gray-200 md:shadow-lg md:dark:border-blue-200/40 md:rounded-md overflow-hidden"
-        initial={{ opacity: 0, x: 20 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ duration: 0.3, delay: 0.2 }}
+        className="flex-1 md:h-[calc(100vh-6rem)] md:pl-6 md:border md:border-gray-200 md:shadow-lg md:dark:border-blue-200/40 md:rounded-md overflow-hidden"
+        {...viewportAnimation(0.2, 20)}
       >
-        <div className="h-full md:overflow-y-auto overflow-hidden">
+        <div className="h-full md:overflow-y-auto overflow-hidden md:pb-4 pt-2 md:pr-4">
           {children}
         </div>
       </motion.div>
